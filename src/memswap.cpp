@@ -14,10 +14,16 @@
 MemSwap::MemSwap(SDL_Window * window, SDL_Renderer * renderer) : 
     window(window), renderer(renderer) {
 
-    // Start game in menu state
-    std::unique_ptr<GameState> menuState = std::make_unique<MenuState>();
-    pushGameState(menuState);
+    // Load game resources from splash state
+    std::unique_ptr<GameState> splashState = std::make_unique<SplashState>();
+    pushGameState(splashState);
 }
+
+/// Hand game events
+void MemSwap::handleEvents() {
+    gameStates.back()->handleEvents();
+}
+
 
 /// Update the current game state
 void MemSwap::update() {

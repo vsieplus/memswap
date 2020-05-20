@@ -1,16 +1,16 @@
-// Header for Menu State
+// Header for Pause State
 
-#ifndef MENUSTATE_HPP
-#define MENUSTATE_HPP
+#ifndef PAUSESTATE_HPP
+#define PAUSESTATE_HPP
 
 #include "gameStates/gamestate.hpp"
 
-// Singleton class for the Menu State
-class MenuState : public GameState {
+// class for the Pause State
+class PauseState : public GameState {
     public:
-        MenuState();
+        PauseState();
 
-        ~MenuState();
+        ~PauseState();
 
         void enterState() override;
         void exitState() override;
@@ -20,4 +20,4 @@ class MenuState : public GameState {
         void render(SDL_Window * window, SDL_Renderer * renderer) override;
 };
 
-#endif // MENUSTATE_HPP
+#endif // PAUSESTATE_HPP

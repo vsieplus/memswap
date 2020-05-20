@@ -1,0 +1,40 @@
+/**
+ * @file pausestate.cpp
+ * @author vsie
+ * @brief implementation for PauseState class
+ * @version 0.1
+ * @date 2020-05-20
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+
+#include "gameStates/pausestate.hpp"
+
+PauseState::PauseState() {
+    gameStateID = GAME_STATE_PAUSE;
+}
+
+PauseState::~PauseState() {
+    exitState();
+}
+
+void PauseState::enterState() {
+
+}
+
+void PauseState::exitState() {
+
+}
+
+void PauseState::handleEvents() {
+    
+}
+
+void PauseState::update() {
+}
+
+/// Render function for the game state
+void PauseState::render(SDL_Window * window, SDL_Renderer * renderer) {
+
+}

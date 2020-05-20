@@ -9,6 +9,7 @@
 #include <SDL.h>
 
 #include "gameStates/gamestate.hpp"
+#include "gameStates/splashstate.hpp"
 #include "gameStates/menustate.hpp"
 //#include "timer.hpp"
 
@@ -27,6 +28,9 @@ class MemSwap {
     public:
         /// Constructor
         MemSwap(SDL_Window * window, SDL_Renderer * renderer); 
+
+        // Handle events
+        void handleEvents();
 
         /// Update the game state
         void update();

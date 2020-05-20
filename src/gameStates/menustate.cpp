@@ -20,11 +20,15 @@ MenuState::~MenuState() {
 }
 
 void MenuState::enterState() {
-
+    // Load menu resources
 }
 
 void MenuState::exitState() {
 
+}
+
+void MenuState::handleEvents() {
+    
 }
 
 void MenuState::update() {

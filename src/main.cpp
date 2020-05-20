@@ -102,6 +102,7 @@ int main(int argc, char* args[]) {
 
 	// Game Loop
 	while(memSwap.isPlaying()) {
+		memSwap.handleEvents();
 		memSwap.update();
 		memSwap.render(window, renderer);		
 	}

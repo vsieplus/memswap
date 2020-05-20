@@ -11,18 +11,38 @@
 
  #include "memswap.hpp"
 
+MemSwap::MemSwap(SDL_Window * window, SDL_Renderer * renderer) : 
+    window(window), renderer(renderer) {
 
+    // Start game in menu state
+    std::unique_ptr<GameState> menuState = std::make_unique<MenuState>();
+    pushGameState(menuState);
+}
+
+/// Update the current game state
 void MemSwap::update() {
-
+    gameStates.back()->update();
 }
 
-void MemSwap::render() {
-
+/// Render the current game state
+void MemSwap::render(SDL_Window * window, SDL_Renderer * renderer) {
+    gameStates.back()->render(window, renderer);
 }
 
-void MemSwap::enterState(int gameStateID) {
+/// Add a game state to the stack (enter a game state)
+void MemSwap::pushGameState(std::unique_ptr<GameState> & state) {
+    gameStates.push_back(std::move(state));
+    state->enterState();
+}
 
+/// Remove a game state from the stack (exit a game state)
+void MemSwap::popGameState() {
+    gameStates.pop_back();
+}
+
+void MemSwap::quit() {
+    gameStates.clear();
 }
 
 bool MemSwap::isPlaying() { return playing; }
-int MemSwap::getGameStateID() { return gameStateID; }
+int MemSwap::getGameStateID() { return gameStates.back()->getGameStateID(); }

@@ -3,37 +3,42 @@
 #ifndef MEMSWAP_HPP
 #define MEMSWAP_HPP
 
+#include <vector>
+#include <memory>
+
 #include <SDL.h>
 
 #include "gameStates/gamestate.hpp"
-#include "timer.hpp"
+#include "gameStates/menustate.hpp"
+//#include "timer.hpp"
 
 class MemSwap {
     private:
         SDL_Window * window;
         SDL_Renderer * renderer;
 
-        Timer * timer;
+//        Timer * timer;
 
-        // For tracking the current and play state
-        GameState * currState;
+        // Stack for tracking the game states
+        std::vector<std::unique_ptr<GameState>> gameStates;
 
         bool playing = true;
-        int gameStateID = GAME_STATE_MENU;
 
     public:
         /// Constructor
-        MemSwap(SDL_Window * window, SDL_Renderer * renderer) : window(window),
-            renderer(renderer) {}
+        MemSwap(SDL_Window * window, SDL_Renderer * renderer); 
 
         /// Update the game state
         void update();
 
         /// Render the current state of the game
-        void render();
+        void render(SDL_Window * window, SDL_Renderer * renderer);
 
-        /// Switch between game states
-        void enterState(int gameStateID);
+        // Manage game states
+        void pushGameState(std::unique_ptr<GameState> & state);
+        void popGameState();
+
+        void quit();
 
         bool isPlaying();
         int getGameStateID();

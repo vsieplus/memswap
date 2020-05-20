@@ -103,10 +103,11 @@ int main(int argc, char* args[]) {
 	// Game Loop
 	while(memSwap.isPlaying()) {
 		memSwap.update();
-		memSwap.render();		
+		memSwap.render(window, renderer);		
 	}
 
+	memSwap.quit();
 
 	close(window, renderer);
-     return 0;
+    return 0;
 }

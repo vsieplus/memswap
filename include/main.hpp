@@ -12,8 +12,8 @@
 #include <SDL_ttf.h>
 
 // Window constants
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 768;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 const std::string GAME_TITLE = "Memory Swap";
 
 // Audio

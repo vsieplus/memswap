@@ -27,7 +27,7 @@ bool init (SDL_Window *& window, SDL_Renderer *& renderer) {
 
 	// Try to create window
 	window = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_UNDEFINED, 
-		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED);
 
 	if (window == NULL) {
 		printf("SDL_Error: %s\n", SDL_GetError());

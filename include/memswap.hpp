@@ -5,12 +5,19 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include <stdio.h>
 
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "gameStates/gamestate.hpp"
 #include "gameStates/splashstate.hpp"
 #include "gameStates/menustate.hpp"
+
+
 
 class MemSwap {
     private:
@@ -22,11 +29,26 @@ class MemSwap {
 
         int nextState = GAME_STATE_NULL;
 
+        // Window constants
+        const int SCREEN_WIDTH = 720;
+        const int SCREEN_HEIGHT = 480;
+
+        // Audio
+        const int SOUND_FREQ = 44100;
+        const int NUM_CHANNELS = 2;
+        const int SAMPLE_SIZE = 2048;
+
+        const std::string GAME_TITLE = "Memory Swap";
+
         bool playing = true;
 
     public:
         /// Constructor
-        MemSwap(SDL_Window * window, SDL_Renderer * renderer); 
+        MemSwap(); 
+
+        // initialize
+        bool init ();
+        bool initLibs();
 
         // Handle events
         void handleEvents();
@@ -35,7 +57,7 @@ class MemSwap {
         void update();
 
         /// Render the current state of the game
-        void render(SDL_Window * window, SDL_Renderer * renderer);
+        void render();
 
         // Manage game states
         void changeState();

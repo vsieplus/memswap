@@ -1,7 +1,7 @@
 /**
  * @file memswap.cpp
  * @author vsie
- * @brief implementation for game instance
+ * @brief implementation for game engine
  * @version 0.1
  * @date 2020-05-19
  * 
@@ -11,12 +11,74 @@
 
  #include "memswap.hpp"
 
-MemSwap::MemSwap(SDL_Window * window, SDL_Renderer * renderer) : 
-    window(window), renderer(renderer) {
+MemSwap::MemSwap() {
+    // Initialize SDL components
+    if(!(init() && initLibs())) {
+        printf("Failed to initialize SDL");
+    }
 
     // Start game in splash state to load res/
     setNextState(GAME_STATE_SPLASH);
     changeState();
+}
+
+
+/**
+ * @brief initialize SDL window/renderer
+ * 
+ * @return true if successful
+ * @return false if unsuccessful
+ */
+bool MemSwap::init () {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+        printf("SDL_Init Error: %s\n", SDL_GetError());
+		return false;
+	} 
+
+	// Try to create window
+	window = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_UNDEFINED, 
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+
+	if (window == NULL) {
+		printf("SDL_Error: %s\n", SDL_GetError());
+		return false;
+	}
+	
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+	return true;
+}
+
+
+/**
+ * @brief initialize SDL libraries we're using
+ * 
+ * @return true if successful
+ * @return false if unsuccessful
+ */
+bool MemSwap::initLibs() {
+	// Initialize SDL_image
+	int imgFlags = IMG_INIT_PNG;
+	if(!(IMG_Init(imgFlags) & imgFlags)) {
+		printf("SDL_Image Error: %s\n", IMG_GetError());
+		return false;
+	}
+
+	// Init SDL_ttf
+	if(TTF_Init() == -1) {
+		printf("SDL_ttf error: %s\n", TTF_GetError());
+		return false;
+	}
+
+	// Initialize Mixer
+	if(Mix_OpenAudio(SOUND_FREQ, MIX_DEFAULT_FORMAT, NUM_CHANNELS, 
+		SAMPLE_SIZE) < 0) {
+		printf("SDL_mixer error %s\n", Mix_GetError());
+		return false;
+	}
+
+	return true;
 }
 
 /// Handle game events
@@ -33,7 +95,7 @@ void MemSwap::update() {
 }
 
 /// Render the current game state
-void MemSwap::render(SDL_Window * window, SDL_Renderer * renderer) {
+void MemSwap::render() {
     gameStates.back()->render(window, renderer);
 }
 
@@ -94,6 +156,13 @@ void MemSwap::popGameState() {
 
 void MemSwap::quit() {
     gameStates.clear();
+
+    SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
 }
 
 bool MemSwap::isPlaying() { 

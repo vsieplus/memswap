@@ -6,7 +6,6 @@ Level::Level(std::string tiledMapPath, SDL_Renderer * renderer) {
     loadMap(tiledMapPath, renderer);
 
     grid.resize(gridWidth * gridHeight);
-
     grid[0] = std::make_unique<Player>(0, 0, 0, 0, renderer);
 }
 
@@ -15,32 +14,29 @@ Level::~Level(){
     mapTiles.clear();
 }
 
+// Update loop
 void Level::update(const Uint8* keyStates) {
     for(int x = 0; x < gridWidth; x++) {
         for(int y = 0; y < gridHeight; y++) {
-            int curr_idx = x + y * gridWidth;
+            int currIndex = xyToIndex(x,y);
+            auto & currEntity = grid[currIndex];
         
-            if(grid[curr_idx]) {
-                grid[curr_idx]->handleEvents(keyStates);
-                grid[curr_idx]->update(this);
-
-                // Change pos in grid if needed
-                if(p->getGridX() != x || p->getGridY() != y) {
-                    grid[curr_idx] = NULL;
-                    grid[curr_idx] = p; 
-                }
+            // Handle events + update for non-null entities
+            if(currEntity) {
+                currEntity->handleEvents(keyStates, this);
+                currEntity->update(this);
             }
         }
     }
 }
-void Level::render(SDL_Renderer* renderer) {
+void Level::render(SDL_Renderer* renderer) const {
     // Render the map
-    for(auto& tile: mapTiles) {
+    for(auto & tile: mapTiles) {
         tile->render(renderer);
     } 
 
     // Render the objs in the grid
-    for(auto & entity : grid) {
+    for(auto & entity: grid) {
         if(entity) {
             entity->render(renderer);
         }
@@ -115,17 +111,25 @@ void Level::loadMap(std::string tiledMapPath, SDL_Renderer * renderer) {
 
                     auto ts_x = (cur_gid % (ts_width/TILE_WIDTH)) * TILE_WIDTH;
                     auto ts_y = (cur_gid / (ts_width/TILE_HEIGHT)) * TILE_HEIGHT;
-//                    auto ts_x = 0;
-//                    auto ts_y = 0;
                     auto xpos = x * TILE_WIDTH;
                     auto ypos = y * TILE_HEIGHT;
 
-                    Tile * tile = new Tile(xpos, ypos, ts_x, ts_y, TILE_WIDTH, TILE_HEIGHT, tilesets[tileset_gid]);
-                    mapTiles.push_back(tile);
+                    mapTiles.emplace+back(Tile(xpos, ypos, ts_x, ts_y,
+                        TILE_WIDTH, TILE_HEIGHT, tilesets[tileset_gid]));
                 }
             }
         }
     }
+}
+
+static int Level::xyToIndex(int x, int y) {
+    return x + y * gridWidth;
+}
+
+static std::pair<int> Level::indexToXY(int index) {
+    int x = index % gridWidth;
+    int y = index / gridWidth;
+    return std::make_pair(x,y);
 }
 
 int Level::getGridWidth() { 
@@ -142,4 +146,8 @@ int Level::getPixelWidth() {
 
 int Level::getPixelHeight() { 
     return pixelHeight;
+}
+
+std::vector<Entity> getGrid() {
+    return &grid;
 }

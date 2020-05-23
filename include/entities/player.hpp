@@ -26,9 +26,10 @@ class Player : public Entity {
 
         int startX, startY, endX, endY; // Start and end positions for movement
         
+        int moveDir = DIR_NONE          // direction of player's move
+        int bufferedDir = DIR_NONE;     // direction of player's buffered move
         int bufferedX = 0;              // buffered movement position
         int bufferedY = 0;              
-        int bufferedDir = DIR_NONE;     // direction of buffered movement
 
         Uint32 moveStartTime = 0;       // time since movement started
 
@@ -37,21 +38,26 @@ class Player : public Entity {
         Player(int screenX, int screenY, int gridX, int gridY, 
             SDL_Renderer * renderer);
 
-        static const int PLAYER_VELOCITY = 10;
+        static const int PLAYER_VELOCITY = 10;       // Pixels moved per sec.
+        static const float MOVEMENT_BUFFER = 0.85f;  // How soon through the
+                                                     // curr movement can buffer
 
         void handleEvents(const Uint8* keyStates, Level * level) override;
         void update(Level * level) override;
         void render(SDL_Renderer* renderer) override;
 
         void checkMovement(const Uint8* keyStates, Level * level);
-        void initMovement();
+
+        void initMovement(int direction);
+        void initMovement(int xPosChange, int yPosChange, int xGridChange, 
+            int yGridChange, Level * level);
+        
         void move();
 
         static std::pair<int,int> lerp(int startX, int startY, int endX,
             int endY, float t);
 
         float getMoveProg();
-
 };
 
 #endif // PLAYER_HPP

@@ -27,6 +27,8 @@ class Entity {
         virtual void update(Level * level) = 0;
         virtual void render(SDL_Renderer * renderer) = 0;
 
+        bool checkCollision(Level * level, int destGridX, int destGridY);
+
         int getScreenX();
         int getScreenY();
         int getGridX();

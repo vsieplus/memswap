@@ -3,8 +3,6 @@
 #ifndef SPLASHSTATE_HPP
 #define SPLASHSTATE_HPP
 
-#include <string>
-
 #include <SDL.h>
 #include <SDL_image.h>
 

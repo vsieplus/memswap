@@ -19,8 +19,6 @@
 #include "gameStates/playstate.hpp"
 #include "gameStates/scorestate.hpp"
 
-
-
 class MemSwap {
     private:
         SDL_Window * window;

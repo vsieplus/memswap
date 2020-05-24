@@ -6,12 +6,14 @@
 #include <memory>
 
 #include "gameStates/gamestate.hpp"
+#include "level/level.hpp"
 #include "utils/timer.hpp"
 
 // Singleton class for the Play State
 class PlayState : public GameState {
     private:
-        std::unique_ptr<Timer> timer;
+        Timer timer;
+        Level level;
 
     public:
         PlayState();

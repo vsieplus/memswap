@@ -17,9 +17,9 @@ class Tile {
         
     public:
         Tile(int mapX, int mapY, int tilesetX, int tilesetY, int width,
-             int height, SDL_Texture* texture);
+             int height, std::shared_ptr<SDL_Texture> texture);
 
-        void render(SDL_Renderer* renderer);
+        void render(SDL_Renderer* renderer) const;
 };
 
 #endif

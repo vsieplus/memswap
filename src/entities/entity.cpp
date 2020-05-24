@@ -3,9 +3,13 @@
 #include "entities/entity.hpp"
 #include "level/level.hpp"
 
-Entity::Entity(int sX, int sY, int gX, int gY, std::string texturePath) :
+Entity::Entity(int sX, int sY, int gX, int gY, std::string texturePath, SDL_Renderer * renderer) :
     screenX(sX), screenY(sY), gridX(gX), gridY(gY) {
-    texture.loadTexture(texturePath);
+    texture.loadTexture(texturePath, renderer);
+}
+
+Entity::~Entity() {
+    
 }
 
 /**
@@ -21,21 +25,21 @@ bool Entity::checkCollision(Level * level, int destGridX, int destGridY) {
     }
 
     // check collision with dest position. Return true if non-null entity
-    return level->getGrid()->at(Level::xyToIndex(destGridX, destGridY)) != nullptr;
+    return !level->getGrid().at(level->xyToIndex(destGridX, destGridY));
 }
 
-int Entity::getScreenX() {
+int Entity::getScreenX() const {
     return screenX;
 }
 
-int Entity::getScreenY() {
+int Entity::getScreenY() const {
     return screenY;
 }
 
-int Entity::getGridX() {
+int Entity::getGridX() const {
     return gridX;
 }
 
-int Entity::getGridY() {
+int Entity::getGridY() const {
     return gridY;
 }

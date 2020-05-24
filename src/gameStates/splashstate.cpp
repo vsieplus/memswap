@@ -41,7 +41,7 @@ void SplashState::update(MemSwap * game) {
 
     } else if (advance) {
             // Otherwise finish the SPLASH state and set next as the MENU state
-            game->setNextState(GAME_STATE_MENU);
+            game->setNextState(GAME_STATE_PLAY);
     }     
 }
 

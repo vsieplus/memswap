@@ -5,14 +5,17 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+
+#include <string>
 #include <vector>
+#include <unordered_map>
 #include <memory>
-#include <pair>
+#include <utility>
 
 #include "tmxlite/Map.hpp"
 #include "tmxlite/Layer.hpp"
 #include "tmxlite/TileLayer.hpp"
-#include "entities/player.hpp"
+#include "entities/entity.hpp"
 #include "level/tile.hpp"
 
 class Level {
@@ -23,35 +26,50 @@ class Level {
         // Width/height in pixels
         int pixelWidth, pixelHeight;
 
-        // A vector holding the entities in the grid
-        std::vector<std::unique_ptr<Entity>> grid;
+        // A map holding the entities in the grid, key = index, value = u_ptr
+        std::unordered_map<int, std::shared_ptr<Entity>> grid;
 
         // A vector holding the background tiles for the map
         std::vector<Tile> mapTiles;
 
     public:
+        Level();
         Level(std::string tiledMapPath, SDL_Renderer * renderer);
+
         ~Level();
 
-        void update(const Uint8* keyStates);
-        void render(SDL_Renderer* renderer) const;
+        void handleEvents(const Uint8 * keyStates);
+        void update();
+        void render(SDL_Renderer * renderer) const;
 
         // Load the tiledmap for this level
         void loadMap(std::string tiledMapPath, SDL_Renderer * renderer);
 
-        const int TILE_HEIGHT;
-        const int TILE_WIDTH;
+        void addBGTiles(const tmx::TileLayer * tileLayer, 
+            const std::map<int, std::shared_ptr<SDL_Texture>> & tilesets);
+        void addEntityTiles(const tmx::TileLayer * tileLayer, 
+            const std::map<int, std::shared_ptr<SDL_Texture>> & tilesets);
 
-        int getGridWidth();
-        int getGridHeight();
-        int getPixelWidth();
-        int getPixelHeight();    
+        void initGrid();
 
-        std::vector<Entity> * getGrid();
+        void updateSize(const tmx::Map & map);
 
-        // Utility functions to convert between x,y indices to vector indices
-        static int xyToIndex(int x, int y);
-        static std::pair<int> indexToXY(int index);
+        int TILE_HEIGHT;
+        int TILE_WIDTH;
+
+        const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME;
+
+        int getGridWidth() const;
+        int getGridHeight() const;
+        int getPixelWidth() const;
+        int getPixelHeight() const;
+
+        const std::unordered_map<int, std::shared_ptr<Entity>> & getGrid();
+        void setGridElement(int startX, int startY, int endX, int endY);
+
+        // functions to convert between x,y indices to map key
+        int xyToIndex(int x, int y) const;
+        std::pair<int, int> indexToXY(int index) const;
 };
 
 #endif // LEVEL_HPP

@@ -4,10 +4,8 @@
 #include "level/level.hpp"
 
 Player::Player(int screenX, int screenY, int gridX, int gridY, 
-    SDL_Renderer* renderer) : Entity(screenX, screenY, gridX, gridY),
+    SDL_Renderer* renderer) : Entity(screenX, screenY, gridX, gridY, "res/spritesheets/sprites/portal_lv0.png", renderer),
     startX(screenX), startY(screenY), endX(screenX), endY(screenY) {
-
-    texture.loadFromFile(texturePath, renderer);
 }
 
 void Player::handleEvents(const Uint8 * keyStates, Level * level) {
@@ -20,15 +18,15 @@ void Player::handleEvents(const Uint8 * keyStates, Level * level) {
 void Player::update(Level * level) {
     // Actually update player position for movement if currently moving
     if(moving) {
-        move();
+        move(level);
     } else if(moveDir != DIR_NONE) {
         // initialize movement if moveDir is not DIR_NONE
-        initMovement(moveDir);
+        initMovement(moveDir, level);
         moveDir = DIR_NONE;
     }
 }
 
-void Player::render(SDL_Renderer* renderer) {
+void Player::render(SDL_Renderer* renderer) const {
     texture.render(screenX, screenY, renderer);
 }
 
@@ -55,19 +53,19 @@ void Player::checkMovement(const Uint8* keyStates, Level * level) {
 }
 
 // Helper function for initMovement
-void Player::initMovement(int direction) {
+void Player::initMovement(int direction, Level * level) {
     switch(direction) {
         case DIR_UP:
-            initMovement(0, -texture.getHeight(), 0, -1);
+            initMovement(0, -texture.getHeight(), 0, -1, level);
             break;
         case DIR_DOWN:
-            initMovement(0, texture.getHeight(), 0, 1);
+            initMovement(0, texture.getHeight(), 0, 1, level);
             break;
         case DIR_LEFT:
-            initMovement(-texture.getWidth(), 0, -1, 0);
+            initMovement(-texture.getWidth(), 0, -1, 0, level);
             break;
         case DIR_RIGHT:
-            initMovement(texture.getWidth(), 0 1, 0);
+            initMovement(texture.getWidth(), 0, 1, 0, level);
             break;                        
     }
 }
@@ -101,14 +99,13 @@ void Player::initMovement(int xPosChange, int yPosChange, int xGridChange,
         gridX += xGridChange;
         gridY += yGridChange; 
 
-        // Update pos. level grid
-        level->getGrid()->at(Level::xyToIndex(gridX, gridY)) = 
-            std::move(level->getGrid()->at(oldGridX, oldGridY));
+        // Update pos. of ptr in the level grid
+        level->setGridElement(oldGridX, oldGridY, gridX, gridY);
     }
 }
 
 // Move the player
-void Player::move() {
+void Player::move(Level * level) {
     if(moveProg < 1.0f) {
         // Update moveProg based on time
         moveProg = PLAYER_VELOCITY * ((SDL_GetTicks() - moveStartTime)/1000.0f);
@@ -120,8 +117,8 @@ void Player::move() {
     } else {
         // Check if a move is buffered
         if(bufferedDir != DIR_NONE) {
-            initMovement(bufferedDir);
-            bufferedDir = NONE;
+            initMovement(bufferedDir, level);
+            bufferedDir = DIR_NONE;
         } else {
             moving = false;
             moveStartTime = 0;

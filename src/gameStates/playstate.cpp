@@ -1,14 +1,6 @@
-/**
- * @file playstate.cpp
- * @author vsie
- * @brief implementation for PlayState class
- * @version 0.1
- * @date 2020-05-20
- * 
- * @copyright Copyright (c) 2020
- * 
- */
+// implementation for Play state
 
+#include "memswap.hpp"
 #include "gameStates/playstate.hpp"
 
 PlayState::PlayState() : GameState(GAME_STATE_PLAY) {}
@@ -18,7 +10,7 @@ PlayState::~PlayState() {
 }
 
 void PlayState::enterState(MemSwap * game) {
-
+    level = Level("res/maps/tutorial/tutorial.tmx", game->getRenderer());
 }
 
 void PlayState::exitState() {
@@ -26,14 +18,15 @@ void PlayState::exitState() {
 }
 
 void PlayState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
-    
+    level.handleEvents(keyStates);
 }
 
 void PlayState::update(MemSwap * game) {
     printf("play state");
+    level.update();
 }
 
 /// Render function for the game state
 void PlayState::render(SDL_Renderer * renderer) {
-
+    level.render(renderer);
 }

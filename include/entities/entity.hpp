@@ -10,7 +10,7 @@
 class Level;
 
 class Entity {
-    private:
+    protected:
         // Texture for the entity
         Texture texture;
 
@@ -21,19 +21,19 @@ class Entity {
         int gridX, gridY;
 
     public:
-        Entity(int sX, int sY, int gX, int gY, std::string texturePath);
+        Entity(int sX, int sY, int gX, int gY, std::string texturePath, SDL_Renderer * renderer);
+        ~Entity();
 
         virtual void handleEvents(const Uint8 * keyStates, Level * level) = 0;
         virtual void update(Level * level) = 0;
-        virtual void render(SDL_Renderer * renderer) = 0;
+        virtual void render(SDL_Renderer * renderer) const = 0;
 
         bool checkCollision(Level * level, int destGridX, int destGridY);
 
-        int getScreenX();
-        int getScreenY();
-        int getGridX();
-        int getGridY();
-
-}
+        int getScreenX() const;
+        int getScreenY() const;
+        int getGridX() const;
+        int getGridY() const;
+};
 
 #endif // ENTITY_HPP

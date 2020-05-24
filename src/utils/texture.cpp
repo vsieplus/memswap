@@ -6,9 +6,9 @@ Texture::Texture() {}
 
 /// image texture constructor
 void Texture::loadTexture(std::string path, SDL_Renderer* renderer) {
-    SDL_Texture* newTexture = NULL;
+    SDL_Texture * newTexture = NULL;
 
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface * surface = IMG_Load(path.c_str());
     if(surface == NULL) {
         throw TextureLoadException(IMG_GetError());
     }
@@ -23,8 +23,8 @@ void Texture::loadTexture(std::string path, SDL_Renderer* renderer) {
     texture = newTexture;
 }
 
-void Texture::loadTextTexture(std::string textureText, SDL_Color textColor, TTF_Font * font,
-    SDL_Renderer* renderer) {
+void Texture::loadTextTexture(std::string textureText, SDL_Color textColor, 
+    TTF_Font * font, SDL_Renderer* renderer) {
 
     SDL_Surface* surface = TTF_RenderText_Solid(font, textureText.c_str(), 
         textColor);
@@ -64,7 +64,7 @@ void Texture::freeTexture() {
  * @param flip Type of flip to use when rendering
  */
 void Texture::render(int x, int y, SDL_Renderer * renderer, SDL_Rect * clip,
-    double angle, SDL_Point * center, SDL_RendererFlip flip) {
+    double angle, SDL_Point * center, SDL_RendererFlip flip) const {
     SDL_Rect renderArea = {x, y, width, height};
 
     if(clip != NULL) {

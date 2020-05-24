@@ -178,7 +178,7 @@ void MemSwap::changeState() {
             popGameState();
         }
 
-        std::unique_ptr<GameState> nextGameState = NULL;
+        std::unique_ptr<GameState> nextGameState = nullptr;
 
         switch(nextState) {
             case GAME_STATE_SPLASH:

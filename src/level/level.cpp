@@ -41,6 +41,7 @@ void Level::handleEvents(const Uint8 * keyStates) {
 
 // Update loop
 void Level::update() {
+    // Update the entities
     for(int x = 0; x < gridWidth; x++) {
         for(int y = 0; y < gridHeight; y++) {
             int currIdx = xyToIndex(x,y);
@@ -49,6 +50,9 @@ void Level::update() {
             }
         }
     }
+
+    // Update the map tiles
+    map.update(this);
 }
 
 void Level::render(SDL_Renderer * renderer) const {

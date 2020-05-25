@@ -34,13 +34,13 @@ void Player::checkMovement(const Uint8* keyStates, Level * level) {
     Direction newDir = DIR_NONE;
 
     // Check for key inputs
-    if(keyStates[SDL_SCANCODE_UP]) {
+    if(keyStates[SDL_SCANCODE_W]) {
         newDir = DIR_UP;
-    } else if (keyStates[SDL_SCANCODE_DOWN]) {
+    } else if (keyStates[SDL_SCANCODE_S]) {
         newDir = DIR_DOWN;
-    } else if (keyStates[SDL_SCANCODE_LEFT]) {
+    } else if (keyStates[SDL_SCANCODE_A]) {
         newDir = DIR_LEFT;
-    } else if (keyStates[SDL_SCANCODE_RIGHT]) {
+    } else if (keyStates[SDL_SCANCODE_D]) {
         newDir = DIR_RIGHT;       
     }
     

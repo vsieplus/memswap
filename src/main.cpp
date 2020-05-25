@@ -11,10 +11,6 @@
 #include "main.hpp"
 #include "memswap.hpp"
 
-/**
- * @brief main
- * 
- */
 int main(int argc, char* args[]) {
 	MemSwap memSwap;
 

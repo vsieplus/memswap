@@ -15,7 +15,7 @@ Entity::~Entity() {
 /**
  * @brief Checks collision for current entity with the specified destination
  * 
- * @return true if there is a collision
+ * @return true if there is a collision (including with the boundary)
  */
 bool Entity::checkCollision(Level * level, int destGridX, int destGridY) {
     // Check if new position is out of bounds, treat as collision

@@ -1,3 +1,6 @@
+// Implementation for tile class
+
+#include "level/level.hpp"
 #include "level/tile.hpp"
 
 Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGID,
@@ -7,14 +10,19 @@ Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGI
     renderArea = {mapX, mapY, tileWidth, tileHeight};
 }
 
+void Tile::update(Level * level) {
+    
+}
+
 void Tile::render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture, 
         const SDL_Rect & tilesheetClip) const {
     SDL_RenderCopy(renderer, tilesetTexture, &tilesheetClip, &renderArea);
 }
 
 // Filp tile's parity, update tilesheetClip
-void Tile::flip() {
+void Tile::flip(int newTilesetGID) {
     tileParity = tileParity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
+    tilesetGID = newTilesetGID;
 }
 
 int Tile::getTilesetFirstGID() const {

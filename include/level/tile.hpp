@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+class Level;
+
 enum TileParity {
     PARITY_GRAY,    // 0 ~ gray
     PARITY_PURPLE   // 1 ~ purple
@@ -15,7 +17,7 @@ class Tile {
         // First GID of the tileset the tile belongs to, and its own GID 
         int tilesetFirstGID, tilesetGID;
 
-        int tileParity;   // indicate tile color (0:gray, 1:purple)
+        int tileParity;          // indicate tile color (0:gray, 1:purple)
 
         SDL_Rect renderArea;     // where on screen to render
         
@@ -23,11 +25,13 @@ class Tile {
         Tile(int mapX, int mapY, int tileWidth, int tileHeight, 
             int tilesetFirstGID, int tilesetGID, int tileParity);
 
+        void update(Level * level);
+
         void render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture, 
             const SDL_Rect & tilesheetClip) const;
 
         // flip the tile parity
-        void flip();
+        void flip(int newTilesetGID);
 
         int getTilesetFirstGID() const;
         int getTilesetGID() const;

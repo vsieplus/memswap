@@ -51,6 +51,7 @@ class Player : public Entity {
         void update(Level * level) override;
         void render(SDL_Renderer* renderer) const override;
 
+        // check if player has input movement
         void checkMovement(const Uint8* keyStates, Level * level);
 
         // initialize movement from a direction

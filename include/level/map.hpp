@@ -50,6 +50,7 @@ class Map {
         Map(std::string tiledMapPath);
         ~Map();
 
+        void update(Level * level);
         void render(SDL_Renderer * renderer) const;
 
         // Load map for the level

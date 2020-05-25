@@ -38,16 +38,18 @@ class Level {
 
         ~Level();
 
+        // game loop
         void handleEvents(const Uint8 * keyStates);
         void update();
         void render(SDL_Renderer * renderer) const;
 
+        // grid initialization
+        void updateSize(const tmx::Map & map, int tileWidth, int tileHeight);
+        void initGrid();
         void addEntityTiles(const tmx::TileLayer * tileLayer, 
             const std::map<int, std::shared_ptr<SDL_Texture>> & tilesetTextures);
 
-        void initGrid();
-
-        void updateSize(const tmx::Map & map, int tileWidth, int tileHeight);
+        // Update bg tiles
 
         int getGridWidth() const;
         int getGridHeight() const;

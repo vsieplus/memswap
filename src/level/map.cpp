@@ -16,6 +16,13 @@ Map::~Map() {
     mapTilesets.clear();
 }
 
+// Update each tile in the map
+void update(Level * level) {
+    for(Tile tile: mapTiles) {
+        tile.update(level);
+    }
+}
+
 void Map::render(SDL_Renderer * renderer) const {
     // Render the background tiles
     for(Tile tile: mapTiles) {

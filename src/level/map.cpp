@@ -1,5 +1,6 @@
 // Implementation for map class
 
+#include "entities/player.hpp"
 #include "level/level.hpp"
 #include "level/map.hpp"
 
@@ -98,7 +99,7 @@ void Map::loadTilesets(const tmx::Map & map, SDL_Renderer * renderer) {
 
             for(auto & tile: tiles) {
                 // check/store this tile's parity
-                checkTileParity(tile);
+                checkTileParity(tile, tileset.getFirstGID());
 
                 // Get position of tile in the tileset to create the clip
                 int tilesetX = tile.imagePosition.x;
@@ -109,12 +110,11 @@ void Map::loadTilesets(const tmx::Map & map, SDL_Renderer * renderer) {
                     (struct SDL_Rect) {tilesetX, tilesetY, tileWidth, tileHeight});               
             }
         }
-        
     }
 }
 
 // Check the tile to store GIDs for the different tile parities
-void Map::checkTileParity(const tmx::Tileset::Tile & tile) {
+void Map::checkTileParity(const tmx::Tileset::Tile & tile, int tilesetFirstGID) {
     auto & tileProperties = tile.properties;
 
     // return if no properties
@@ -124,7 +124,7 @@ void Map::checkTileParity(const tmx::Tileset::Tile & tile) {
     unsigned int i = 0;
     while(i < tileProperties.size()) {
         if(tileProperties[i].getName() == "parity") {
-            tileParities.emplace(tile.ID, tileProperties[i].getIntValue());
+            tileParities.emplace(tile.ID + tilesetFirstGID, tileProperties[i].getIntValue());
             break;
         }
         i++;
@@ -135,9 +135,9 @@ void Map::checkTileParity(const tmx::Tileset::Tile & tile) {
 void Map::addBGTiles(const tmx::TileLayer * tileLayer, Level * level) {
     auto & layerTiles = tileLayer->getTiles();
             
-    // Iterate through each tile in this layer
-    for(auto x = 0; x < mapWidth; x++) {
-        for(auto y = 0; y < mapHeight; y++) {
+    // Iterate through each tile in this layer (top left corner -> down right)
+    for(int y = 0; y < mapHeight; y++) {
+        for(int x = 0; x < mapWidth; x++) {
             int tileIndex = level->xyToIndex(x,y);
 
             // Get the GID for the current tile in this layer
@@ -156,12 +156,58 @@ void Map::addBGTiles(const tmx::TileLayer * tileLayer, Level * level) {
             auto mapX = x * tileWidth;
             auto mapY = y * tileHeight;
 
-            // Get parity of the BG Tile (0:gray, 1:purple)
-            int tileParity = tileParities[tileGID]; 
+            // Get parity of the BG Tile if available (0:gray, 1:purple)
+            auto tileParity = tileParities.find(tileGID);
+            int tp = tileParity == tileParities.end() ? PARITY_NONE : tileParity->second;
 
             // Add new tile to mapTiles
             mapTiles.emplace_back(mapX, mapY, tileWidth, tileHeight, 
-                tilesetFirstGID, tileGID, tileParity);            
+                tilesetFirstGID, tileGID, tp);
+        }
+    }
+}
+
+// Check if a tile at the given index is inbounds
+bool Map::inBounds(int x, int y) const {
+    return (x >= 0 && x <= mapWidth - 1) && (y >= 0 && y <= mapHeight - 1);
+}
+
+
+// Update bg tiles when the specified movement occurs
+void Map::flipTiles(int movedFromX, int movedFromY, int moveDir, Level * level) {
+    // Get indices for all tiles on map surrounding the old pos
+    std::list<std::pair<int, int>> tileIndices;
+
+    // Up, down, left, right (order matches Direction enum)
+    tileIndices.push_back(std::make_pair(movedFromX, movedFromY - 1));
+    tileIndices.push_back(std::make_pair(movedFromX, movedFromY + 1));
+    tileIndices.push_back(std::make_pair(movedFromX - 1, movedFromY));
+    tileIndices.push_back(std::make_pair(movedFromX + 1, movedFromY));
+
+    // Remove the pair for the tile we moved onto
+    auto it = tileIndices.begin();
+    advance(it, moveDir - 1);
+    tileIndices.erase(it);
+
+    // For each tile except the one we moved onto, try to call flip if inbounds
+    for(auto indices: tileIndices) {
+        // Check if in bounds
+        if(inBounds(indices.first, indices.second)) {
+            Tile & currTile = mapTiles.at(level->xyToIndex(indices.first, indices.second));
+
+            // skip if tile is parity-neutral
+            if(currTile.getTileParity() == PARITY_NONE) break;
+
+            // Get new tileset GID (gray <-> purple)
+            int tileGID = currTile.getTilesetGID();
+            for(auto & tp: tileParities) {
+                // Flip upon finding the first non-matching GID tile parity
+                if(tp.first != tileGID) {
+                    currTile.flip(tp.first);
+                    break;
+                }
+            }
+
         }
     }
 }

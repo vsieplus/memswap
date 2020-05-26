@@ -57,7 +57,7 @@ class Player : public Entity {
         // initialize movement from a direction
         void initMovement(int direction, Level * level);
         void initMovement(int xPosChange, int yPosChange, int xGridChange, 
-            int yGridChange, Level * level);
+            int yGridChange, int direction, Level * level);
         
         // update the player's position
         void move(Level * level);

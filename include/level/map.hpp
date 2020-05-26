@@ -3,11 +3,13 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include <utility>
 #include <memory>
 #include <vector>
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <list>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -33,13 +35,13 @@ class Map {
         // key: first tileset GID, val: pointer to ts texture 
         std::map<int, std::shared_ptr<SDL_Texture>> mapTilesets;
 
+        // map of tile parities for BG Tiles (Should only contain 2 elems)
+        // key: tile GID, val: Tile parity (int indicating parity) 
+        std::map<int, int> tileParities;
+
         // map of tileset clips for BG tiles
         // key: tile GID, val: SDL_Rect
         std::unordered_map<int, SDL_Rect> bgTilesetClips;
-
-        // map of tile parities for BG Tiles
-        // key: tile GID, val: Tile parity (int indicating parity) 
-        std::unordered_map<int, int> tileParities;
 
     public:
         // strings used to interface with tiledmap properties/labels
@@ -57,10 +59,16 @@ class Map {
         void loadMap(SDL_Renderer * renderer, Level * level);
         void loadTilesets(const tmx::Map & map, SDL_Renderer * renderer);
 
-        void checkTileParity(const tmx::Tileset::Tile & tile);
+        void checkTileParity(const tmx::Tileset::Tile & tile, int tilesetFirstGID);
 
         // add background tiles to the map from the given tileLayer
         void addBGTiles(const tmx::TileLayer * tileLayer, Level * level);
+
+        // Check if a tile is in bounds
+        bool inBounds(int x, int y) const;
+
+        // Update bg tiles when the specified movement occurs
+        void flipTiles(int movedFromX, int movedFromY, int moveDir, Level * level);
 };
 
 #endif // MAP_HPP

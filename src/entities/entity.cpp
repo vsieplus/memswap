@@ -2,6 +2,7 @@
 
 #include "entities/entity.hpp"
 #include "level/level.hpp"
+#include "level/map.hpp"
 
 Entity::Entity(int sX, int sY, int gX, int gY, std::string texturePath, SDL_Renderer * renderer) :
     screenX(sX), screenY(sY), gridX(gX), gridY(gY) {
@@ -18,11 +19,8 @@ Entity::~Entity() {
  * @return true if there is a collision (including with the boundary)
  */
 bool Entity::checkCollision(Level * level, int destGridX, int destGridY) {
-    // Check if new position is out of bounds, treat as collision
-    if((destGridX < 0 || destGridX > level->getGridWidth() - 1) ||
-       (destGridY < 0 || destGridY > level->getGridHeight() - 1)) {
-        return true;
-    }
+    // Check if new position is out of bounds, treat as collision (w/wall)
+    if(!level->getMap().inBounds(destGridX, destGridY)) return true;
 
     // check collision with dest position. Return true if non-null entity
     bool entityAtNewPos = 

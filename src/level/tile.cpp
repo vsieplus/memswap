@@ -19,7 +19,7 @@ void Tile::render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture,
     SDL_RenderCopy(renderer, tilesetTexture, &tilesheetClip, &renderArea);
 }
 
-// Filp tile's parity, update tilesheetClip
+// Filp tile's parity, update tilesetGID.
 void Tile::flip(int newTilesetGID) {
     tileParity = tileParity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
     tilesetGID = newTilesetGID;

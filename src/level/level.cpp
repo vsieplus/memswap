@@ -19,18 +19,18 @@ Level::~Level(){
 }
 
 void Level::initGrid() {
-    for(int x = 0; x < gridWidth; x++) {
-        for(int y = 0; y < gridHeight; y++) {
+    for(int y = 0; y < gridHeight; y++) {
+        for(int x = 0; x < gridWidth; x++) {
             int currIdx = xyToIndex(x,y);
             grid[currIdx] = nullptr;
         }
     }
 }
 
-// Event loop
+// Event loop (down right)
 void Level::handleEvents(const Uint8 * keyStates) {
-    for(int x = 0; x < gridWidth; x++) {
-        for(int y = 0; y < gridHeight; y++) {
+    for(int y = 0; y < gridHeight; y++) {
+        for(int x = 0; x < gridWidth; x++) {
             int currIdx = xyToIndex(x,y);
             if(grid.at(currIdx)) {
                 grid.at(currIdx)->handleEvents(keyStates, this);
@@ -42,8 +42,8 @@ void Level::handleEvents(const Uint8 * keyStates) {
 // Update loop
 void Level::update() {
     // Update the entities
-    for(int x = 0; x < gridWidth; x++) {
-        for(int y = 0; y < gridHeight; y++) {
+    for(int y = 0; y < gridHeight; y++) {
+        for(int x = 0; x < gridWidth; x++) {
             int currIdx = xyToIndex(x,y);
             if(grid.at(currIdx)) {
                 grid.at(currIdx)->update(this);
@@ -60,8 +60,8 @@ void Level::render(SDL_Renderer * renderer) const {
     map.render(renderer); 
 
     // Render the objs in the grid
-    for(int x = 0; x < gridWidth; x++) {
-        for(int y = 0; y < gridHeight; y++) {
+    for(int y = 0; y < gridHeight; y++) {
+        for(int x = 0; x < gridWidth; x++) {
             int currIdx = xyToIndex(x,y);
             if(grid.at(currIdx)) {
                 grid.at(currIdx)->render(renderer);
@@ -74,6 +74,11 @@ void Level::render(SDL_Renderer * renderer) const {
 void Level::addEntityTiles(const tmx::TileLayer * tileLayer, 
     const std::map<int, std::shared_ptr<SDL_Texture>> & tilesetTextures) {
 
+}
+
+// flip tiles in the map for the specified movement
+void Level::flipMapTiles(int movedFromX, int movedFromY, int moveDir) {
+    map.flipTiles(movedFromX, movedFromY, moveDir, this);
 }
 
 // Update size from the given map
@@ -111,6 +116,10 @@ int Level::getPixelWidth() const {
 
 int Level::getPixelHeight() const { 
     return pixelHeight;
+}
+
+const Map & Level::getMap() const {
+    return map;
 }
 
 const std::unordered_map<int, std::shared_ptr<Entity>> & Level::getGrid() {

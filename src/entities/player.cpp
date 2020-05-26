@@ -58,16 +58,16 @@ void Player::checkMovement(const Uint8* keyStates, Level * level) {
 void Player::initMovement(int direction, Level * level) {
     switch(direction) {
         case DIR_UP:
-            initMovement(0, -texture.getHeight(), 0, -1, level);
+            initMovement(0, -texture.getHeight(), 0, -1, direction, level);
             break;
         case DIR_DOWN:
-            initMovement(0, texture.getHeight(), 0, 1, level);
+            initMovement(0, texture.getHeight(), 0, 1, direction, level);
             break;
         case DIR_LEFT:
-            initMovement(-texture.getWidth(), 0, -1, 0, level);
+            initMovement(-texture.getWidth(), 0, -1, 0, direction, level);
             break;
         case DIR_RIGHT:
-            initMovement(texture.getWidth(), 0, 1, 0, level);
+            initMovement(texture.getWidth(), 0, 1, 0, direction, level);
             break;                        
     }
 }
@@ -77,12 +77,17 @@ void Player::initMovement(int direction, Level * level) {
  *        position
  */
 void Player::initMovement(int xPosChange, int yPosChange, int xGridChange, 
-    int yGridChange, Level * level) {
+    int yGridChange, int direction, Level * level) {
 
     // Check for collisions or invalid tile movement
     if(checkCollision(level, gridX + xGridChange, gridY + yGridChange)) {
         return;
-    } else {    
+    } else {
+        // Flip map tiles
+        if(direction != DIR_NONE) {
+            level->flipMapTiles(gridX, gridY, direction);
+        }
+
         // Reset movement
         moveProg = 0.f;
         startX = screenX;

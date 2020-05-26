@@ -26,7 +26,7 @@ class Level {
         // Width/height in pixels
         int pixelWidth, pixelHeight;
 
-        // A map holding the entities in the grid, key = index, value = u_ptr
+        // A map holding the entities in the grid, key = index, value = ptr
         std::unordered_map<int, std::shared_ptr<Entity>> grid;
 
         // The map representation of the background
@@ -49,13 +49,14 @@ class Level {
         void addEntityTiles(const tmx::TileLayer * tileLayer, 
             const std::map<int, std::shared_ptr<SDL_Texture>> & tilesetTextures);
 
-        // Update bg tiles
+        void flipMapTiles(int movedFromX, int movedFromY, int moveDir);
 
         int getGridWidth() const;
         int getGridHeight() const;
         int getPixelWidth() const;
         int getPixelHeight() const;
 
+        const Map & getMap() const;
         const std::unordered_map<int, std::shared_ptr<Entity>> & getGrid();
         void setGridElement(int startX, int startY, int endX, int endY);
 

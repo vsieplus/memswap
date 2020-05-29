@@ -20,7 +20,7 @@ SplashState::~SplashState() {
 
 void SplashState::enterState(MemSwap * game) {
     // load bg texture
-    bgTexture.loadTexture(SPLASH_BG_PATH, game->getRenderer());
+    bgTexture.loadTexture("res/images/splash/bg.png", game->getRenderer());
 }
 
 void SplashState::exitState() {

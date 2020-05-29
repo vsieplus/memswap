@@ -6,7 +6,7 @@
    <property name="parity" type="int" value="2"/>
   </properties>
  </tile>
- <tile id="32">
+ <tile id="1">
   <properties>
    <property name="parity" type="int" value="1"/>
   </properties>

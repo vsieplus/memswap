@@ -27,8 +27,6 @@ class SplashState : public GameState {
         // BG texture to show while loading resources
         Texture bgTexture;
 
-        std::string SPLASH_BG_PATH = "res/images/splash/bg.png";
-
         bool loadingRes = false;     // if we're loading resources
         bool advance = false;       // if the user wants to advance
 

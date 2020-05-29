@@ -15,6 +15,9 @@ class PlayState : public GameState {
         Timer timer;
         Level level;
 
+        // Texture to show in the background
+        Texture bgTexture;
+
     public:
         PlayState();
 

@@ -186,7 +186,7 @@ void Map::flipTiles(int tileX, int tileY, int moveDir, Level * level) {
 
     // none, Up, down, left, right (order matches Direction enum)
     tileIndices.push_back(std::make_pair(tileX, tileY));
-    tileIndices.push_back(std::make_pair(tileX, tileY - 1));
+/*     tileIndices.push_back(std::make_pair(tileX, tileY - 1));
     tileIndices.push_back(std::make_pair(tileX, tileY + 1));
     tileIndices.push_back(std::make_pair(tileX - 1, tileY));
     tileIndices.push_back(std::make_pair(tileX + 1, tileY));
@@ -194,7 +194,7 @@ void Map::flipTiles(int tileX, int tileY, int moveDir, Level * level) {
     // Remove the pair for the tile we moved onto
     auto it = tileIndices.begin();
     advance(it, moveDir);
-    tileIndices.erase(it);
+    tileIndices.erase(it); */
 
     // For each tile except the one we moved onto, try to call flip if inbounds
     for(auto indices: tileIndices) {

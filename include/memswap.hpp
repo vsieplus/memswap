@@ -58,7 +58,7 @@ class MemSwap {
         MemSwap(); 
 
         // initialize
-        bool init ();
+        SDL_Renderer * init ();
         bool initLibs();
 
         // (called during splash state)

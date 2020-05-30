@@ -12,18 +12,6 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-// Exception class for texture loading
-class TextureLoadException : public std::exception {
-    private:
-        std::string message_;
-    public:
-        explicit TextureLoadException(const std::string& message) : 
-            message_(message) { }
-        virtual const char * what() const throw() {
-            return message_.c_str();
-        }
-};
-
 const int ALPHA_STEP = 5;
 
 class Texture {

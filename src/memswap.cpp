@@ -11,10 +11,10 @@
 
  #include "memswap.hpp"
 
-MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, renderer) {
+MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, init()) {
     // Initialize SDL components
-    if(!(init() && initLibs())) {
-        printf("Failed to initialize SDL");
+    if(!initLibs()) {
+        printf("Failed to initialize SDL libraries");
     }
 
     // Start game in splash state to load res/
@@ -26,22 +26,21 @@ MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, renderer) {
 /**
  * @brief initialize SDL window/renderer
  * 
- * @return true if successful
- * @return false if unsuccessful
+ * @return pointer to the SDL renderer (null if unsuccessfull)
  */
-bool MemSwap::init () {
+SDL_Renderer * MemSwap::init () {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
-		return false;
+		return nullptr;
 	} 
 
 	// Try to create window
 	window = SDL_CreateWindow(GAME_TITLE.c_str(), SDL_WINDOWPOS_UNDEFINED, 
 		SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_RESIZABLE);
 
-	if (window == NULL) {
+	if (!window) {
 		printf("SDL_Error: %s\n", SDL_GetError());
-		return false;
+		return nullptr;
 	}
 	
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -51,7 +50,7 @@ bool MemSwap::init () {
     SDL_SetHint (SDL_HINT_RENDER_SCALE_QUALITY, 0);
     SDL_RenderSetLogicalSize(renderer, screenWidth, screenHeight);
 
-	return true;
+	return renderer;
 }
 
 

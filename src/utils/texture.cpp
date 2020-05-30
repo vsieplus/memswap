@@ -8,12 +8,17 @@ Texture::Texture() {}
 void Texture::loadTexture(std::string path, SDL_Renderer* renderer) {
     SDL_Surface * surface = IMG_Load(path.c_str());
     if(!surface) {
-        throw TextureLoadException(IMG_GetError());
+        return;
     }
 
     // Create SDL texture from the surface
-    auto newTexture = std::shared_ptr<SDL_Texture> 
+    std::shared_ptr<SDL_Texture> newTexture 
         (SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
+        
+    if(!newTexture.get()) {
+        printf("Error creating texture, %s", SDL_GetError());
+    }
+
     texture = newTexture;
 
     width = surface->w;
@@ -27,12 +32,17 @@ void Texture::loadTextTexture(std::string textureText, SDL_Color textColor,
 
     SDL_Surface* surface = TTF_RenderText_Solid(font, textureText.c_str(), 
         textColor);
-     if(surface == NULL) {
-        throw TextureLoadException(TTF_GetError());
+     if(!surface) {
+        return;
     }
 
-    auto newTexture = std::shared_ptr<SDL_Texture> 
+    std::shared_ptr<SDL_Texture> newTexture
         (SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
+
+    if(!newTexture.get()) {
+        printf("Error creating texture, %s", SDL_GetError());
+    }
+
     texture = newTexture;
 
     width = surface->w;

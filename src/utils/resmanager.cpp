@@ -68,7 +68,7 @@ void ResManager::loadNextResource() {
 
 // load a standalone texture
 void ResManager::loadTexture(std::string resourceID, std::string resourcePath) {
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<Texture> texture (new Texture());
     texture->loadTexture(resourcePath, renderer);
 
     textures.emplace(resHash(resourceID), texture);
@@ -82,8 +82,8 @@ void ResManager::loadSpritesheets(std::string resourcePath) {
         const auto & readTilesets = map.getTilesets();
         for(const auto & tileset: readTilesets) { 
             // load textures for each of the tilesets used in the map
-            std::shared_ptr<Texture> texture;
-            texture->loadTexture(tileset.getImagePath(), renderer);
+            std::shared_ptr<Texture> texture (new Texture());
+            texture->loadTexture(tileset.getImagePath(), renderer);     // BUG HERE
 
             // add the tileset with its first GID as key
             spritesheets.emplace(tileset.getFirstGID(), texture);
@@ -93,8 +93,8 @@ void ResManager::loadSpritesheets(std::string resourcePath) {
             // Compute total size of tileset
             auto tilesetWidth = 0;
             auto tilesetHeight = 0;
-            SDL_QueryTexture((spritesheets.at(tileset.getFirstGID()).get())->getTexture().get(), 
-                NULL, NULL, &tilesetWidth, &tilesetHeight);
+            SDL_QueryTexture(texture->getTexture().get(), NULL, NULL,
+                &tilesetWidth, &tilesetHeight);
 
             // get vector of (unique) tiles
             const auto & tiles = tileset.getTiles();

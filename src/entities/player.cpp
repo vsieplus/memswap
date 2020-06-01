@@ -82,15 +82,15 @@ void Player::initMovement(int xPosChange, int yPosChange, int xGridChange,
     int newGridX = gridX + xGridChange;
     int newGridY = gridY + yGridChange;
 
-    // Check for collisions or invalid tile movement (differing tileParity)
+    // Check for collisions or invalid tile movement (same tileParity)
     if(checkCollision(level, newGridX, newGridY) || 
-       tileParity != level->getMap().getTileParity(newGridX, newGridY)) {
+        tileParity == level->getMap().getTileParity(newGridX, newGridY)) {
         return;
     }
 
     // Flip map tiles
     if(direction != DIR_NONE) {
-        level->flipMapTiles(gridX, gridY, direction);
+        level->flipMapTiles(gridX, gridY, direction, tileParity);
     }
 
     // Reset movement
@@ -115,7 +115,7 @@ void Player::initMovement(int xPosChange, int yPosChange, int xGridChange,
     level->setGridElement(oldGridX, oldGridY, gridX, gridY);
 
     // Update player parity
-    tileParity = level->getMap().getTileParity(gridX, gridY);
+    //tileParity = level->getMap().getTileParity(gridX, gridY);
 }
 
 // Move the player

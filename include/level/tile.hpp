@@ -16,10 +16,10 @@ class Tile {
         // x, y value on screen
         int x, y;
 
-        // First GID of the tileset the tile belongs to, and its own GID 
-        int tilesetFirstGID, tilesetGID;
+        // First GID of the tileset the tile belongs to, and its (relative) ID 
+        int tilesetFirstGID, tilesetID;
 
-        int tileParity;          // indicate tile color (0:gray, 1:purple)
+        int tileParity;          // indicate tile color (1:gray, 2:purple)
                                  // (-1 for no parity)
 
         bool flipped = false;
@@ -28,7 +28,7 @@ class Tile {
         
     public:
         Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGID, 
-            int tilesetGID, int tileParity);
+            int tilesetID, int tileParity);
 
         void update(Level * level);
 
@@ -39,7 +39,7 @@ class Tile {
         void flip(int newTilesetGID);
 
         int getTilesetFirstGID() const;
-        int getTilesetGID() const;
+        int getID() const;
         
         int getTileParity() const;
 

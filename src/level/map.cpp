@@ -7,6 +7,7 @@
 
 const std::string Map::BG_LAYER_NAME = "background";
 const std::string Map::ENTITY_LAYER_NAME = "entities";
+const std::string Map::PARITY_PROP = "parity";
 
 Map::Map() {}
 
@@ -24,9 +25,9 @@ void Map::render(SDL_Renderer * renderer) const {
     // Render the background tiles
     for(Tile tile: mapTiles) {
         // Render tile with correct tileset + clip
-        tile.render(renderer, 
-            (mapTilesets->at(tile.getTilesetFirstGID()).get())->getTexture().get(),
-             tilesetClips->at(tile.getTilesetGID()));
+        auto & ss = mapSpritesheets.at(tile.getTilesetFirstGID());
+
+        tile.render(renderer, ss->getTexture(), ss->getTileClip(tile.getID()));
     }
 }
 
@@ -44,10 +45,13 @@ void Map::loadMap(SDL_Renderer * renderer, Level * level, MemSwap * game) {
         mapWidth = level->getGridWidth();
         mapHeight = level->getGridHeight();
 
-        // assign pointers to pre-loaded tilesets
-        mapTilesets = game->getResManager().getSpritesheets();
-        tilesetClips = game->getResManager().getSpritesheetClips();
-        tileParities = game->getResManager().getTileParities();
+        // retrieve pre-loaded spritesheets for the tilesets used in this map
+        for(auto & tileset: map.getTilesets()) {
+            std::string tilesetName = tileset.getName();
+            auto ssPtr = game->getResManager().getSpriteSheet(tilesetName);
+
+            mapSpritesheets.emplace(tileset.getFirstGID(), ssPtr);
+        }
 
         // Get data from each map layer, create necessary tiles/objects
         auto & mapLayers = map.getLayers();
@@ -64,7 +68,7 @@ void Map::loadMap(SDL_Renderer * renderer, Level * level, MemSwap * game) {
                 addBGTiles(tileLayer, level, game);
             } else if (layer->getName() == ENTITY_LAYER_NAME) {
                 // load entities into the level
-                level->addEntityTiles(tileLayer, *mapTilesets);
+                level->addEntityTiles(tileLayer, mapSpritesheets);
             }
         }
     }
@@ -88,26 +92,37 @@ void Map::addBGTiles(const tmx::TileLayer * tileLayer, Level * level,
             // Get the GID for the current tile in this layer
             int tileGID = layerTiles[tileIndex].ID;
 
-            // Find the first GID for the tileset this tile belongs to
+            // get tileset's firstGID (greatest ID <= ours)
             int tilesetFirstGID = -1;
-            for(auto & tileset: *mapTilesets) {
-                // find the greatest GID which is <= ours
-                if(tileset.first > tileGID) break;
-
-                tilesetFirstGID = tileset.first;
+            for(auto & spritesheet: mapSpritesheets) {
+                int currFirstGID = spritesheet.first;
+                if(currFirstGID <= tileGID &&  currFirstGID > tilesetFirstGID) {
+                    tilesetFirstGID = currFirstGID;
+                }
             }
+
+            // no tileset found
+            if(tilesetFirstGID == -1) continue;
+
+            // normalize ID to the BG spritesheet
+            int tileID = tileGID - tilesetFirstGID;
 
             // Get position of tile in the map, centered for the given map size 
             auto mapX = renderX + x * tileWidth;
             auto mapY = renderY + y * tileHeight;
 
-            // Get parity of the BG Tile if available (0:gray, 1:purple)
-            auto tileParity = tileParities->find(tileGID);
-            int tp = tileParity == tileParities->end() ? PARITY_NONE : tileParity->second;
-
+            // Get parity of the BG Tile from spritesheet properties
+            int tileParity = 
+                mapSpritesheets.at(tilesetFirstGID)->getPropertyValue<int>(tileID, PARITY_PROP);
+            
+            // add to parityTileIDs if not yet complete
+            if(parityTileIDs.size() < 2) {                    
+                parityTileIDs[tileParity] = tileID;
+            }
+            
             // Add new tile to mapTiles
             mapTiles.emplace_back(mapX, mapY, tileWidth, tileHeight, 
-                tilesetFirstGID, tileGID, tp);
+                tilesetFirstGID, tileID, tileParity);
         }
     }
 }
@@ -119,7 +134,7 @@ bool Map::inBounds(int x, int y) const {
 
 
 // Update bg tiles when the specified movement occurs
-void Map::flipTiles(int tileX, int tileY, int moveDir, Level * level) {
+void Map::flipTiles(int tileX, int tileY, int moveDir, int playerParity, Level * level) {
     // Get indices for all tiles on map surrounding the old pos
     std::list<std::pair<int, int>> tileIndices;
 
@@ -144,19 +159,14 @@ void Map::flipTiles(int tileX, int tileY, int moveDir, Level * level) {
             // skip if tile is parity-neutral
             if(currTile.getTileParity() == PARITY_NONE) break;
 
-            // Get new tileset GID (gray <-> purple)
-            int tileGID = currTile.getTilesetGID();
-            for(auto & tp: *tileParities) {
-                // skip tiles already flipped once
-                if(currTile.isFlipped()) continue;
+            // skip tiles already flipped once
+            if(currTile.isFlipped()) continue;
 
-                // Flip upon finding the first non-matching GID tile parity
-                if(tp.first != tileGID) {
-                    currTile.flip(tp.first);
-                    break;
-                }
+            // Flip if parity differs from player's
+            if(playerParity != currTile.getTileParity()) {
+                currTile.flip(parityTileIDs.at(playerParity));
+                break;
             }
-
         }
     }
 }

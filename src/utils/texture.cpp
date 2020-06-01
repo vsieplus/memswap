@@ -114,6 +114,6 @@ int Texture::getWidth() {
     return width;
 }
 
-std::shared_ptr<SDL_Texture> Texture::getTexture() {
+std::shared_ptr<SDL_Texture> Texture::getTexture() const {
     return texture;
 }

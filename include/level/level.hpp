@@ -17,6 +17,7 @@
 
 #include "entities/entity.hpp"
 #include "level/map.hpp"
+#include "utils/spritesheet.hpp"
 
 class MemSwap;
 class Texture;
@@ -48,9 +49,9 @@ class Level {
         void updateSize(const tmx::Map & map, int tileWidth, int tileHeight);
         void initGrid();
         void addEntityTiles(const tmx::TileLayer * tileLayer, 
-            const std::map<int, std::shared_ptr<Texture>> & tilesetTextures);
+            const std::unordered_map<int, std::shared_ptr<SpriteSheet>> & tilesetTextures);
 
-        void flipMapTiles(int movedFromX, int movedFromY, int moveDir);
+        void flipMapTiles(int movedFromX, int movedFromY, int moveDir, int playerParity);
 
         int getGridWidth() const;
         int getGridHeight() const;

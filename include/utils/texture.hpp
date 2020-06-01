@@ -58,7 +58,7 @@ class Texture {
 
         int getHeight();
         int getWidth();
-        std::shared_ptr<SDL_Texture> getTexture();
+        std::shared_ptr<SDL_Texture> getTexture() const;
 };
 
 #endif // TEXTURE_HPP

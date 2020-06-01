@@ -38,8 +38,25 @@ void ResManager::parseJSON(std::string resourcePathsFile) {
             resourcePaths.emplace(resHashID, resPath);
 
             // add to stack of resources to load if not map or is 0-0 map
-            if(jsonObj.first != RES_MAPS_NAME || res.first == "0-0") {
+            if(jsonObj.first != RES_MAPS_NAME) {
                 resourcesToLoad.push_back(resHashID);
+            } else if(res.first == BASE_MAP_ID) {
+                // add each spritesheet resource from the first base map "0-0"
+                tmx::Map map;
+
+                if(map.load(resPath)) {
+                    const auto & readTilesets = map.getTilesets();
+                    for(const auto & tileset: readTilesets) {
+                        // hash the name of the tileset
+                        int ssHashID = resHash(tileset.getName());
+                        
+                        // add map path and hashed ID to resources to load
+                        resourcePaths.emplace(ssHashID, resPath);
+                        resourcesToLoad.push_back(ssHashID);
+
+                        tilesetNames.emplace(ssHashID, tileset.getName());
+                    }
+                }
             }
         }
     }
@@ -47,7 +64,12 @@ void ResManager::parseJSON(std::string resourcePathsFile) {
 
 // load all resources
 void ResManager::loadNextResource() {
-    if(!loadingResources()) return;
+    if(!loadingResources()) {
+        // clear unused resources
+        tilesetNames.clear();
+
+        return;
+    }
 
     int currResID = resourcesToLoad.back();
     resourcesToLoad.pop_back();
@@ -60,7 +82,7 @@ void ResManager::loadNextResource() {
     if(resFileExt == IMAGE_EXT) {
         loadTexture(currResID, currResFilepath);
     } else if (resFileExt == MAP_EXT) {
-        loadSpritesheets(currResFilepath);
+        loadSpritesheet(currResID, currResFilepath);
     } else if (resFileExt == SOUND_EXT) {
         loadSound(currResID, currResFilepath);
     } else if (resFileExt == MUSIC_EXT) {
@@ -77,67 +99,11 @@ void ResManager::loadTexture(int resourceIDHash, std::string resourcePath) {
 }
 
 // load a spritesheet via tutorial tiledmap (from resourcePath)
-void ResManager::loadSpritesheets(std::string resourcePath) {
-    tmx::Map map;
+void ResManager::loadSpritesheet(int resourceIDHash, std::string resourcePath) {
+    std::shared_ptr<SpriteSheet> spritesheet(
+        new SpriteSheet(resourcePath, tilesetNames[resourceIDHash], renderer));
 
-    if(map.load(resourcePath)) {
-        const auto & readTilesets = map.getTilesets();
-        for(const auto & tileset: readTilesets) { 
-            // load textures for each of the tilesets used in the map
-            std::shared_ptr<Texture> texture (new Texture());
-            texture->loadTexture(tileset.getImagePath(), renderer);     // BUG HERE
-
-            // add the tileset with its first GID as key
-            spritesheets.emplace(tileset.getFirstGID(), texture);
-            
-            // Add tileset clips for each tileset
-
-            // Compute total size of tileset
-            auto tilesetWidth = 0;
-            auto tilesetHeight = 0;
-            SDL_QueryTexture(texture->getTexture().get(), NULL, NULL,
-                &tilesetWidth, &tilesetHeight);
-
-            // get vector of (unique) tiles
-            const auto & tiles = tileset.getTiles();
-
-            for(auto & tile: tiles) {
-                // check/store this tile's parity if properties nonempty (for BG)
-                if(tileset.getName() == BG_TILESET_NAME) {
-                    checkTileParity(tile, tileset.getFirstGID());
-                }
-                    
-                // Get position/size of tile in the tileset to create the clip
-                int tilesetX = tile.imagePosition.x;
-                int tilesetY = tile.imagePosition.y;
-
-                int tileWidth = tile.imageSize.x;
-                int tileHeight = tile.imageSize.y;
-
-                // Use total GID (relative tile ID + tileset's first GID)
-                tilesetClips.emplace(tile.ID + tileset.getFirstGID(), 
-                    (struct SDL_Rect) {tilesetX, tilesetY, tileWidth, tileHeight});               
-            }
-        }
-    }
-}
-
-// Check the tile to store GIDs for the different tile parities
-void ResManager::checkTileParity(const tmx::Tileset::Tile & tile,
-    int tilesetFirstGID) {
-    auto & tileProperties = tile.properties;
-
-    // return if no properties
-    if(tileProperties.empty()) return;
-    
-    // Find 'parity' property of the tile
-    for(unsigned int i = 0; i < tileProperties.size(); i++) {
-        if(tileProperties[i].getName() == "parity") {
-            tileParities.emplace(tile.ID + tilesetFirstGID,
-                tileProperties[i].getIntValue());
-            break;
-        }
-    }
+    spritesheets.emplace(resourceIDHash, spritesheet);
 }
 
 void ResManager::loadSound(int resourceIDHash, std::string resourcePath) {
@@ -163,17 +129,10 @@ std::shared_ptr<Texture> ResManager::getTexture(std::string id) const {
     return textures.at(resHash(id));
 }
 
-std::map<int, std::shared_ptr<Texture>> * ResManager::getSpritesheets() {
-    return &spritesheets;
+std::shared_ptr<SpriteSheet> ResManager::getSpriteSheet(std::string id) const {
+    return spritesheets.at(resHash(id));
 }
 
-std::unordered_map<int, SDL_Rect> * ResManager::getSpritesheetClips() {
-    return &tilesetClips;
-}
-
-std::map<int, int> * ResManager::getTileParities() {
-    return &tileParities;
-}
 
 std::shared_ptr<Mix_Chunk> ResManager::getSound(std::string id) const {
     return sounds.at(resHash(id));

@@ -4,8 +4,8 @@
 #include "level/tile.hpp"
 
 Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGID,
-        int tilesetGID, int tileParity) : x(mapX), y(mapY), 
-        tilesetFirstGID(tilesetFirstGID), tilesetGID(tilesetGID), 
+        int tilesetID, int tileParity) : x(mapX), y(mapY), 
+        tilesetFirstGID(tilesetFirstGID), tilesetID(tilesetID), 
         tileParity(tileParity) {
     renderArea = {mapX, mapY, tileWidth, tileHeight};
 
@@ -24,9 +24,9 @@ void Tile::render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture,
 }
 
 // Filp tile's parity, update tilesetGID.
-void Tile::flip(int newTilesetGID) {
+void Tile::flip(int newTilesetID) {
     tileParity = tileParity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
-    tilesetGID = newTilesetGID;
+    tilesetID = newTilesetID;
     flipped = true;
 }
 
@@ -34,8 +34,8 @@ int Tile::getTilesetFirstGID() const {
     return tilesetFirstGID;
 }
 
-int Tile::getTilesetGID() const {
-    return tilesetGID;
+int Tile::getID() const {
+    return tilesetID;
 }
 
 int Tile::getTileParity() const {

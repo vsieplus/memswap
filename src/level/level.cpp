@@ -71,13 +71,13 @@ void Level::render(SDL_Renderer * renderer) const {
 
 // Add entities from map to entity grid
 void Level::addEntityTiles(const tmx::TileLayer * tileLayer, 
-    const std::map<int, std::shared_ptr<Texture>> & tilesetTextures) {
+    const std::unordered_map<int, std::shared_ptr<SpriteSheet>> & tilesetTextures) {
 
 }
 
 // flip tiles in the map for the specified movement
-void Level::flipMapTiles(int movedFromX, int movedFromY, int moveDir) {
-    map.flipTiles(movedFromX, movedFromY, moveDir, this);
+void Level::flipMapTiles(int movedFromX, int movedFromY, int moveDir, int playerParity) {
+    map.flipTiles(movedFromX, movedFromY, moveDir, playerParity, this);
 }
 
 // Update size from the given map

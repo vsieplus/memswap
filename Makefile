@@ -1,4 +1,4 @@
-CC 		 := g++
+CC 		 := g++ --std=c++17
 CC_FLAGS := -Wall -g3
 LDFLAGS  := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -ltmxlite
 LIBPATHS := -LC:\mingw-libs\i686-w64-mingw32\lib -LC:\mingw-libs\tmxlite\build

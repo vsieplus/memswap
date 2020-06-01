@@ -7,7 +7,6 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <map>
 #include <unordered_map>
 #include <list>
 
@@ -18,7 +17,7 @@
 #include <tmxlite/TileLayer.hpp>
 
 #include "level/tile.hpp"
-#include "utils/texture.hpp"
+#include "utils/spritesheet.hpp"
 
 class MemSwap;
 
@@ -35,22 +34,16 @@ class Map {
 
         // A vector holding the background tiles for the map
         std::vector<Tile> mapTiles;
-        
-        // ptr to map of pointers to textures of tilesets used in the map
-        // key: first tileset GID, val: pointer to ts texture 
-        std::map<int, std::shared_ptr<Texture>> * mapTilesets;
 
-        // ptr to map of tile parities for BG Tiles (Should only contain 2 elems)
-        // key: tile GID, val: Tile parity (int indicating parity) 
-        std::map<int, int> * tileParities;
+        // store spritesheets used by this map  (key: ss first GID, val: ptr->ss)
+        std::unordered_map<int, std::shared_ptr<SpriteSheet>> mapSpritesheets;
 
-        // ptr to map of tileset clips for map tiles
-        // key: tile GID, val: SDL_Rect representing clip in its tileset
-        std::unordered_map<int, SDL_Rect> * tilesetClips;
+        // store tile GIDs for parity tiles (key: parity, val: Tile ID)
+        std::unordered_map<int, int> parityTileIDs;
 
     public:
         // strings used to interface with tiledmap properties/labels
-        const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME;
+        const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME, PARITY_PROP;
 
         Map();
         Map(std::string tiledMapPath);
@@ -69,7 +62,8 @@ class Map {
         bool inBounds(int x, int y) const;
 
         // Update bg tiles when the specified movement occurs
-        void flipTiles(int tileX, int tileY, int moveDir, Level * level);
+        void flipTiles(int tileX, int tileY, int moveDir, int playerParity,
+            Level * level);
 
         // Get parity of tile at the specified grid location
         int getTileParity(int x, int y) const;

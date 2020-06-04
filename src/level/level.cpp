@@ -4,15 +4,9 @@
 #include "level/level.hpp"
 #include "entities/player.hpp"
 
-Level::Level() {}
-
 Level::Level(std::string tiledMapPath, SDL_Renderer * renderer, MemSwap * game) 
-    : map(tiledMapPath) {
-    
-    map.loadMap(renderer, this, game);
+    : map(tiledMapPath, renderer, this, game) {
 
-    // initialize entity grid
-    initGrid();
     grid[0] = std::make_shared<Player>(map.getRenderX() + 0, map.getRenderY() + 0, 
         0, 0, renderer);
 }
@@ -72,6 +66,13 @@ void Level::render(SDL_Renderer * renderer) const {
 // Add entities from map to entity grid
 void Level::addEntityTiles(const tmx::TileLayer * tileLayer, 
     const std::unordered_map<int, std::shared_ptr<SpriteSheet>> & tilesetTextures) {
+
+    // initialize empty grid
+    initGrid();
+
+    // add any entities to their correct location
+    auto & layerTiles = tileLayer->getTiles();
+
 
 }
 

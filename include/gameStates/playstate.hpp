@@ -3,6 +3,7 @@
 #ifndef PLAYSTATE_HPP
 #define PLAYSTATE_HPP
 
+#include <string>
 #include <memory>
 
 #include "gameStates/gamestate.hpp"
@@ -21,7 +22,7 @@ class PlayState : public GameState {
         const std::string BG_ID = "play_bg";
 
     public:
-        PlayState();
+        PlayState(std::string levelPath, MemSwap * game);
 
         void enterState(MemSwap * game) override;
         void exitState() override;

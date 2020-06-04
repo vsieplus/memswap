@@ -188,7 +188,7 @@ void MemSwap::changeState() {
                 nextGameState = std::make_unique<MenuState>();
                 break;
             case GAME_STATE_PLAY:
-                nextGameState = std::make_unique<PlayState>();
+                nextGameState = std::make_unique<PlayState>(resourceManager.getResPath("1-1"), this);
                 break;
             case GAME_STATE_SCORE:
                 nextGameState = std::make_unique<ScoreState>();

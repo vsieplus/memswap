@@ -3,13 +3,11 @@
 #include "memswap.hpp"
 #include "gameStates/playstate.hpp"
 
-PlayState::PlayState() : GameState(GAME_STATE_PLAY) {}
+PlayState::PlayState(std::string levelPath, MemSwap * game) : 
+    GameState(GAME_STATE_PLAY), level(levelPath, game->getRenderer(), game) {}
 
 void PlayState::enterState(MemSwap * game) {
-    std::string mapPath = game->getResManager().getResPath("1-1");
-    level = Level(mapPath, game->getRenderer(), game);
-
-    // load bg texture
+    // retrieve bg texture
     bgTexture = game->getResManager().getTexture(BG_ID);
 }
 
@@ -20,7 +18,7 @@ void PlayState::exitState() {
 void PlayState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     // Check for level reset
     if(keyStates[SDL_SCANCODE_SPACE]) {
-        enterState(game);
+        // level.reset();
     }
 
     level.handleEvents(keyStates);

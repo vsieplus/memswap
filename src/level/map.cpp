@@ -9,10 +9,11 @@ const std::string Map::BG_LAYER_NAME = "background";
 const std::string Map::ENTITY_LAYER_NAME = "entities";
 const std::string Map::PARITY_PROP = "parity";
 
-Map::Map() {}
-
 // store map path
-Map::Map(std::string tiledMapPath) : mapPath(tiledMapPath) {}
+Map::Map(std::string tiledMapPath, SDL_Renderer * renderer, Level * level,
+    MemSwap * game) {
+    loadMap(tiledMapPath, renderer, level, game);
+}
 
 // Update each tile in the map
 void Map::update(Level * level) {
@@ -32,10 +33,11 @@ void Map::render(SDL_Renderer * renderer) const {
 }
 
 // Load the map for the given level
-void Map::loadMap(SDL_Renderer * renderer, Level * level, MemSwap * game) {
+void Map::loadMap(std::string tiledMapPath, SDL_Renderer * renderer,
+    Level * level, MemSwap * game) {
     tmx::Map map;
 
-    if(map.load(mapPath)) {
+    if(map.load(tiledMapPath)) {
         // update size variables
         auto tilesize = map.getTileSize();
         tileWidth = tilesize.x;

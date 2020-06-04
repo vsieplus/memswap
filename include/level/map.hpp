@@ -30,8 +30,6 @@ class Map {
 
         int renderX, renderY;            // x,y on the screen to render map
 
-        std::string mapPath;             // path to map (tmx file)
-
         // A vector holding the background tiles for the map
         std::vector<Tile> mapTiles;
 
@@ -45,14 +43,14 @@ class Map {
         // strings used to interface with tiledmap properties/labels
         const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME, PARITY_PROP;
 
-        Map();
-        Map(std::string tiledMapPath);
+        Map(std::string tiledMapPath, SDL_Renderer * renderer, Level * level, 
+            MemSwap * game);
 
         void update(Level * level);
         void render(SDL_Renderer * renderer) const;
 
         // Load map for the level
-        void loadMap(SDL_Renderer * renderer, Level * level, MemSwap * game);
+        void loadMap(std::string tiledMapPath, SDL_Renderer * renderer, Level * level, MemSwap * game);
 
         // add background tiles to the map from the given tileLayer
         void addBGTiles(const tmx::TileLayer * tileLayer, Level * level,

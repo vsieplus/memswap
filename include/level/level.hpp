@@ -37,7 +37,6 @@ class Level {
         Map map;
 
     public:
-        Level();
         Level(std::string tiledMapPath, SDL_Renderer * renderer, MemSwap * game);
 
         // game loop

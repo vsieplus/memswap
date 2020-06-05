@@ -4,7 +4,7 @@
 #include "level/level.hpp"
 #include "entities/player.hpp"
 
-Level::Level();
+Level::Level() {}
 
 Level::Level(std::string tiledMapPath, SDL_Renderer * renderer, MemSwap * game) 
     : map(tiledMapPath, renderer, this, game) {

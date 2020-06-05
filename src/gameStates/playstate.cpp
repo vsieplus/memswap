@@ -11,7 +11,7 @@ void PlayState::enterState(MemSwap * game) {
 
     // load level
     std::string levelPath = game->getResManager().getResPath("1-1"); 
-    level = Level(levelPath, game->getRenderer, game);
+    level = Level(levelPath, game->getRenderer(), game);
 }
 
 void PlayState::exitState() {

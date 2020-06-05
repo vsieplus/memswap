@@ -55,9 +55,8 @@ class MemSwap {
 
     public:
         /// Constructor
-        MemSwap(); 
-        ~MemSwap();
-
+        MemSwap();
+        
         // initialize
         SDL_Renderer * init ();
         bool initLibs();

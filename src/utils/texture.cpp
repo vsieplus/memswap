@@ -27,30 +27,6 @@ void Texture::loadTexture(std::string path, SDL_Renderer* renderer) {
     SDL_FreeSurface(surface);
 }
 
-void Texture::loadTextTexture(std::string textureText, SDL_Color textColor, 
-    TTF_Font * font, SDL_Renderer* renderer) {
-
-    SDL_Surface* surface = TTF_RenderText_Solid(font, textureText.c_str(), 
-        textColor);
-     if(!surface) {
-        return;
-    }
-
-    std::shared_ptr<SDL_Texture> newTexture
-        (SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
-
-    if(!newTexture.get()) {
-        printf("Error creating texture, %s", SDL_GetError());
-    }
-
-    texture = newTexture;
-
-    width = surface->w;
-    height = surface->h;
-    SDL_FreeSurface(surface);
-}
-
-
 /**
  * @brief Render the texture at position x,y to the given renderer
  * 
@@ -62,7 +38,7 @@ void Texture::loadTextTexture(std::string textureText, SDL_Color textColor,
  * @param center center loc. of rendering
  * @param flip Type of flip to use when rendering
  */
-void Texture::render(int x, int y, SDL_Renderer * renderer, SDL_Rect * clip,
+void Texture::render(int x, int y, SDL_Renderer * renderer, const SDL_Rect * clip,
     double angle, SDL_Point * center, SDL_RendererFlip flip) const {
     SDL_Rect renderArea = {x, y, width, height};
 

@@ -124,7 +124,8 @@ void ResManager::loadFont(int resourceIDHash, std::string resourcePath) {
     // pass paths to png (texture) file and fnt (config) file
     std::string texturePath = resourcePath.substr(0, resourcePath.length() - 
         EXT_LENGTH) + IMAGE_EXT;
-    std::shared_ptr<BitmapFont> font(texturePath, resourcePath, renderer);
+    std::shared_ptr<BitmapFont> font(new BitmapFont(texturePath, resourcePath, 
+        renderer));
     fonts.emplace(resourceIDHash, font);
 }
 
@@ -156,7 +157,7 @@ std::shared_ptr<Music> ResManager::getMusic(std::string id) const {
     return musics.at(resHash(id));
 }
 
-std::shared_ptr<BitmapFont> getFont(std::string id) const {
+std::shared_ptr<BitmapFont> ResManager::getFont(std::string id) const {
     return fonts.at(resHash(id));
 }
 

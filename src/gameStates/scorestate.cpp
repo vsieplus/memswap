@@ -9,10 +9,11 @@
  * 
  */
 
+#include "memswap.hpp"
 #include "gameStates/scorestate.hpp"
 
 ScoreState::ScoreState(MemSwap * game) : GameState(GAME_STATE_SCORE) {
-    font = game->getResManager().getFont(FONT_ID)
+    font = game->getResManager().getFont(FONT_ID);
 }
 
 void ScoreState::enterState(MemSwap * game) {

@@ -33,10 +33,6 @@ class Texture {
         // initializing texture from an image path
         void loadTexture(std::string path, SDL_Renderer* renderer);
 
-        // initializing textual texture from an input string/font
-        void loadTextTexture(std::string textureText, SDL_Color textColor, TTF_Font * font, 
-            SDL_Renderer* renderer);
-
         // set texture color
         void setColor(Uint8 red, Uint8 green, Uint8 blue);
 
@@ -52,7 +48,7 @@ class Texture {
          * If provided, renders a specific clip of the texture, rotated at a 
          * particular angle/flipped
          */
-        void render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip = NULL,
+        void render(int x, int y, SDL_Renderer* renderer, const SDL_Rect* clip = NULL,
             double angle = 0.0, SDL_Point* center = NULL,
             SDL_RendererFlip flip = SDL_FLIP_NONE) const;
 

@@ -8,7 +8,6 @@
 
 #include <SDL.h>
 
-#include "memswap.hpp"
 #include "utils/texture.hpp"
 
 // class for a font bitmap spritesheet
@@ -43,7 +42,7 @@ class BitmapFont {
         BitmapFont(std::string texturePath, std::string configPath, SDL_Renderer * renderer);
 
         // build the font
-        bool buildFont(std::string texturePath, std::string configPath, SDL_Renderer* renderer);
+        void buildFont(std::string texturePath, std::string configPath, SDL_Renderer* renderer);
 
         // render text using the bitmap
         void initRenderText(int x, int y, std::string text, bool typed);

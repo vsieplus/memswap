@@ -8,9 +8,9 @@ BitmapFont::BitmapFont(std::string texturePath, std::string configPath,
 }
 
 // build the font - load the texture + define the character clips
-bool BitmapFont::buildFont(std::string texturePath, std::string configPath,
+void BitmapFont::buildFont(std::string texturePath, std::string configPath,
     SDL_Renderer * renderer) {
-    bitmapTexture.loadFromFile(texturePath, renderer);
+    bitmapTexture.loadTexture(texturePath, renderer);
 
     // process the config file
 }
@@ -29,7 +29,7 @@ void BitmapFont::renderText(SDL_Renderer * renderer) const {
     // render each char in the string up to currChar
     int x = renderX, y = renderY;
 
-    for(int i = 0; i < currChar; i++) {
+    for(unsigned int i = 0; i < currChar; i++) {
         // handle special chars.
         if(currString[i] == ' ') {
             // move over

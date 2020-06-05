@@ -22,14 +22,6 @@ MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, init()) {
     changeState();
 }
 
-// Quit SDL components
-MemSwap::~MemSwap() {
-    Mix_Quit();
-    IMG_Quit();
-    SDL_Quit();
-}
-
-
 /**
  * @brief initialize SDL window/renderer
  * 
@@ -226,7 +218,7 @@ void MemSwap::quit() {
     SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
-	TTF_Quit();
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }

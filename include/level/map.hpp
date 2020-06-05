@@ -43,6 +43,7 @@ class Map {
         // strings used to interface with tiledmap properties/labels
         const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME, PARITY_PROP;
 
+        Map();
         Map(std::string tiledMapPath, SDL_Renderer * renderer, Level * level, 
             MemSwap * game);
 

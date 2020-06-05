@@ -30,5 +30,8 @@
         "world01": "world01.ogg",
         "world02": "world02.ogg",
         "world03": "world03.ogg"
+    },
+    "fonts": {
+        "mainFont": "rhodum_libre.fnt"
     }
 }

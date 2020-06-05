@@ -3,14 +3,20 @@
 #ifndef SCORESTATE_HPP
 #define SCORESTATE_HPP
 
+#include <memory>
+
 #include "gameStates/gamestate.hpp"
+#include "utils/bitmapfont.hpp"
 
-// Singleton class for the Score State
+// Class for the Score State
 class ScoreState : public GameState {
-    public:
-        ScoreState();
+    private:
+        std::shared_ptr<BitmapFont> font;
 
-        ~ScoreState();
+        const std::string FONT_ID = "mainFont";
+
+    public:
+        ScoreState(MemSwap * game);
 
         void enterState(MemSwap * game) override;
         void exitState() override;

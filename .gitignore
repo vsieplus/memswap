@@ -6,3 +6,4 @@ build/*
 *.txt
 *.exe
 *.dll
+*.fnt

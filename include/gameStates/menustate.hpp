@@ -8,9 +8,7 @@
 // Singleton class for the Menu State
 class MenuState : public GameState {
     public:
-        MenuState();
-
-        ~MenuState();
+        MenuState(MemSwap * game);
 
         void enterState(MemSwap * game) override;
         void exitState() override;

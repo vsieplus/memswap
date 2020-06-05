@@ -13,9 +13,6 @@
 
 PauseState::PauseState() : GameState(GAME_STATE_PAUSE) {}
 
-PauseState::~PauseState() {
-    exitState();
-}
 
 void PauseState::enterState(MemSwap * game) {
 

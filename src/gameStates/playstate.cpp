@@ -3,12 +3,15 @@
 #include "memswap.hpp"
 #include "gameStates/playstate.hpp"
 
-PlayState::PlayState(std::string levelPath, MemSwap * game) : 
-    GameState(GAME_STATE_PLAY), level(levelPath, game->getRenderer(), game) {}
+PlayState::PlayState() : GameState(GAME_STATE_PLAY) {}
 
 void PlayState::enterState(MemSwap * game) {
     // retrieve bg texture
     bgTexture = game->getResManager().getTexture(BG_ID);
+
+    // load level
+    std::string levelPath = game->getResManager().getResPath("1-1"); 
+    level = Level(levelPath, game->getRenderer, game);
 }
 
 void PlayState::exitState() {

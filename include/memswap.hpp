@@ -10,7 +10,6 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
 #include "gameStates/gamestate.hpp"
@@ -18,6 +17,7 @@
 #include "gameStates/menustate.hpp"
 #include "gameStates/playstate.hpp"
 #include "gameStates/scorestate.hpp"
+#include "gameStates/pausestate.hpp"
 
 #include "utils/resmanager.hpp"
 
@@ -56,6 +56,7 @@ class MemSwap {
     public:
         /// Constructor
         MemSwap(); 
+        ~MemSwap();
 
         // initialize
         SDL_Renderer * init ();

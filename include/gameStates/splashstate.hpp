@@ -15,9 +15,7 @@
 class SplashState : public GameState {
     public:
         SplashState();
-
-        ~SplashState();
-
+        
         void enterState(MemSwap * game) override;
         void exitState() override;
 

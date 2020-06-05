@@ -21,6 +21,7 @@
 #include "utils/spritesheet.hpp"
 #include "utils/sound.hpp"
 #include "utils/music.hpp"
+#include "utils/bitmapfont.hpp"
 
 using json = nlohmann::json;
 
@@ -36,6 +37,7 @@ const std::string IMAGE_EXT = "png";
 const std::string MAP_EXT = "tmx";
 const std::string SOUND_EXT = "wav";
 const std::string MUSIC_EXT = "ogg";
+const std::string FONT_EXT = "fnt";
 
 const std::string BG_TILESET_NAME = "bgTiles";
 
@@ -65,6 +67,9 @@ class ResManager {
         std::unordered_map<int, std::shared_ptr<Sound>> sounds;
         std::unordered_map<int, std::shared_ptr<Music>> musics;
 
+        // fonts
+        std::unordered_map<int, std::shared_ptr<BitmapFont>> fonts;
+
         // tileset names
         std::unordered_map<int, std::string> tilesetNames;
 
@@ -86,6 +91,7 @@ class ResManager {
         void loadSound(int resourceIDHash, std::string resourcePath);
         void loadMusic(int resourceIDHash, std::string resourcePath);
         void loadSpritesheet(int resourceIDHash, std::string resourcePath);
+        void loadFont(int resourceIDHash, std::string resourcePath);
 
         bool loadingResources() const;
 
@@ -96,6 +102,7 @@ class ResManager {
         std::shared_ptr<SpriteSheet> getSpriteSheet(std::string id) const;
         std::shared_ptr<Sound> getSound(std::string id) const;
         std::shared_ptr<Music> getMusic(std::string id) const;
+        std::shared_ptr<BitmapFont> getFont(std::string id) const;
         
         std::string getResPath(std::string id) const;
 };

@@ -11,11 +11,7 @@
 
 #include "gameStates/menustate.hpp"
 
-MenuState::MenuState() : GameState(GAME_STATE_MENU) {}
-
-MenuState::~MenuState() {
-    exitState();
-}
+MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {}
 
 void MenuState::enterState(MemSwap * game) {
     // Load menu resources

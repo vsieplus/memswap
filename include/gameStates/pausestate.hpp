@@ -10,8 +10,6 @@ class PauseState : public GameState {
     public:
         PauseState();
 
-        ~PauseState();
-
         void enterState(MemSwap * game) override;
         void exitState() override;
 

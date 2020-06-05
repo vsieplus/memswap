@@ -9,7 +9,8 @@ const std::string Map::BG_LAYER_NAME = "background";
 const std::string Map::ENTITY_LAYER_NAME = "entities";
 const std::string Map::PARITY_PROP = "parity";
 
-// store map path
+// constructors
+Map::Map();
 Map::Map(std::string tiledMapPath, SDL_Renderer * renderer, Level * level,
     MemSwap * game) {
     loadMap(tiledMapPath, renderer, level, game);

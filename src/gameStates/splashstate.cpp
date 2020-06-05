@@ -15,10 +15,6 @@
 
 SplashState::SplashState() : GameState(GAME_STATE_SPLASH) {}
 
-SplashState::~SplashState() {
-    exitState();
-}
-
 void SplashState::enterState(MemSwap * game) {
     // load splash textures prematurely
     bgTexture.loadTexture(game->getResManager().getResPath(BG_ID), 

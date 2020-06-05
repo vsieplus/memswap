@@ -22,6 +22,13 @@ MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, init()) {
     changeState();
 }
 
+// Quit SDL components
+MemSwap::~MemSwap() {
+    Mix_Quit();
+    IMG_Quit();
+    SDL_Quit();
+}
+
 
 /**
  * @brief initialize SDL window/renderer
@@ -65,12 +72,6 @@ bool MemSwap::initLibs() {
 	int imgFlags = IMG_INIT_PNG;
 	if(!(IMG_Init(imgFlags) & imgFlags)) {
 		printf("SDL_Image Error: %s\n", IMG_GetError());
-		return false;
-	}
-
-	// Init SDL_ttf
-	if(TTF_Init() == -1) {
-		printf("SDL_ttf error: %s\n", TTF_GetError());
 		return false;
 	}
 
@@ -185,13 +186,16 @@ void MemSwap::changeState() {
                 nextGameState = std::make_unique<SplashState>();
                 break;
             case GAME_STATE_MENU:
-                nextGameState = std::make_unique<MenuState>();
+                nextGameState = std::make_unique<MenuState>(this);
                 break;
             case GAME_STATE_PLAY:
-                nextGameState = std::make_unique<PlayState>(resourceManager.getResPath("1-1"), this);
+                nextGameState = std::make_unique<PlayState>();
                 break;
             case GAME_STATE_SCORE:
-                nextGameState = std::make_unique<ScoreState>();
+                nextGameState = std::make_unique<ScoreState>(this);
+                break;
+            case GAME_STATE_PAUSE:
+                nextGameState = std::make_unique<PauseState>();
                 break;
         }
 
@@ -210,7 +214,10 @@ void MemSwap::pushGameState(std::unique_ptr<GameState> & state) {
 
 /// Remove a game state from the stack (exit a game state)
 void MemSwap::popGameState() {
-    gameStates.pop_back();
+    if(!gameStates.empty()) {
+        gameStates.back()->exitState();
+        gameStates.pop_back();
+    }
 }
 
 void MemSwap::quit() {

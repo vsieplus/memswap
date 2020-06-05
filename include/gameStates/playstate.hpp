@@ -22,7 +22,7 @@ class PlayState : public GameState {
         const std::string BG_ID = "play_bg";
 
     public:
-        PlayState(std::string levelPath, MemSwap * game);
+        PlayState();
 
         void enterState(MemSwap * game) override;
         void exitState() override;

@@ -1,9 +1,6 @@
-build/*
-*.wav
-*.png
+res/spritesheets/sprites/*
+res/spritesheets/pdns/*
 *.pdn
-*.tmx
 *.txt
 *.exe
 *.dll
-*.fnt

@@ -3,12 +3,19 @@
 #ifndef BITMAPFONT_HPP
 #define BITMAPFONT_HPP
 
+#include <vector>
 #include <map>
 #include <string>
 
 #include <SDL.h>
 
 #include "utils/texture.hpp"
+
+struct CharSpacing {
+    int charXOffset;     // how much to offset when drawing a char
+    int charYOffset;
+    int charXAdvance;    // how much to advance after drawing a char
+};
 
 // class for a font bitmap spritesheet
 class BitmapFont {
@@ -19,14 +26,19 @@ class BitmapFont {
         // the character clips; key: ascii value, val: SDL_Rect defining char. clip
         std::map<int, SDL_Rect> charClips;
 
-        // spacing characters
-        int newLineChar = 0;
-        int spaceChar = 0;
+        // character spacings
+        std::map<int, CharSpacing> charSpacings;
 
-        int H_PAD = 50;             // space between edge of window/text
+        // spacing characters
+        const char SPACE_CHAR = ' ';
+        const char NEWLINE_CHAR = '\n';
+        int spaceChar = 0;
+        int newLineChar = 0;
+
+        int H_PAD = 100;             // space between edge of window/text
 
         // for text rendering (w/'typing' animation)        
-        int textSpeed = 4;           // # of chars to render per second
+        int textSpeed = 24;          // # of chars to render per second
         unsigned int currChar = 0;   // current character of string we've reached
 
         int renderX = 0;
@@ -34,18 +46,28 @@ class BitmapFont {
 
         float stringProgress = 0;   // how much of string has been typed (0-1)
         bool rendering = false;     // if currently rendering
+        bool flashing = false;      // if text is flashing
 
         std::string currString;     // current string to render
 
+        // strings for parsing bmfont fnt->json file
+        const std::string TEXTURE_LABEL = "pages";
+        const std::string COMMON_DATA_LABEL = "common";
+        const std::string CHARMAP_LABEL = "chars";
+
+        const char PATH_SEP = '/';
+
+        void updateAlpha();
 
     public:
-        BitmapFont(std::string texturePath, std::string configPath, SDL_Renderer * renderer);
+        BitmapFont(std::string configPath, SDL_Renderer * renderer);
 
         // build the font
-        void buildFont(std::string texturePath, std::string configPath, SDL_Renderer* renderer);
+        void buildFont(std::string configPath, SDL_Renderer* renderer);
 
         // render text using the bitmap
-        void initRenderText(int x, int y, std::string text, bool typed);
+        void initRenderText(int x, int y, std::string text, bool typed,
+            bool flashing = false, Uint8 r = 0xFF, Uint8 g = 0xFF, Uint8 b = 0xFF);
         void renderText(SDL_Renderer * renderer) const;
 
         void updateText(float delta);

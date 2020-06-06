@@ -28,7 +28,7 @@ void ScoreState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     
 }
 
-void ScoreState::update(MemSwap * game) {
+void ScoreState::update(MemSwap * game, float delta) {
     if(font->isRendering()) {
 //        font.updateText(delta);
     }

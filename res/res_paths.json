@@ -1,7 +1,6 @@
 {
     "images":{
         "splash_bg": "splash/bg.png",
-        "splash_adv": "splash/adv.png",
         "menu_bg": "menu/bg.png",
         "play_bg": "play/bg.png"
     },
@@ -32,6 +31,6 @@
         "world03": "world03.ogg"
     },
     "fonts": {
-        "mainFont": "rhodum_libre.fnt"
+        "mainFont": "rhodum_libre.json"
     }
 }

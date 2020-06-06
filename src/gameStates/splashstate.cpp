@@ -19,12 +19,10 @@ void SplashState::enterState(MemSwap * game) {
     // load splash textures prematurely
     bgTexture.loadTexture(game->getResManager().getResPath(BG_ID), 
         game->getRenderer());
-    advTexture.loadTexture(game->getResManager().getResPath(ADV_ID), 
-        game->getRenderer());
 
     // set advText render pos
-    advTextX = (game->getScreenWidth() / 2) - (advTexture.getWidth() / 2);
-    advTextY = (2 * game->getScreenHeight() / 3) - (advTexture.getHeight() / 2);
+    advTextX = (game->getScreenWidth() / 4);
+    advTextY = (2 * game->getScreenHeight() / 3);
 }
 
 void SplashState::exitState() {
@@ -39,7 +37,7 @@ void SplashState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     } 
 }
 
-void SplashState::update(MemSwap * game) {
+void SplashState::update(MemSwap * game, float delta) {
     // Continue loading resources until finished
     if(loadingRes) {
         game->getResManager().loadNextResource();
@@ -50,8 +48,17 @@ void SplashState::update(MemSwap * game) {
             game->setNextState(GAME_STATE_PLAY);
         }
 
-        // Flash advance text graphic to signal user
-        advTexture.updateAlpha();
+        // retrieve loaded font
+        if(!splashFont.get()) {
+            splashFont = game->getResManager().getFont(FONT_ID);
+        }
+
+        // start rendering advance text graphic to signal user
+        if(!splashFont->isRendering()) {
+            splashFont->initRenderText(advTextX, advTextY, ADV_TEXT, true, true);
+        } else {
+            splashFont->updateText(delta);
+        }
     }     
 }
 
@@ -64,6 +71,8 @@ void SplashState::render(SDL_Renderer * renderer) const {
 
     // Render graphic indicating loading is done
     if(!loadingRes) {
-        advTexture.render(advTextX, advTextY, renderer);
+        if(splashFont.get() && splashFont->isRendering()) {
+            splashFont->renderText(renderer);
+        }
     }
 }

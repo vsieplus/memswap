@@ -26,7 +26,7 @@ void PauseState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     
 }
 
-void PauseState::update(MemSwap * game) {
+void PauseState::update(MemSwap * game, float delta) {
 }
 
 /// Render function for the game state

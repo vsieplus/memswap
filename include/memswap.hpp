@@ -23,6 +23,11 @@
 
 class MemSwap {
     private:
+        // for time
+        float delta = 0;        // ms passed since last call to update
+        Uint64 lastTime = 0;
+        Uint64 currTime;
+
         int nextState = GAME_STATE_NULL;
         int currState = GAME_STATE_NULL;
 

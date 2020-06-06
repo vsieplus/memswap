@@ -39,7 +39,7 @@ class GameState {
         virtual void handleEvents(MemSwap * game, const Uint8 * keyStates) = 0;
 
         /// Update method for the particular game state 
-        virtual void update(MemSwap * game) = 0;
+        virtual void update(MemSwap * game, float delta) = 0;
 
         /// Render function for the game state
         virtual void render(SDL_Renderer * renderer) const = 0;

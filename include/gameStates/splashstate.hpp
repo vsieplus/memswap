@@ -3,6 +3,7 @@
 #ifndef SPLASHSTATE_HPP
 #define SPLASHSTATE_HPP
 
+#include <memory>
 #include <string>
 
 #include <SDL.h>
@@ -10,6 +11,7 @@
 
 #include "gameStates/gamestate.hpp"
 #include "utils/texture.hpp"
+#include "utils/bitmapfont.hpp"
 
 // class for the Splash State
 class SplashState : public GameState {
@@ -20,15 +22,18 @@ class SplashState : public GameState {
         void exitState() override;
 
         void handleEvents(MemSwap * game, const Uint8 * keyStates) override;
-        void update(MemSwap * game) override;
+        void update(MemSwap * game, float delta) override;
         void render(SDL_Renderer * renderer) const override;
 
     private:
         Texture bgTexture;  // BG texture to show while loading resources
-        Texture advTexture; // Texture to prompt player to advance
 
+        // font for splash text rendering
+        std::shared_ptr<BitmapFont> splashFont; 
+    
         const std::string BG_ID = "splash_bg";
-        const std::string ADV_ID = "splash_adv";
+        const std::string FONT_ID = "mainFont";
+        const std::string ADV_TEXT = "Press Enter to Start";
 
         int advTextX, advTextY;
 

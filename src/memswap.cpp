@@ -11,7 +11,8 @@
 
  #include "memswap.hpp"
 
-MemSwap::MemSwap() : gameStates(), resourceManager(RES_PATHS_FILE, init()) {
+MemSwap::MemSwap() : currTime(SDL_GetPerformanceCounter()), gameStates(), 
+    resourceManager(RES_PATHS_FILE, init()) {
     // Initialize SDL components
     if(!initLibs()) {
         printf("Failed to initialize SDL libraries");
@@ -129,8 +130,13 @@ void MemSwap::handleWindowEvents() {
 
 /// Update the current game state
 void MemSwap::update() {
+    // update delta
+    lastTime = currTime;
+    currTime = SDL_GetPerformanceCounter();
+    delta = (float) ((currTime - lastTime) * 1000 / (float) SDL_GetPerformanceFrequency());
+
     if(!gameStates.empty()) {
-        gameStates.back()->update(this);
+        gameStates.back()->update(this, delta);
     }
         
     changeState();

@@ -37,7 +37,7 @@ const std::string IMAGE_EXT = "png";
 const std::string MAP_EXT = "tmx";
 const std::string SOUND_EXT = "wav";
 const std::string MUSIC_EXT = "ogg";
-const std::string FONT_EXT = "fnt";
+const std::string FONT_EXT = "son";
 
 const std::string BG_TILESET_NAME = "bgTiles";
 

@@ -12,8 +12,6 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-const int ALPHA_STEP = 5;
-
 class Texture {
     private:
         // pointer to the SDL texture
@@ -22,16 +20,28 @@ class Texture {
         int width = 0;
         int height = 0;
 
+        // width in bytes (4 bytes per pixel)
+        int pitch = 0;
+        const static int BYTES_PER_PIXEL = 4;
+
         // for texture transparency
+        Uint8 textureAlpha = 255;
         const static int ALPHA_MAX = 255;
-        int textureAlpha = 255;
+        const static int ALPHA_STEP = 5;
 
         bool alphaIncreasing = false;
+
+        // for pixel access (e.g. for bitmap textures)
+        void * texturePixels;
+
     public:
         Texture();
 
         // initializing texture from an image path
-        void loadTexture(std::string path, SDL_Renderer* renderer);
+        void loadTexture(std::string path, SDL_Renderer * renderer);
+
+        // load a bitmap texture
+        void loadBitmapTexture(std::string path, SDL_Renderer * renderer);
 
         // set texture color
         void setColor(Uint8 red, Uint8 green, Uint8 blue);
@@ -42,6 +52,13 @@ class Texture {
         // transparency
         void updateAlpha();             // flashing effect
         void setAlpha(Uint8 alpha);     // one-time update
+
+        // pixel access/manip.
+        bool lockTexture();
+        bool unlockTexture();
+        void * getPixels();
+        int getPitch();
+        Uint32 getPixel32(unsigned int x, unsigned int y);
 
         /**
          * @brief   Render the texture at position x,y to the given renderer

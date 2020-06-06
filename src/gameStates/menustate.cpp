@@ -25,7 +25,7 @@ void MenuState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     
 }
 
-void MenuState::update(MemSwap * game) {
+void MenuState::update(MemSwap * game, float delta) {
 }
 
 /// Render function for the game state

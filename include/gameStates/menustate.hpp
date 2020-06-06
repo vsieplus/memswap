@@ -14,7 +14,7 @@ class MenuState : public GameState {
         void exitState() override;
 
         void handleEvents(MemSwap * game, const Uint8 * keyStates) override;
-        void update(MemSwap * game) override;
+        void update(MemSwap * game, float delta) override;
         void render(SDL_Renderer * renderer) const override;
 };
 

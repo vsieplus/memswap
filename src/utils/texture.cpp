@@ -27,6 +27,35 @@ void Texture::loadTexture(std::string path, SDL_Renderer* renderer) {
     SDL_FreeSurface(surface);
 }
 
+void Texture::loadBitmapTexture(std::string path, SDL_Renderer * renderer) {
+    SDL_Surface * surface = IMG_Load(path.c_str());
+    if(!surface) {
+        return;
+    }
+
+    // set black color key
+    SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0, 0));
+
+    // Create SDL texture from the surface
+    std::shared_ptr<SDL_Texture> newTexture (SDL_CreateTextureFromSurface(renderer, 
+        surface), SDL_DestroyTexture);
+        
+    if(!newTexture.get()) {
+        printf("Error creating texture, %s", SDL_GetError());
+        return;
+    }
+
+    texture = newTexture;
+
+    width = surface->w;
+    height = surface->h;
+
+    // enable blending for flashing text
+    setBlendMode(SDL_BLENDMODE_BLEND);
+
+    SDL_FreeSurface(surface);
+}
+
 /**
  * @brief Render the texture at position x,y to the given renderer
  * 
@@ -48,6 +77,46 @@ void Texture::render(int x, int y, SDL_Renderer * renderer, const SDL_Rect * cli
     }
 
     SDL_RenderCopyEx(renderer, texture.get(), clip, &renderArea, angle, center, flip);
+}
+
+// lock texture; return true if successful
+bool Texture::lockTexture() {
+    // check if already locked/try to lock it
+    if(texturePixels != NULL || SDL_LockTexture(texture.get(), NULL,
+        &texturePixels, &pitch) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Texture::unlockTexture() {
+    if(texturePixels == NULL) return false; // not locked
+
+    SDL_UnlockTexture(texture.get());
+    texturePixels = NULL;
+    pitch = 0;
+
+    return true;
+}
+
+// texture must be locked
+Uint32 Texture::getPixel32(unsigned int x, unsigned int y) {
+    Uint32 * pixels = (Uint32 * ) texturePixels;
+
+    // get correct pixel (correct indexing)
+    // the width of the texture in memory (in bytes)
+    // 4 bytes per pixel -> width in pixels = mPitch/4 
+
+    return pixels[y * (pitch / BYTES_PER_PIXEL) + x];
+}
+
+int Texture::getPitch() {
+    return pitch;
+}
+
+void * Texture::getPixels() {
+    return texturePixels;
 }
 
 void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue) {

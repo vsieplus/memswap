@@ -27,7 +27,7 @@ void PlayState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     level.handleEvents(keyStates);
 }
 
-void PlayState::update(MemSwap * game) {
+void PlayState::update(MemSwap * game, float delta) {
     level.update();
 }
 

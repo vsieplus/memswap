@@ -27,7 +27,7 @@ void ResManager::parseJSON(std::string resourcePathsFile) {
 
         // loop through all resources in each resource map
         for(auto const & res: resPathMap) {
-            std::string resPath = resPathMap[res.first];
+            std::string resPath = resPathMap[res.first].get<std::string>();
 
             // Add path to folder depending on resource type
             resPath = RES_FOLDER_NAME + PATH_SEP + jsonObj.first +
@@ -121,11 +121,8 @@ void ResManager::loadMusic(int resourceIDHash, std::string resourcePath) {
 }
 
 void ResManager::loadFont(int resourceIDHash, std::string resourcePath) {
-    // pass paths to png (texture) file and fnt (config) file
-    std::string texturePath = resourcePath.substr(0, resourcePath.length() - 
-        EXT_LENGTH) + IMAGE_EXT;
-    std::shared_ptr<BitmapFont> font(new BitmapFont(texturePath, resourcePath, 
-        renderer));
+    // pass path to font json (config) file
+    std::shared_ptr<BitmapFont> font(new BitmapFont(resourcePath, renderer));
     fonts.emplace(resourceIDHash, font);
 }
 

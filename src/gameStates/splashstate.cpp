@@ -21,8 +21,8 @@ void SplashState::enterState(MemSwap * game) {
         game->getRenderer());
 
     // set advText render pos
-    advTextX = (game->getScreenWidth() / 4);
-    advTextY = (2 * game->getScreenHeight() / 3);
+    advTextX = (game->getScreenWidth() / 3);
+    advTextY = (3 * game->getScreenHeight() / 5);
 }
 
 void SplashState::exitState() {
@@ -55,7 +55,9 @@ void SplashState::update(MemSwap * game, float delta) {
 
         // start rendering advance text graphic to signal user
         if(!splashFont->isRendering()) {
-            splashFont->initRenderText(advTextX, advTextY, ADV_TEXT, true, true);
+            // typed and flashing, with dark green text
+            splashFont->initRenderText(advTextX, advTextY, ADV_TEXT, true, true,
+                0x65, 0xDC, 0x98);
         } else {
             splashFont->updateText(delta);
         }

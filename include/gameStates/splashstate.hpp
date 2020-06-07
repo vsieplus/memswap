@@ -33,7 +33,7 @@ class SplashState : public GameState {
     
         const std::string BG_ID = "splash_bg";
         const std::string FONT_ID = "mainFont";
-        const std::string ADV_TEXT = "Press Enter to Start";
+        const std::string ADV_TEXT = "Press Enter to Start...";
 
         int advTextX, advTextY;
 

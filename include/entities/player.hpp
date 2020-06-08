@@ -9,6 +9,7 @@
 #include "utils/texture.hpp"
 #include "entities/movable.hpp"
 
+const int PLAYER_VELOCITY = 6;
 
 class Player : public Movable {
     private:
@@ -16,8 +17,6 @@ class Player : public Movable {
     public:
         Player(int screenX, int screenY, int gridX, int gridY, 
             std::shared_ptr<Sprite> entitySprite);
-
-        const int PLAYER_VELOCITY = 6;
 
         // game loop stuff
         void handleEvents(const Uint8 * keyStates, Level * level) override;

@@ -6,7 +6,7 @@
 #include "level/level.hpp"
 
 Player::Player(int screenX, int screenY, int gridX, int gridY, 
-    std::shared_ptr<Sprite> entitySprite) : 
+    std::shared_ptr<Sprite> entitySprite) :
     Movable(screenX, screenY, gridX, gridY, PLAYER_VELOCITY, entitySprite,
         PARITY_PURPLE) {}
 

@@ -71,7 +71,7 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
 void Movable::move(Level * level, float delta) {
     if(moveProg < 1.0f) {
         // Update moveProg based on time
-        moveProg = moveProg +  velocity * (delta/1000.f);
+        moveProg += velocity * (delta/1000.f);
 
         // Perform linear interpolation if not yet reached
         std::pair<int, int> newPos = lerp(startX, startY, endX, endY, moveProg);

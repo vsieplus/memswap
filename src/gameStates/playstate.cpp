@@ -10,7 +10,7 @@ void PlayState::enterState(MemSwap * game) {
     bgTexture = game->getResManager().getTexture(BG_ID);
 
     // load level
-    std::string levelPath = game->getResManager().getResPath("1-1"); 
+    std::string levelPath = game->getResManager().getResPath("testing"); 
     level = Level(levelPath, game->getRenderer(), game);
 }
 
@@ -21,6 +21,7 @@ void PlayState::exitState() {
 void PlayState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
     // Check for level reset
     if(keyStates[SDL_SCANCODE_SPACE]) {
+        //enterState(game);
         // level.reset();
     }
 

@@ -3,7 +3,7 @@
 #include "utils/spritesheet.hpp"
 
 SpriteSheet::SpriteSheet(std::string mapPath, std::string tilesetName, 
-    SDL_Renderer * renderer) {
+    SDL_Renderer * renderer) : spritesheetTexture(new Texture()) {
     
     loadSpritesheet(mapPath, tilesetName, renderer);
 }
@@ -21,7 +21,7 @@ void SpriteSheet::loadSpritesheet(std::string mapPath, std::string tilesetName,
             // check matching tileset names
             if(tileset.getName() == tilesetName) {
                 // load the texture
-                spritesheetTexture.loadTexture(tileset.getImagePath(), renderer);
+                spritesheetTexture->loadTexture(tileset.getImagePath(), renderer);
 
                 // store first GID
                 firstGID = tileset.getFirstGID();
@@ -29,19 +29,22 @@ void SpriteSheet::loadSpritesheet(std::string mapPath, std::string tilesetName,
                 // get vector of (unique) tiles
                 const auto & tiles = tileset.getTiles();
 
+                // construct sprites for each tile in the spritesheet
                 for(auto & tile: tiles) {
                     loadTileProperties(tile);
-                        
-                    // Get position/size of tile in the tileset to create the clip
+
+                    // Get position/size of tile in the tileset to create the sprite/clip
                     int tilesetX = tile.imagePosition.x;
                     int tilesetY = tile.imagePosition.y;
 
                     int tileWidth = tile.imageSize.x;
                     int tileHeight = tile.imageSize.y;
 
-                    // Use relative tile ID
-                    spritesheetClips.emplace(tile.ID, (struct SDL_Rect) {tilesetX,
-                        tilesetY, tileWidth, tileHeight});               
+                    std::shared_ptr<Sprite> tileSprite = 
+                        std::make_shared<Sprite>(spritesheetTexture,
+                        (struct SDL_Rect) {tilesetX, tilesetY, tileWidth, tileHeight});
+
+                    sprites.emplace(tile.ID, tileSprite);               
                 }
                 break;
             }
@@ -94,8 +97,8 @@ void SpriteSheet::loadTileProperties(const tmx::Tileset::Tile & tile) {
 }
 
 // get the clip in this spritesheet for the given tile (as SDL_Rect) 
-const SDL_Rect & SpriteSheet::getTileClip(int tileID) const {
-    return spritesheetClips.at(tileID);
+std::shared_ptr<Sprite> SpriteSheet::getSprite(int tileID) const {
+    return sprites.at(tileID);
 }
 
 int SpriteSheet::getFirstGID() const {
@@ -103,5 +106,5 @@ int SpriteSheet::getFirstGID() const {
 }
 
 SDL_Texture * SpriteSheet::getTexture() const {
-    return spritesheetTexture.getTexture().get();
+    return spritesheetTexture->getTexture().get();
 }

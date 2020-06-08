@@ -6,12 +6,16 @@
 #include <unordered_map>
 #include <string>
 #include <any>
+#include <functional>
 
 #include <SDL.h>
 #include <tmxlite/Map.hpp>
 #include <tmxlite/Tileset.hpp>
 
 #include "utils/texture.hpp"
+#include "utils/sprite.hpp"
+
+const std::string TILENAME_PROPERTY = "tilename";
 
 class SpriteSheet {
     private:
@@ -19,10 +23,10 @@ class SpriteSheet {
         int firstGID;
 
         // the spritesheet texture
-        Texture spritesheetTexture;
+        std::shared_ptr<Texture> spritesheetTexture;
 
-        // spritesheet clips, key: tile GID, val: SDL_Rect representing clip
-        std::unordered_map<int, SDL_Rect> spritesheetClips;
+        // sprites in the spritesheet, key: hash of tileID, val: Sprite obj.
+        std::unordered_map<int, std::shared_ptr<Sprite>> sprites;
 
         // (non-empty) tile properties, as stored in the tiledmap data
         // key: tile ID, value: map of properties (prop. names -> values)
@@ -42,8 +46,8 @@ class SpriteSheet {
             return std::any_cast<T>(tileProperties.at(tileID).at(propertyName));
         }
 
-        // get the clip in this spritesheet for the given tile (as SDL_Rect) 
-        const SDL_Rect & getTileClip(int tileID) const;
+        // Get the sprite in this sheet with the specified tilename
+        std::shared_ptr<Sprite> getSprite(int tileID) const;
 
         SDL_Texture * getTexture() const;
 

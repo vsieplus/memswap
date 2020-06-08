@@ -79,8 +79,8 @@ void Level::addEntityTiles(const tmx::TileLayer * tileLayer,
 }
 
 // flip tiles in the map for the specified movement
-void Level::flipMapTiles(int movedFromX, int movedFromY, int moveDir, int playerParity) {
-    map.flipTiles(movedFromX, movedFromY, moveDir, playerParity, this);
+void Level::flipMapTiles(int movedFromX, int movedFromY, int entityParity) {
+    map.flipTile(movedFromX, movedFromY, entityParity, this);
 }
 
 // Update size from the given map

@@ -3,10 +3,10 @@
 #include "level/level.hpp"
 #include "level/tile.hpp"
 
-Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGID,
-        int tilesetID, int tileParity) : x(mapX), y(mapY), 
-        tilesetFirstGID(tilesetFirstGID), tilesetID(tilesetID), 
-        tileParity(tileParity) {
+Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tileParity,
+    std::shared_ptr<Sprite> tileSprite) : tileParity(tileParity), 
+    tileSprite(tileSprite) {
+    
     renderArea = {mapX, mapY, tileWidth, tileHeight};
 
     if(tileParity == PARITY_PURPLE) {
@@ -18,24 +18,16 @@ void Tile::update(Level * level) {
     
 }
 
-void Tile::render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture, 
-        const SDL_Rect & tilesheetClip) const {
-    SDL_RenderCopy(renderer, tilesetTexture, &tilesheetClip, &renderArea);
+void Tile::render(SDL_Renderer * renderer) const {
+    tileSprite->render(renderer, renderArea);
 }
 
-// Filp tile's parity, update tilesetGID.
-void Tile::flip(int newTilesetID) {
+// Filp tile's parity, + update sprite
+void Tile::flip(std::shared_ptr<Sprite> newTileSprite) {
     tileParity = tileParity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
-    tilesetID = newTilesetID;
+    tileSprite.reset();
+    tileSprite = newTileSprite;
     flipped = true;
-}
-
-int Tile::getTilesetFirstGID() const {
-    return tilesetFirstGID;
-}
-
-int Tile::getID() const {
-    return tilesetID;
 }
 
 int Tile::getTileParity() const {

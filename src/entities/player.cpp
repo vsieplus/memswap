@@ -90,7 +90,7 @@ void Player::initMovement(int xPosChange, int yPosChange, int xGridChange,
 
     // Flip map tiles
     if(direction != DIR_NONE) {
-        level->flipMapTiles(gridX, gridY, direction, tileParity);
+        level->flipMapTiles(gridX, gridY, tileParity);
     }
 
     // Reset movement

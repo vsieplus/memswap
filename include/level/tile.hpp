@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+#include "utils/sprite.hpp"
+
 class Level;
 
 enum TileParity {
@@ -13,33 +15,26 @@ enum TileParity {
 
 class Tile {
     private:
-        // x, y value on screen
-        int x, y;
-
-        // First GID of the tileset the tile belongs to, and its (relative) ID 
-        int tilesetFirstGID, tilesetID;
-
-        int tileParity;          // indicate tile color (1:gray, 2:purple)
-                                 // (-1 for no parity)
+        // indicate tile color (1:gray, 2:purple) | (-1 for no parity)                            
+        int tileParity;
+        
+        // the tile's sprite
+        std::shared_ptr<Sprite> tileSprite;
 
         bool flipped = false;
 
         SDL_Rect renderArea;     // where on screen to render
         
     public:
-        Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tilesetFirstGID, 
-            int tilesetID, int tileParity);
+        Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tileParity,
+            std::shared_ptr<Sprite> tileSprite);
 
         void update(Level * level);
 
-        void render(SDL_Renderer * renderer, SDL_Texture * tilesetTexture, 
-            const SDL_Rect & tilesheetClip) const;
+        void render(SDL_Renderer * renderer) const;
 
         // flip the tile parity
-        void flip(int newTilesetGID);
-
-        int getTilesetFirstGID() const;
-        int getID() const;
+        void flip(std::shared_ptr<Sprite> newTileSprite);
         
         int getTileParity() const;
 

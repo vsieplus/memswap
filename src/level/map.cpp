@@ -26,10 +26,7 @@ void Map::update(Level * level) {
 void Map::render(SDL_Renderer * renderer) const {
     // Render the background tiles
     for(Tile tile: mapTiles) {
-        // Render tile with correct tileset + clip
-        auto & ss = mapSpritesheets.at(tile.getTilesetFirstGID());
-
-        tile.render(renderer, ss->getTexture(), ss->getTileClip(tile.getID()));
+        tile.render(renderer);
     }
 }
 
@@ -115,17 +112,17 @@ void Map::addBGTiles(const tmx::TileLayer * tileLayer, Level * level,
             auto mapY = renderY + y * tileHeight;
 
             // Get parity of the BG Tile from spritesheet properties
-            int tileParity = 
-                mapSpritesheets.at(tilesetFirstGID)->getPropertyValue<int>(tileID, PARITY_PROP);
+            auto & tileSpritesheet = mapSpritesheets.at(tilesetFirstGID);
+            int tileParity = tileSpritesheet->getPropertyValue<int>(tileID, PARITY_PROP);
             
             // add to parityTileIDs if not yet complete
-            if(parityTileIDs.size() < 2) {                    
-                parityTileIDs[tileParity] = tileID;
+            if(parityTileSprites.size() < 2) {
+                parityTileSprites.emplace(tileParity, tileSpritesheet->getSprite(tileID));
             }
             
             // Add new tile to mapTiles
             mapTiles.emplace_back(mapX, mapY, tileWidth, tileHeight, 
-                tilesetFirstGID, tileID, tileParity);
+                tileParity, tileSpritesheet->getSprite(tileID));
         }
     }
 }
@@ -136,40 +133,19 @@ bool Map::inBounds(int x, int y) const {
 }
 
 
-// Update bg tiles when the specified movement occurs
-void Map::flipTiles(int tileX, int tileY, int moveDir, int playerParity, Level * level) {
-    // Get indices for all tiles on map surrounding the old pos
-    std::list<std::pair<int, int>> tileIndices;
+// Update bg tile when the specified movement occurs at the specified pos. by
+// an entity with the given parity
+void Map::flipTile(int tileX, int tileY, int entityParity, Level * level) {
+    // Check if in bounds
+    if(inBounds(tileX, tileY)) {
+        Tile & currTile = mapTiles.at(level->xyToIndex(tileX, tileY));
 
-    // none, Up, down, left, right (order matches Direction enum)
-    tileIndices.push_back(std::make_pair(tileX, tileY));
-/*     tileIndices.push_back(std::make_pair(tileX, tileY - 1));
-    tileIndices.push_back(std::make_pair(tileX, tileY + 1));
-    tileIndices.push_back(std::make_pair(tileX - 1, tileY));
-    tileIndices.push_back(std::make_pair(tileX + 1, tileY));
+        // skip if tile is parity-neutral/has already been flipped
+        if(currTile.getTileParity() == PARITY_NONE || currTile.isFlipped()) return;
 
-    // Remove the pair for the tile we moved onto
-    auto it = tileIndices.begin();
-    advance(it, moveDir);
-    tileIndices.erase(it); */
-
-    // For each tile except the one we moved onto, try to call flip if inbounds
-    for(auto indices: tileIndices) {
-        // Check if in bounds
-        if(inBounds(indices.first, indices.second)) {
-            Tile & currTile = mapTiles.at(level->xyToIndex(indices.first, indices.second));
-
-            // skip if tile is parity-neutral
-            if(currTile.getTileParity() == PARITY_NONE) break;
-
-            // skip tiles already flipped once
-            if(currTile.isFlipped()) continue;
-
-            // Flip if parity differs from player's
-            if(playerParity != currTile.getTileParity()) {
-                currTile.flip(parityTileIDs.at(playerParity));
-                break;
-            }
+        // Flip if parity differs from player's
+        if(entityParity != currTile.getTileParity()) {
+            currTile.flip(parityTileSprites.at(entityParity));
         }
     }
 }

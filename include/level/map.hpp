@@ -18,6 +18,7 @@
 
 #include "level/tile.hpp"
 #include "utils/spritesheet.hpp"
+#include "utils/sprite.hpp"
 
 class MemSwap;
 
@@ -36,8 +37,8 @@ class Map {
         // store spritesheets used by this map  (key: ss first GID, val: ptr->ss)
         std::unordered_map<int, std::shared_ptr<SpriteSheet>> mapSpritesheets;
 
-        // store tile GIDs for parity tiles (key: parity, val: Tile ID)
-        std::unordered_map<int, int> parityTileIDs;
+        // store tile sprites for parity tiles (key: parity, val: sprite ptr)
+        std::unordered_map<int, std::shared_ptr<Sprite>> parityTileSprites;
 
     public:
         // strings used to interface with tiledmap properties/labels
@@ -61,8 +62,7 @@ class Map {
         bool inBounds(int x, int y) const;
 
         // Update bg tiles when the specified movement occurs
-        void flipTiles(int tileX, int tileY, int moveDir, int playerParity,
-            Level * level);
+        void flipTile(int tileX, int tileY, int entityParity, Level * level);
 
         // Get parity of tile at the specified grid location
         int getTileParity(int x, int y) const;

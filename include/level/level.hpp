@@ -51,7 +51,7 @@ class Level {
         void addEntityTiles(const tmx::TileLayer * tileLayer, 
             const std::unordered_map<int, std::shared_ptr<SpriteSheet>> & tilesetTextures);
 
-        void flipMapTiles(int movedFromX, int movedFromY, int moveDir, int playerParity);
+        void flipMapTiles(int movedFromX, int movedFromY, int entityParity);
 
         int getGridWidth() const;
         int getGridHeight() const;

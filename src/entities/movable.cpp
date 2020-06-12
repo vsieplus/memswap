@@ -2,10 +2,9 @@
 #include "level/level.hpp"
 
 Movable::Movable(int screenX, int screenY, int gridX, int gridY, int velocity,
-    std::shared_ptr<Sprite> entitySprite, int movableParity) : 
-    Entity(screenX, screenY, gridX, gridY, entitySprite), startX(screenX),
-    startY(screenY), endX(screenX), endY(screenY), velocity(velocity),
-    movableParity(movableParity) {}
+    int parity, std::shared_ptr<Sprite> entitySprite) : 
+    Entity(screenX, screenY, gridX, gridY, parity, entitySprite), startX(screenX),
+    startY(screenY), endX(screenX), endY(screenY), velocity(velocity) {}
 
 void Movable::update(Level * level, float delta) {
     // update booster if being booster
@@ -66,19 +65,19 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
 
     // Check for collisions or invalid tile movement (same tile Parity)
     if(checkCollision((level->getMap()), newGridX, newGridY) || 
-        movableParity == level->getMap().getTileParity(newGridX, newGridY)) {
+        parity == level->getMap().getTileParity(newGridX, newGridY)) {
         return;
     }
 
     // Flip map tiles
     if(direction != DIR_NONE) {
-        level->flipMapTiles(gridX, gridY, movableParity);
+        level->flipMapTiles(gridX, gridY, parity);
     }
 
     // Reset movement
     moveProg = 0.f;
-    startX = screenX;
-    startY = screenY;
+    startX = renderArea.x;
+    startY = renderArea.y;
 
     moving = true;
     
@@ -106,11 +105,8 @@ void Movable::move(Level * level, float delta) {
         std::pair<int, int> newPos = lerp(startX, startY, endX, endY, moveProg);
 
         // For possible overshoot from float error, set to end position
-        screenX = abs(newPos.first - startX) < abs(endX - startX) ? newPos.first : endX;
-        screenY = abs(newPos.second - startY) < abs(endY - startY) ? newPos.second : endY;
-
-        renderArea.x = screenX;
-        renderArea.y = screenY;
+        renderArea.x = abs(newPos.first - startX) < abs(endX - startX) ? newPos.first : endX;
+        renderArea.y = abs(newPos.second - startY) < abs(endY - startY) ? newPos.second : endY;
     } else {
         // When current move is finished check if a move is buffered/boosting
         if(bufferedDir != DIR_NONE) {
@@ -120,7 +116,9 @@ void Movable::move(Level * level, float delta) {
             bufferedDir = DIR_NONE;
         } else if(boostDir != DIR_NONE) {
             // if currently using boost status, decrease by 1 each time
-            if(boostPower > 0) {                
+            if(boostPower > 0) {
+                // Check for another boost at next tile when already boosted
+                // if there is, avoid boosting 2x in that direction
                 if(!checkBoost(level, boostDir)) {
                     initMovement(boostDir, level);
                     boostPower--;            

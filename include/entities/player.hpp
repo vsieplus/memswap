@@ -15,7 +15,7 @@ class Player : public Movable {
         Direction pushDir = DIR_NONE;
 
     public:
-        Player(int screenX, int screenY, int gridX, int gridY, 
+        Player(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite);
 
         // game loop stuff

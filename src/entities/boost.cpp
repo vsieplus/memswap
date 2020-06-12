@@ -2,9 +2,9 @@
 
 #include "entities/boost.hpp"
 
-Boost::Boost(int screenX, int screenY, int gridX, int gridY, 
+Boost::Boost(int screenX, int screenY, int gridX, int gridY, int parity,
     std::shared_ptr<Sprite> entitySprite, int power, int direction) :
-    Entity(screenX, screenY, gridX, gridY, entitySprite), power(power),
+    Entity(screenX, screenY, gridX, gridY, parity, entitySprite), power(power),
     direction((Direction)direction) {}
 
 void Boost::handleEvents(const Uint8 * keyStates, Level * level) {

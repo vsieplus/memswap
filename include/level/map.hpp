@@ -82,7 +82,7 @@ class Map {
         void flipTile(int tileX, int tileY, int entityParity, Level * level);
 
         // Get parity of tile at the specified grid location
-        int getTileParity(int x, int y) const;
+        Parity getTileParity(int x, int y) const;
 
         // check for a particular entity shared_ptr at the given tile
         template <class T>

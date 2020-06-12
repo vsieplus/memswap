@@ -6,10 +6,9 @@
 #include "entities/diamond.hpp"
 #include "level/level.hpp"
 
-Player::Player(int screenX, int screenY, int gridX, int gridY, 
+Player::Player(int screenX, int screenY, int gridX, int gridY, int parity,
     std::shared_ptr<Sprite> entitySprite) :
-    Movable(screenX, screenY, gridX, gridY, PLAYER_VELOCITY, entitySprite,
-        PARITY_PURPLE) {}
+    Movable(screenX, screenY, gridX, gridY, PLAYER_VELOCITY, parity, entitySprite) {}
 
 void Player::handleEvents(const Uint8 * keyStates, Level * level) {
     // Check if player wants to start moving or buffer a move, when not boosted

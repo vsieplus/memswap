@@ -11,7 +11,7 @@ class Receptor : public Entity {
         bool completed = false;
 
     public:
-        Receptor(int screenX, int screenY, int gridX, int gridY, 
+        Receptor(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite);
 
         void handleEvents(const Uint8 * keyStates, Level * level) override;

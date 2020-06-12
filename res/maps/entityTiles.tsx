@@ -49,24 +49,28 @@
   <properties>
    <property name="direction" type="int" value="1"/>
    <property name="name" value="player"/>
+   <property name="parity" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="9">
   <properties>
    <property name="direction" type="int" value="3"/>
    <property name="name" value="player"/>
+   <property name="parity" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="10">
   <properties>
    <property name="direction" type="int" value="4"/>
    <property name="name" value="player"/>
+   <property name="parity" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="11">
   <properties>
    <property name="direction" type="int" value="2"/>
    <property name="name" value="player"/>
+   <property name="parity" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="12">
@@ -103,14 +107,16 @@
  </tile>
  <tile id="16">
   <properties>
-   <property name="name" value="exit"/>
+   <property name="name" value="boost"/>
    <property name="parity" type="int" value="2"/>
+   <property name="shape" value="player"/>
   </properties>
  </tile>
  <tile id="17">
   <properties>
    <property name="name" value="receptor"/>
    <property name="parity" type="int" value="2"/>
+   <property name="shape" value="diamond"/>
   </properties>
  </tile>
  <tile id="18">
@@ -153,14 +159,16 @@
  </tile>
  <tile id="24">
   <properties>
-   <property name="name" value="exit"/>
+   <property name="name" value="boost"/>
    <property name="parity" type="int" value="1"/>
+   <property name="shape" value="player"/>
   </properties>
  </tile>
  <tile id="25">
   <properties>
    <property name="name" value="receptor"/>
    <property name="parity" type="int" value="1"/>
+   <property name="shape" value="diamond"/>
   </properties>
  </tile>
  <tile id="26">

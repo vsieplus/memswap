@@ -17,7 +17,7 @@ class Boost : public Entity {
         bool activated = false;
 
     public:
-        Boost(int screenX, int screenY, int gridX, int gridY, 
+        Boost(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite, int power, int direction);
 
         void handleEvents(const Uint8 * keyStates, Level * level) override;

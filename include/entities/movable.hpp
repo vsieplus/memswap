@@ -24,9 +24,6 @@ class Movable : public Entity {
 
         int velocity;                     // Pixels moved per sec.
 
-        // parity of the movable entity
-        int movableParity;
-
         // for tracking boost status of movable entities
         int boostPower = 0;
         Direction boostDir = DIR_NONE;
@@ -38,7 +35,7 @@ class Movable : public Entity {
 
     public:
         Movable(int screenX, int screenY, int gridX, int gridY, int velocity,
-            std::shared_ptr<Sprite> entitySprite, int movableParity);
+            int parity, std::shared_ptr<Sprite> entitySprite);
 
         virtual void update(Level * level, float delta) override;
         void render(SDL_Renderer* renderer) const override;  

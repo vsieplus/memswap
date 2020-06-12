@@ -17,8 +17,8 @@ class Diamond : public Movable {
         std::shared_ptr<Receptor> dReceptor;
 
     public:
-        Diamond(int screenX, int screenY, int gridX, int gridY,
-            std::shared_ptr<Sprite> entitySprite, int parity);
+        Diamond(int screenX, int screenY, int gridX, int gridY, int parity,
+            std::shared_ptr<Sprite> entitySprite);
 
         void handleEvents(const Uint8 * keyStates, Level * level) override;
         void update(Level * level, float delta) override;

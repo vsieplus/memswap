@@ -5,9 +5,9 @@
 #include "entities/diamond.hpp"
 #include "entities/receptor.hpp"
 
-Diamond::Diamond(int screenX, int screenY, int gridX, int gridY,
-    std::shared_ptr<Sprite> entitySprite, int parity) : Movable(screenX,
-    screenY, gridX, gridY, DIAMOND_VELOCITY, entitySprite, parity) {
+Diamond::Diamond(int screenX, int screenY, int gridX, int gridY, int parity,
+    std::shared_ptr<Sprite> entitySprite) : Movable(screenX,
+    screenY, gridX, gridY, DIAMOND_VELOCITY, parity, entitySprite) {
 
 }
 

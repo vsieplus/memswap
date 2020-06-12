@@ -3,35 +3,32 @@
 #include "level/level.hpp"
 #include "level/tile.hpp"
 
-Tile::Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tileParity,
-    std::shared_ptr<Sprite> tileSprite) : tileParity(tileParity), 
-    tileSprite(tileSprite) {
+Tile::Tile(int mapX, int mapY, int tileParity, std::shared_ptr<Sprite> tileSprite) 
+    : Entity(mapX, mapY, tileParity, tileSprite) {
     
-    renderArea = {mapX, mapY, tileWidth, tileHeight};
-
-    if(tileParity == PARITY_PURPLE) {
+    if(parity == PARITY_PURPLE) {
         flipped = true;
     }
 }
 
-void Tile::update(Level * level) {
+void Tile::handleEvents(const Uint8 * keyStates, Level * level) {
+
+}
+
+void Tile::update(Level * level, float delta) {
     
 }
 
 void Tile::render(SDL_Renderer * renderer) const {
-    tileSprite->render(renderer, renderArea);
+    Entity::render(renderer);
 }
 
 // Filp tile's parity, + update sprite
 void Tile::flip(std::shared_ptr<Sprite> newTileSprite) {
-    tileParity = tileParity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
-    tileSprite.reset();
-    tileSprite = newTileSprite;
+    parity = parity == PARITY_GRAY ? PARITY_PURPLE : PARITY_GRAY;
+    entitySprite.reset();
+    entitySprite = newTileSprite;
     flipped = true;
-}
-
-int Tile::getTileParity() const {
-    return tileParity;
 }
 
 bool Tile::isFlipped() const {

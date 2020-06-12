@@ -5,39 +5,25 @@
 
 #include "utils/sprite.hpp"
 
+#include "entities/entity.hpp"
+
 class Level;
 
-enum TileParity {
-    PARITY_NONE,    // 0 ~ none
-    PARITY_GRAY,    // 1 ~ gray
-    PARITY_PURPLE   // 2 ~ purple
-};
-
-class Tile {
+class Tile : public Entity {
     private:
-        // indicate tile color (1:gray, 2:purple) | (-1 for no parity)                            
-        int tileParity;
-        
-        // the tile's sprite
-        std::shared_ptr<Sprite> tileSprite;
-
         bool flipped = false;
-
-        SDL_Rect renderArea;     // where on screen to render
         
     public:
-        Tile(int mapX, int mapY, int tileWidth, int tileHeight, int tileParity,
-            std::shared_ptr<Sprite> tileSprite);
+        Tile(int gridX, int gridY, int tileParity, std::shared_ptr<Sprite> sprite);
 
-        void update(Level * level);
+        void handleEvents(const Uint8 * keyStates, Level * level) override;
+        void update(Level * level, float delta) override;
 
         void render(SDL_Renderer * renderer) const;
 
         // flip the tile parity
         void flip(std::shared_ptr<Sprite> newTileSprite);
         
-        int getTileParity() const;
-
         bool isFlipped() const;
 };
 

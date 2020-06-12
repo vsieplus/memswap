@@ -63,24 +63,28 @@
    <properties>
     <property name="direction" type="int" value="1"/>
     <property name="name" value="player"/>
+    <property name="parity" type="int" value="2"/>
    </properties>
   </tile>
   <tile id="9">
    <properties>
     <property name="direction" type="int" value="3"/>
     <property name="name" value="player"/>
+    <property name="parity" type="int" value="2"/>
    </properties>
   </tile>
   <tile id="10">
    <properties>
     <property name="direction" type="int" value="4"/>
     <property name="name" value="player"/>
+    <property name="parity" type="int" value="2"/>
    </properties>
   </tile>
   <tile id="11">
    <properties>
     <property name="direction" type="int" value="2"/>
     <property name="name" value="player"/>
+    <property name="parity" type="int" value="2"/>
    </properties>
   </tile>
   <tile id="12">
@@ -117,14 +121,16 @@
   </tile>
   <tile id="16">
    <properties>
-    <property name="name" value="exit"/>
+    <property name="name" value="boost"/>
     <property name="parity" type="int" value="2"/>
+    <property name="shape" value="player"/>
    </properties>
   </tile>
   <tile id="17">
    <properties>
     <property name="name" value="receptor"/>
     <property name="parity" type="int" value="2"/>
+    <property name="shape" value="diamond"/>
    </properties>
   </tile>
   <tile id="18">
@@ -167,14 +173,16 @@
   </tile>
   <tile id="24">
    <properties>
-    <property name="name" value="exit"/>
+    <property name="name" value="boost"/>
     <property name="parity" type="int" value="1"/>
+    <property name="shape" value="player"/>
    </properties>
   </tile>
   <tile id="25">
    <properties>
     <property name="name" value="receptor"/>
     <property name="parity" type="int" value="1"/>
+    <property name="shape" value="diamond"/>
    </properties>
   </tile>
   <tile id="26">
@@ -223,7 +231,7 @@
  </layer>
  <layer id="4" name="entities" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYIAAdwb6AEcsYq5EqsMHnIA4Cof+ICx2eOIwx5dI+9wIyIPs9yDSLGLMgwEnEswkRy+55geRYB4ojP1JUI8uFoVFDTUAtjSHK1+Qmj5BIACLGK5wc8Qhj0s9seZis8cfjU8JQNdPrDvQgR+aGTBzAYwGC+k=
+   eJxjYBj+wA+IHdHEPEnQH4TGDyDDDej200vvSADo8UMIgMLTHY+8Gwnm0Ar4MpDur5EAAAuyA/0=
   </data>
  </layer>
 </map>

@@ -22,7 +22,6 @@ const std::string Map::POWER_PROP = "power";
 const std::string Map::PLAYER_ENAME = "player";
 const std::string Map::RECEPTOR_ENAME = "receptor";
 const std::string Map::BOOST_ENAME = "boost";
-const std::string Map::EXIT_ENAME = "exit";
 const std::string Map::DIAMOND_ENAME = "diamond";
 const std::string Map::PORTAL_ENAME = "portal";
 
@@ -48,7 +47,7 @@ void Map::handleEvents(Level * level, const Uint8 * keyStates) {
 // Update each tile in the map
 void Map::update(Level * level, float delta) {
     for(Tile tile: mapTiles) {
-        tile.update(level);
+        tile.update(level, delta);
     }
     
     // Update the entities
@@ -183,8 +182,7 @@ void Map::addBGTile(int screenX, int screenY, int tileID,
     }
     
     // Add new tile to mapTiles
-    mapTiles.emplace_back(screenX, screenY, tileWidth, tileHeight, tileParity,
-        spritesheet->getSprite(tileID));
+    mapTiles.emplace_back(screenX, screenY, tileParity, spritesheet->getSprite(tileID));
 }
 
 void Map::addEntity(int screenX, int screenY, int gridX, int gridY, int tileID, 
@@ -192,30 +190,29 @@ void Map::addEntity(int screenX, int screenY, int gridX, int gridY, int tileID,
 
     auto entitySprite = spritesheet->getSprite(tileID);
 
-    // Get name of entity to determine what entity to create
+    // Get name/parity of entity to determine what entity to create
     auto entityName = spritesheet->getPropertyValue<std::string>(tileID, NAME_PROP);
-    
+    int parity = spritesheet->getPropertyValue<int>(tileID, PARITY_PROP);
+
     std::shared_ptr<Entity> newEntity;
 
     if(entityName == PLAYER_ENAME) {
         newEntity = std::make_shared<Player>(screenX, screenY, gridX, gridY, 
-            entitySprite);
+            parity, entitySprite);
     } else if(entityName == DIAMOND_ENAME) {
         newEntity = std::make_shared<Diamond>(screenX, screenY, gridX, gridY, 
-            entitySprite, spritesheet->getPropertyValue<int>(tileID, PARITY_PROP));
+            parity, entitySprite);
     } else if(entityName == RECEPTOR_ENAME) {
         newEntity = std::make_shared<Receptor>(screenX, screenY, gridX, gridY, 
-            entitySprite);
+            parity, entitySprite);
     } else if(entityName == BOOST_ENAME) {
         // get direction/power properties for boost
         int power = spritesheet->getPropertyValue<int>(tileID, POWER_PROP);
         int direction = spritesheet->getPropertyValue<int>(tileID, DIR_PROP);
 
         newEntity = std::make_shared<Boost>(screenX, screenY, gridX, gridY,
-            entitySprite, power, direction);
+            parity, entitySprite, power, direction);
     } else if(entityName == PORTAL_ENAME) {
-
-    } else if(entityName == EXIT_ENAME) {
 
     }
 
@@ -248,10 +245,10 @@ void Map::flipTile(int tileX, int tileY, int entityParity, Level * level) {
         Tile & currTile = mapTiles.at(xyToIndex(tileX, tileY));
 
         // skip if tile is parity-neutral/has already been flipped
-        if(currTile.getTileParity() == PARITY_NONE || currTile.isFlipped()) return;
+        if(currTile.getParity() == PARITY_NONE || currTile.isFlipped()) return;
 
         // Flip if parity differs from player's
-        if(entityParity != currTile.getTileParity()) {
+        if(entityParity != currTile.getParity()) {
             currTile.flip(parityTileSprites.at(entityParity));
         }
     }
@@ -270,9 +267,9 @@ void Map::removeGridElement(int x, int y) {
     }
 }
 
-int Map::getTileParity(int x, int y) const {
+Parity Map::getTileParity(int x, int y) const {
     if(inBounds(x, y)) {
-        return mapTiles.at(x + y * mapWidth).getTileParity();
+        return mapTiles.at(x + y * mapWidth).getParity();
     }
     
     return PARITY_NONE;

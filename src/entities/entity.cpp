@@ -3,9 +3,16 @@
 #include "entities/entity.hpp"
 #include "level/map.hpp"
 
-Entity::Entity(int sX, int sY, int gX, int gY, std::shared_ptr<Sprite> entitySprite) : 
-    screenX(sX), screenY(sY), gridX(gX), gridY(gY), entitySprite(entitySprite),
-    renderArea{sX, sY, entitySprite->getWidth(), entitySprite->getHeight()} {}
+Entity::Entity(int screenX, int screenY, int gridX, int gridY, int parity, 
+    std::shared_ptr<Sprite> entitySprite) : 
+    gridX(gridX), gridY(gridY), parity((Parity)parity), entitySprite(entitySprite),
+    renderArea{screenX, screenY, entitySprite->getWidth(), 
+    entitySprite->getHeight()} {}
+
+Entity::Entity(int screenX, int screenY, int parity, 
+    std::shared_ptr<Sprite> entitySprite) : gridX(0), gridY(0), parity(Parity(parity)),
+    entitySprite(entitySprite), renderArea{screenX, screenY, entitySprite->getWidth(), 
+    entitySprite->getHeight()} {}
 
 /**
  * @brief Checks collision for current entity with the specified destination
@@ -52,11 +59,11 @@ std::pair<int, int> Entity::getCoords(Direction direction) {
 }
 
 int Entity::getScreenX() const {
-    return screenX;
+    return renderArea.x;
 }
 
 int Entity::getScreenY() const {
-    return screenY;
+    return renderArea.y;
 }
 
 int Entity::getGridX() const {
@@ -65,4 +72,8 @@ int Entity::getGridX() const {
 
 int Entity::getGridY() const {
     return gridY;
+}
+
+Parity Entity::getParity() const {
+    return parity;
 }

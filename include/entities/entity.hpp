@@ -22,21 +22,34 @@ enum Direction {
     DIR_RIGHT
 };
 
+enum Parity {
+    PARITY_NONE,    // 0 ~ none
+    PARITY_GRAY,    // 1 ~ gray
+    PARITY_PURPLE   // 2 ~ purple
+};
+
 class Entity {
     protected:
-        // x and y position on the screen
-        int screenX, screenY;
-
         // x,y location in the grid
         int gridX, gridY;
+
+        // parity of the entity
+        Parity parity;
 
         // Texture for the entity
         std::shared_ptr<Sprite> entitySprite;
 
+        // render area on the screen
         SDL_Rect renderArea;
 
     public:
-        Entity(int sX, int sY, int gX, int gY, std::shared_ptr<Sprite> entitySprite);
+        // for grid-based entities
+        Entity(int screenX, int screenY, int gridX, int gridY, int parity, 
+            std::shared_ptr<Sprite> entitySprite);
+
+        // for non grid-based entities (eg tiles)
+        Entity(int screenX, int screenY, int parity, 
+            std::shared_ptr<Sprite> entitySprite);
 
         virtual void handleEvents(const Uint8 * keyStates, Level * level) = 0;
         virtual void update(Level * level, float delta) = 0;
@@ -48,6 +61,8 @@ class Entity {
         int getScreenY() const;
         int getGridX() const;
         int getGridY() const;
+
+        Parity getParity() const;
 
         std::pair<int, int> getCoords(Direction direction);
 };

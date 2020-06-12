@@ -25,6 +25,8 @@ class Diamond : public Movable {
         void render(SDL_Renderer* renderer) const override;
 
         void checkReceptor(Level * level, Direction direction);
+
+        bool isMerging() const;
 };
 
 #endif // DIAMOND_HPP

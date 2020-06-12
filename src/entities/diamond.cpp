@@ -57,5 +57,12 @@ void Diamond::checkReceptor(Level * level, Direction direction) {
         // remove receptor from grid and track receptor from this diamond
         dReceptor = receptor;
         level->getMap().removeGridElement(receptor->getGridX(), receptor->getGridY());
+
+        // stop movement after next move
+        boostPower = 1;
     }
+}
+
+bool Diamond::isMerging() const {
+    return merging;
 }

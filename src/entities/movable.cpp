@@ -8,8 +8,12 @@ Movable::Movable(int screenX, int screenY, int gridX, int gridY, int velocity,
 
 void Movable::update(Level * level, float delta) {
     // update booster if being booster
-    if(boostPower > 0 && booster.get()) {
-        booster->update(level, delta);
+    if(booster.get()) {
+        if(boostPower > 0) {
+            booster->update(level, delta);
+        } else {
+            booster.reset();
+        }
     }
 
     // Update entity position for movement if currently moving

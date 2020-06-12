@@ -69,7 +69,8 @@ void Player::pushDiamond(Level * level) {
     auto diamond = level->getMap().getGridElement<Diamond>(pushCoords.first,
         pushCoords.second);
 
-    if(diamond.get()) {
+    // set move direction of diamond if not already merging w/receptor
+    if(diamond.get() && !diamond->isMerging()) {
         // set the move direction of the diamond
         diamond->setMoveDir(pushDir);
     }

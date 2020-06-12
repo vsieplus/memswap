@@ -120,11 +120,10 @@ void Movable::move(Level * level, float delta) {
             bufferedDir = DIR_NONE;
         } else if(boostDir != DIR_NONE) {
             // if currently using boost status, decrease by 1 each time
-            if(boostPower > 0) {
-                boostPower--;
-                
+            if(boostPower > 0) {                
                 if(!checkBoost(level, boostDir)) {
-                    initMovement(boostDir, level);                
+                    initMovement(boostDir, level);
+                    boostPower--;            
                 }
             } else {
                 // otherwise reset boost dir./booster

@@ -24,7 +24,7 @@ class Diamond : public Movable {
         void update(Level * level, float delta) override;
         void render(SDL_Renderer* renderer) const override;
 
-        void checkReceptor(Level * level);
+        void checkReceptor(Level * level, Direction direction);
 };
 
 #endif // DIAMOND_HPP

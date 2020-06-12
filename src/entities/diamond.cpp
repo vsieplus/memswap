@@ -23,7 +23,11 @@ void Diamond::update(Level * level, float delta) {
 
     // check for receptor
     if(moveDir != DIR_NONE) {
-        checkReceptor(level);
+        checkReceptor(level, moveDir);
+    }
+
+    if(boostDir != DIR_NONE) {
+        checkReceptor(level, boostDir);
     }
     
     // normal movement
@@ -39,8 +43,8 @@ void Diamond::render(SDL_Renderer* renderer) const {
     Movable::render(renderer);
 }
 
-void Diamond::checkReceptor(Level * level) {
-    std::pair<int, int> pushCoords = getCoords(moveDir);
+void Diamond::checkReceptor(Level * level, Direction direction) {
+    std::pair<int, int> pushCoords = getCoords(direction);
 
     // check for receptor at tile we're going to check
     auto receptor = level->getMap().getGridElement<Receptor>(pushCoords.first,

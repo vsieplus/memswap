@@ -52,7 +52,7 @@ class Movable : public Entity {
         void move(Level * level, float delta);
 
         // check for a boost entity
-        void checkBoost(Level * level, Direction direction);
+        bool checkBoost(Level * level, Direction direction);
 
         static std::pair<int,int> lerp(int startX, int startY, int endX,
             int endY, float t);

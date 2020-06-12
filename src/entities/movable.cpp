@@ -112,7 +112,7 @@ void Movable::move(Level * level, float delta) {
         renderArea.x = screenX;
         renderArea.y = screenY;
     } else {
-        // When current move is finished check if a move is buffered
+        // When current move is finished check if a move is buffered/boosting
         if(bufferedDir != DIR_NONE) {
             checkBoost(level, bufferedDir);
             initMovement(bufferedDir, level);
@@ -123,8 +123,9 @@ void Movable::move(Level * level, float delta) {
             if(boostPower > 0) {
                 boostPower--;
                 
-                initMovement(boostDir, level);
-                checkBoost(level, boostDir);
+                if(!checkBoost(level, boostDir)) {
+                    initMovement(boostDir, level);                
+                }
             } else {
                 // otherwise reset boost dir./booster
                 booster.reset();
@@ -137,7 +138,7 @@ void Movable::move(Level * level, float delta) {
 }
 
 // check for a boost in the specified direction, and interact accordingly
-void Movable::checkBoost(Level * level, Direction direction) {
+bool Movable::checkBoost(Level * level, Direction direction) {
     // check coordinate in direction of move
     auto checkCoords = getCoords(direction);
 
@@ -160,7 +161,11 @@ void Movable::checkBoost(Level * level, Direction direction) {
         // store boost power and direction, overwriting any existing boosts
         boostPower = boost->getPower();
         boostDir = boost->getDirection();
+        
+        return true;
     }
+
+    return false;
 }
 
 // Linear interpolation from current position to <endX, endY>

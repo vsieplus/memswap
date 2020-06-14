@@ -52,9 +52,17 @@ void Level::removeGridElement(int x, int y) {
 
 // check if the level is complete
 void Level::checkComplete() {
-    if(true) {
-        completed = true;
+    // check if each tile parity matches purple parity
+    for(int y = 0; y < gridHeight; y++) {
+        for(int x = 0; x < gridWidth; x++) {
+            // if some tile isn't flipped, level has not been succesfully completed
+            if(getTileParity(x, y) != PARITY_PURPLE) {
+                return;
+            }
+        }
     }
+
+    completed = true;
 }
 
 bool Level::isCompleted() const {

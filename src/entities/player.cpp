@@ -23,11 +23,11 @@ void Player::handleEvents(const Uint8 * keyStates, Level * level) {
 
 void Player::update(Level * level, float delta) {
     // check for entity interaction if player tried to move
-    if(moveDir != DIR_NONE && !moving) {
+    if(moveDir != DIR_NONE || bufferedDir != DIR_NONE) {
         pushDiamond(level);
 
-        // if player merges w/receptor, check if level is complete
-        if(checkReceptor(level, moveDir)) {
+        // if player not moving + merges w/receptor, check if level is complete
+        if(!moving && checkReceptor(level, moveDir)) {
             level->checkComplete();
         }
     }
@@ -68,7 +68,9 @@ void Player::checkMovement(const Uint8 * keyStates, Level * level) {
 }
 
 void Player::pushDiamond(Level * level) {
-    std::pair<int, int> pushCoords = getCoords(moveDir);
+    Direction pushDir = moving ? bufferedDir : moveDir;
+
+    std::pair<int, int> pushCoords = getCoords(pushDir);
 
     // check if entity at the coordinate is a diamond
     auto diamond = level->getGridElement<Diamond>(pushCoords.first,
@@ -77,9 +79,6 @@ void Player::pushDiamond(Level * level) {
     // set move direction of diamond if not already merging w/receptor
     if(diamond.get() && !diamond->isMerging()) {
         // set the move direction of the diamond
-        diamond->setMoveDir(moveDir);
-
-        // reset moveDir
-        moveDir = DIR_NONE;
+        diamond->setMoveDir(pushDir);
     }
 }

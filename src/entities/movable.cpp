@@ -22,10 +22,11 @@ void Movable::update(Level * level, float delta) {
         move(level, delta);
     } else if(moveDir != DIR_NONE) {
         // check for boost
-        checkBoost(level, moveDir);
-        
-        // try to initialize movement if moveDir is not DIR_NONE
-        initMovement(moveDir, level);
+        if(!checkBoost(level, moveDir)) {
+            // try to initialize movement if moveDir is not DIR_NONE
+            initMovement(moveDir, level);
+            moveDir = DIR_NONE;
+        }
     } else if(merging) {
         // if merging, update receptor, and then do 'merge' animation
         mReceptor->update(level, delta);
@@ -76,6 +77,7 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
     // Check for collisions or invalid tile movement (same tile Parity)
     if(checkCollision(level, newGridX, newGridY) || parity == 
        level->getTileParity(newGridX, newGridY)) {
+        moveDir = DIR_NONE;
         return;
     }
 
@@ -155,8 +157,8 @@ bool Movable::checkBoost(Level * level, Direction direction) {
 
         boost->setActivated(true);
 
-        // if currently boosted, finish last boost
-        if(boostPower > 0) { 
+        // if currently boosted/set to move, finish move
+        if(boostPower > 0 || moveDir != DIR_NONE) { 
             initMovement(moveDir, level);    
         }
 

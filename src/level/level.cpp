@@ -25,11 +25,6 @@ void Level::render(SDL_Renderer * renderer) const {
     map.render(renderer); 
 }
 
-// flip tiles in the map for the specified movement
-void Level::flipMapTiles(int movedFromX, int movedFromY, int entityParity) {
-    map.flipTile(movedFromX, movedFromY, entityParity, this);
-}
-
 // Update size from the given map
 void Level::updateSize(const tmx::Map & map, int tileWidth, int tileHeight) {
     auto map_dimensions = map.getTileCount();
@@ -39,6 +34,31 @@ void Level::updateSize(const tmx::Map & map, int tileWidth, int tileHeight) {
 
     pixelWidth = tileWidth * gridWidth;
     pixelHeight = tileHeight * gridHeight;
+}
+
+// flip tiles in the map for the specified movement
+void Level::flipMapTiles(int movedFromX, int movedFromY, int entityParity) {
+    map.flipTile(movedFromX, movedFromY, entityParity, this);
+}
+
+// Move a grid element from start x,y to end
+void Level::moveGridElement(int startX, int startY, int endX, int endY) {
+    map.moveGridElement(startX, startY, endX, endY);
+}
+
+void Level::removeGridElement(int x, int y) {
+    map.removeGridElement(x, y);
+}
+
+// check if the level is complete
+void Level::checkComplete() {
+    if(true) {
+        completed = true;
+    }
+}
+
+bool Level::isCompleted() const {
+    return completed;
 }
 
 int Level::getGridWidth() const { 
@@ -63,13 +83,4 @@ bool Level::inBounds(int x, int y) const {
 
 Parity Level::getTileParity(int x, int y) const {
     return map.getTileParity(x, y);
-}
-
-// Move a grid element from start x,y to end
-void Level::moveGridElement(int startX, int startY, int endX, int endY) {
-    map.moveGridElement(startX, startY, endX, endY);
-}
-
-void Level::removeGridElement(int x, int y) {
-    map.removeGridElement(x, y);
 }

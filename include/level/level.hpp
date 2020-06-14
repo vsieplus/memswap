@@ -24,6 +24,9 @@ class Level {
         // The map representation of the background
         Map map;
 
+        // if level has been completed by the player
+        bool completed = false;
+
     public:
         Level();
         Level(std::string tiledMapPath, SDL_Renderer * renderer, MemSwap * game);
@@ -37,6 +40,13 @@ class Level {
         void updateSize(const tmx::Map & map, int tileWidth, int tileHeight);
 
         void flipMapTiles(int movedFromX, int movedFromY, int entityParity);
+        void removeGridElement(int x, int y);
+        void moveGridElement(int startX, int startY, int endX, int endY);
+
+        // check for level completion
+        void checkComplete();
+
+        bool isCompleted() const;
 
         int getGridWidth() const;
         int getGridHeight() const;
@@ -50,8 +60,6 @@ class Level {
 
         bool inBounds(int x, int y) const;
         Parity getTileParity(int x, int y) const;
-        void removeGridElement(int x, int y);
-        void moveGridElement(int startX, int startY, int endX, int endY);
 };
 
 #endif // LEVEL_HPP

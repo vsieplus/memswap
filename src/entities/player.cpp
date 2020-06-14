@@ -10,8 +10,8 @@
 const std::string Player::PLAYER_SHAPE = "player";
 
 Player::Player(int screenX, int screenY, int gridX, int gridY, int parity,
-    std::shared_ptr<Sprite> entitySprite) :
-    Movable(screenX, screenY, gridX, gridY, PLAYER_VELOCITY, parity, entitySprite) {}
+    std::shared_ptr<Sprite> entitySprite) : Movable(screenX, screenY, gridX, 
+    gridY, PLAYER_VELOCITY, parity, entitySprite, PLAYER_SHAPE) {}
 
 void Player::handleEvents(const Uint8 * keyStates, Level * level) {
     // Check if player wants to start moving or buffer a move, when not boosted
@@ -22,9 +22,14 @@ void Player::handleEvents(const Uint8 * keyStates, Level * level) {
 }
 
 void Player::update(Level * level, float delta) {
-    // try pushing diamond
-    if(pushDir != DIR_NONE) {
+    // check for entity interaction if player tried to move
+    if(moveDir != DIR_NONE && !moving) {
         pushDiamond(level);
+
+        // if player merges w/receptor, check if level is complete
+        if(checkReceptor(level, moveDir)) {
+            level->checkComplete();
+        }
     }
 
     // update player movement
@@ -60,13 +65,10 @@ void Player::checkMovement(const Uint8 * keyStates, Level * level) {
     } else {
         moveDir = newDir;
     }
-
-    // update push-dir
-    pushDir = newDir;
 }
 
 void Player::pushDiamond(Level * level) {
-    std::pair<int, int> pushCoords = getCoords(pushDir);
+    std::pair<int, int> pushCoords = getCoords(moveDir);
 
     // check if entity at the coordinate is a diamond
     auto diamond = level->getGridElement<Diamond>(pushCoords.first,
@@ -75,20 +77,9 @@ void Player::pushDiamond(Level * level) {
     // set move direction of diamond if not already merging w/receptor
     if(diamond.get() && !diamond->isMerging()) {
         // set the move direction of the diamond
-        diamond->setMoveDir(pushDir);
-    }
+        diamond->setMoveDir(moveDir);
 
-    // reset pushDir
-    pushDir = DIR_NONE;
-}
-
-// check for exit/determine if level is complete
-void Player::checkExit(Level * level, Direction direction) {
-    auto coords = getCoords(direction);
-    auto exit = level->getGridElement<Receptor>(coords.first, coords.second);
-
-    // if receptor is of player shape, proceed to check if game over
-    if(exit.get() && exit->getShape() == PLAYER_SHAPE) {
-
+        // reset moveDir
+        moveDir = DIR_NONE;
     }
 }

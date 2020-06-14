@@ -2,22 +2,23 @@
 #include "level/level.hpp"
 
 Movable::Movable(int screenX, int screenY, int gridX, int gridY, int velocity,
-    int parity, std::shared_ptr<Sprite> entitySprite) : 
+    int parity, std::shared_ptr<Sprite> entitySprite, std::string movableShape) : 
     Entity(screenX, screenY, gridX, gridY, parity, entitySprite), startX(screenX),
-    startY(screenY), endX(screenX), endY(screenY), velocity(velocity) {}
+    startY(screenY), endX(screenX), endY(screenY), velocity(velocity), 
+    movableShape(movableShape) {}
 
-void Movable::update(Level * level, float delta) {
-    // update booster if being booster
-    if(booster.get()) {
-        if(boostPower > 0) {
-            booster->update(level, delta);
-        } else {
-            booster.reset();
-        }
-    }
-
-    // Update entity position for movement if currently moving
+void Movable::update(Level * level, float delta) {    
     if(moving) {
+        // if boosted, update booster
+        if(booster.get()) {
+            if(boostPower > 0) {
+                booster->update(level, delta);
+            } else {
+                booster.reset();
+            }
+        }
+
+        // Update entity position for movement if currently moving
         move(level, delta);
     } else if(moveDir != DIR_NONE) {
         // check for boost
@@ -25,12 +26,17 @@ void Movable::update(Level * level, float delta) {
         
         // try to initialize movement if moveDir is not DIR_NONE
         initMovement(moveDir, level);
-        moveDir = DIR_NONE;
+    } else if(merging) {
+        // if merging, update receptor, and then do 'merge' animation
+        mReceptor->update(level, delta);
     }
 }
 
 void Movable::render(SDL_Renderer* renderer) const {
-    if(boostPower > 0 && booster.get()) {
+    // render receptor first when merging
+    if(merging) {
+        mReceptor->render(renderer);
+    } else if(boostPower > 0 && booster.get()) {
         booster->render(renderer);
     }
 
@@ -118,22 +124,18 @@ void Movable::move(Level * level, float delta) {
             initMovement(bufferedDir, level);
 
             bufferedDir = DIR_NONE;
-        } else if(boostDir != DIR_NONE) {
-            // if currently using boost status, decrease by 1 each time
-            if(boostPower > 0) {
-                // Check for another boost at next tile when already boosted
-                // if there is, avoid boosting 2x in that direction
-                if(!checkBoost(level, boostDir)) {
-                    initMovement(boostDir, level);
-                    boostPower--;            
-                }
-            } else {
-                // otherwise reset boost dir./booster
-                booster.reset();
-                boostDir = DIR_NONE;
+        } else if(boostPower > 0) {
+            // Check for another boost at next tile when already boosted
+            // if there is, avoid boosting 2x in that direction
+            if(!checkBoost(level, moveDir)) {
+                initMovement(moveDir, level);
+                boostPower--;            
             }
         } else {
+            moveDir = DIR_NONE;
             moving = false;
+
+            if(booster.get()) booster.reset();
         }
     }
 }
@@ -155,12 +157,38 @@ bool Movable::checkBoost(Level * level, Direction direction) {
 
         // if currently boosted, finish last boost
         if(boostPower > 0) { 
-            initMovement(boostDir, level);    
+            initMovement(moveDir, level);    
         }
 
         // store boost power and direction, overwriting any existing boosts
         boostPower = boost->getPower();
-        boostDir = boost->getDirection();
+        moveDir = boost->getDirection();
+        
+        return true;
+    }
+
+    return false;
+}
+
+
+// handle interaction between a movable entity/its receptor
+bool Movable::checkReceptor(Level * level, Direction direction) {
+    std::pair<int, int> coords = getCoords(direction);
+
+    // check for receptor at tile we're going to check
+    auto receptor = level->getGridElement<Receptor>(coords.first, coords.second);
+
+    // check that receptor is not yet completed + has the correct shape
+    if(receptor.get() && !receptor->isCompleted() && receptor->getShape() == movableShape) {
+        merging = true;
+        receptor->setCompleted(true);
+
+        // remove receptor from grid and track receptor from this entity
+        mReceptor = receptor;
+        level->removeGridElement(receptor->getGridX(), receptor->getGridY());
+
+        // stop movement after next move if boosting
+        boostPower = boostPower > 0 ? 1 : 0;
         
         return true;
     }
@@ -192,4 +220,8 @@ void Movable::setMoveDir(Direction direction) {
 
 float Movable::getMoveProg() const {
     return moveProg; 
+}
+
+bool Movable::isMerging() const {
+    return merging;
 }

@@ -30,6 +30,11 @@ void PlayState::handleEvents(MemSwap * game, const Uint8 * keyStates) {
 
 void PlayState::update(MemSwap * game, float delta) {
     level.update(delta);
+
+    // check if level is completed, enter scorestate if so
+    if(level.isCompleted()) {
+        game->setNextState(GAME_STATE_SCORE);
+    }
 }
 
 /// Render function for the game state

@@ -5,14 +5,14 @@
 
 #include "entities/entity.hpp"
 #include "entities/boost.hpp"
+#include "entities/receptor.hpp"
 #include "level/tile.hpp"
 
 class Movable : public Entity {
     protected:
         // Movement progress + tracking
         float moveProg = 0.f;
-
-        bool moving = false;
+        const float MOVEMENT_BUFFER = 0.85f;
 
         int startX, startY, endX, endY;   // Start and end positions for movement
 
@@ -26,16 +26,24 @@ class Movable : public Entity {
 
         // for tracking boost status of movable entities
         int boostPower = 0;
-        Direction boostDir = DIR_NONE;
 
         // for storing booster upon activation
         std::shared_ptr<Boost> booster;
 
-        const float MOVEMENT_BUFFER = 0.85f;
+        // the receptor to merge with
+        std::shared_ptr<Receptor> mReceptor;
+        
+        // if merging with a receptor/moving
+        bool merging = false;
+        bool moving = false;
+
+        std::string movableShape;
+
 
     public:
         Movable(int screenX, int screenY, int gridX, int gridY, int velocity,
-            int parity, std::shared_ptr<Sprite> entitySprite);
+            int parity, std::shared_ptr<Sprite> entitySprite, 
+            std::string movableShape);
 
         virtual void update(Level * level, float delta) override;
         void render(SDL_Renderer* renderer) const override;  
@@ -50,12 +58,14 @@ class Movable : public Entity {
 
         // check for a boost entity
         bool checkBoost(Level * level, Direction direction);
+        bool checkReceptor(Level * level, Direction direction);
 
         static std::pair<int,int> lerp(int startX, int startY, int endX,
             int endY, float t);
 
         void setMoveDir(Direction direction);
         float getMoveProg() const;
+        bool isMerging() const;
 };
 
 #endif // MOVABLE_HPP

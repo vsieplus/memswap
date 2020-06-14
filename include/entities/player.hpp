@@ -12,8 +12,6 @@ class Player : public Movable {
     private:
         static const int PLAYER_VELOCITY = 7;
 
-        Direction pushDir = DIR_NONE;
-
     public:
         const static std::string PLAYER_SHAPE;
 
@@ -30,9 +28,6 @@ class Player : public Movable {
 
         // try to push a diamond
         void pushDiamond(Level * level);
-
-        // check for exit/determine if level is complete
-        void checkExit(Level * level, Direction direction);
 };
 
 #endif // PLAYER_HPP

@@ -19,15 +19,30 @@ class Button {
         void handleKeyEvents(const SDL_Event & e);
 
         void update();
-        void render(SDL_Renderer * renderer);
+        void render(SDL_Renderer * renderer) const;
 
         void setFocus(bool focus);
 
         bool isActivated() const;
 
     private:
+        std::shared_ptr<Texture> buttonSprite;
+
+        // button outline
+        SDL_Rect buttonOutline;
+
+        // outline color
+        SDL_Color outlineColor;
+
         // position on screen
         int screenX, screenY;
+
+        // amt to shift r/g by for flashing effect
+        int colorShiftMax;
+        int currShift = 0;
+        const int COLOR_SHIFT_AMT = 2;
+
+        bool darkening = true;
 
         // if button is part of clickable gui (or gamepad controlled focus)
         bool clickable;
@@ -41,14 +56,6 @@ class Button {
 
         // use this to determine when to take action
         bool activated = false;
-
-        std::shared_ptr<Texture> buttonSprite;
-
-        // button outline
-        SDL_Rect buttonOutline;
-
-        // outline color
-        SDL_Color outlineColor;
 };
 
 #endif // BUTTON_HPP

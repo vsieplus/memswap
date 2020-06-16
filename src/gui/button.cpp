@@ -2,10 +2,11 @@
 
 Button::Button(int screenX, int screenY, bool clickable, 
     std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor) : 
-    screenX(screenX), screenY(screenY), clickable(clickable),
     buttonSprite(buttonSprite), buttonOutline((SDL_Rect) {screenX - 1, 
     screenY - 1, buttonSprite->getWidth() + 2, buttonSprite->getHeight() + 2}), 
-    outlineColor(outlineColor) {}
+    outlineColor(outlineColor), screenX(screenX), screenY(screenY),
+    colorShiftMax(std::min(outlineColor.r, outlineColor.g)), currShift(0),
+    clickable(clickable) {}
 
 void Button::handleEvents(const SDL_Event & e) {
     if(clickable) {
@@ -49,13 +50,34 @@ void Button::handleKeyEvents(const SDL_Event & e) {
     }
 }
 
-void Button::render(SDL_Renderer * renderer) {
+void Button::update() {
+    if(inFocus) {
+        // add "flashing" effect by altering r/g (v) b(^)
+        if(darkening) {
+            currShift = currShift + COLOR_SHIFT_AMT;
+
+            if(currShift >= colorShiftMax) {
+                darkening = false;
+                currShift = colorShiftMax;
+            }
+        } else {
+            currShift = currShift - COLOR_SHIFT_AMT;
+            if(currShift < 0) {
+                darkening = true;
+                currShift = 0;
+            }
+        }
+    }
+}
+
+void Button::render(SDL_Renderer * renderer) const {
     buttonSprite->render(screenX, screenY, renderer);
 
     // if button is in focus, draw an outline around the button
     if(inFocus) {
-        SDL_SetRenderDrawColor(renderer, outlineColor.r, outlineColor.g,
-            outlineColor.b, outlineColor.a);
+
+        SDL_SetRenderDrawColor(renderer, (outlineColor.r - currShift), 
+            (outlineColor.g - currShift), outlineColor.b, outlineColor.a);
         SDL_RenderDrawRect(renderer, &buttonOutline);
         
         // for mouse-controlled buttons, add additional effect on mouse-down

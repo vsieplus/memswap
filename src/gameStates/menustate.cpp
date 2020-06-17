@@ -18,12 +18,12 @@ MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {
     bgTexture = game->getResManager().getTexture(BG_ID);
     menuFont = game->getResManager().getFont(FONT_ID);
 
-    // add buttons for each menu screen
-    addMainButtons(game);
-    addLvlSelectButtons(game);
-    addStatsButtons(game);
-    addConfigButtons(game);
-    addCreditsButtons(game);
+    // add buttons/other gui elements for each menu screen
+    addMainGUI(game);
+    addLvlSelectGUI(game);
+    addStatsGUI(game);
+    addConfigGUI(game);
+    addCreditsGUI(game);
 
     // set current button to first button on main menu screen, first ptr
     currButton = &(stateButtons.at(currScreen).at(currButtonID));
@@ -38,7 +38,11 @@ void MenuState::exitState() {
 }
 
 // functions to add buttons for the specified screen
-void MenuState::addMainButtons(MemSwap * game) {
+void MenuState::addMainGUI(MemSwap * game) {
+    // add title
+
+
+    // add buttons
     std::vector<Button> mainButtons;
 
     // calc. button spacing in bottom (2/3) [4 buttons, 2 rows] inside border
@@ -68,28 +72,28 @@ void MenuState::addMainButtons(MemSwap * game) {
     screenLayouts.emplace(MenuScreen::MENU_MAIN, std::make_pair<int, int>(2, 2));
 }
 
-void MenuState::addLvlSelectButtons(MemSwap * game) {
+void MenuState::addLvlSelectGUI(MemSwap * game) {
     std::vector<Button> LvlSelectButtons;
 
     stateButtons.emplace(MenuScreen::MENU_LVLS, LvlSelectButtons);
     screenLayouts.emplace(MenuScreen::MENU_LVLS, std::make_pair(LVLS_COLS, LVLS_ROWS));
 }
 
-void MenuState::addStatsButtons(MemSwap * game) {
+void MenuState::addStatsGUI(MemSwap * game) {
     std::vector<Button> StatsButtons;
 
     stateButtons.emplace(MenuScreen::MENU_STATS, StatsButtons);
     screenLayouts.emplace(MenuScreen::MENU_STATS, std::make_pair<int, int>(2, 1));
 }
 
-void MenuState::addConfigButtons(MemSwap * game) {
+void MenuState::addConfigGUI(MemSwap * game) {
     std::vector<Button> ConfigButtons;
 
     stateButtons.emplace(MenuScreen::MENU_CONFIG, ConfigButtons);
     screenLayouts.emplace(MenuScreen::MENU_CONFIG, std::make_pair<int, int>(1, 1));
 }
 
-void MenuState::addCreditsButtons(MemSwap * game) {
+void MenuState::addCreditsGUI(MemSwap * game) {
     // only need a 'back' button
     std::vector<Button> creditsButtons;
 

@@ -92,11 +92,11 @@ class MenuState : public GameState {
         };
 
         // load buttons for each menu screen 
-        void addMainButtons(MemSwap * game);
-        void addLvlSelectButtons(MemSwap * game);
-        void addStatsButtons(MemSwap * game);
-        void addConfigButtons(MemSwap * game);
-        void addCreditsButtons(MemSwap * game);
+        void addMainGUI(MemSwap * game);
+        void addLvlSelectGUI(MemSwap * game);
+        void addStatsGUI(MemSwap * game);
+        void addConfigGUI(MemSwap * game);
+        void addCreditsGUI(MemSwap * game);
 
         void changeCurrButton(const SDL_Event & e);
 

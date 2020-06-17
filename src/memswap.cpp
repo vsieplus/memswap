@@ -97,13 +97,13 @@ void MemSwap::handleEvents() {
             
             // no polled events for play state
             if(currState != GAME_STATE_PLAY) {
-                gameStates.back()->handleEvents(this, e);
+                gameStates.at(currState)->handleEvents(this, e);
             }
         }
 
         // keyState events for play state
         if(currState == GAME_STATE_PLAY) {
-            gameStates.back()->handleEvents(this, e);
+            gameStates.at(currState)->handleEvents(this, e);
         }
     }   
 }
@@ -150,7 +150,7 @@ void MemSwap::update() {
     delta = (float) ((currTime - lastTime) * 1000 / (float) SDL_GetPerformanceFrequency());
 
     if(!gameStates.empty()) {
-        gameStates.back()->update(this, delta);
+        gameStates.at(currState)->update(this, delta);
     }
         
     changeState();
@@ -164,7 +164,7 @@ void MemSwap::render() const {
         SDL_RenderClear(renderer);
         
         // Render stuff for current game state
-        gameStates.back()->render(renderer);
+        gameStates.at(currState)->render(renderer);
         
         // render to screen
         SDL_RenderPresent(renderer);
@@ -172,70 +172,75 @@ void MemSwap::render() const {
 }
 
 /// Set next state to change to indicated by the given state ID
-void MemSwap::setNextState(int stateID) {
+void MemSwap::setNextState(GameStateID stateID) {
     nextState = stateID;
 }
 
 /// Change states if needed
 void MemSwap::changeState() {
     if(nextState != currState) {
-        // If next state set to exit, stop playing
-        if(nextState == GAME_STATE_EXIT) {
+        // If next state set to exit/null, stop playing
+        if(nextState == GAME_STATE_EXIT || nextState == GAME_STATE_NULL) {
             playing = false;
             return;
         }
 
-        // Pop off current non-null state, unless it's a PLAY state
-        if(currState != GAME_STATE_NULL && currState != GAME_STATE_PLAY) {
-            popGameState();
-        }
+        // check if the next state already exists, if not add to the map
+        auto it = gameStates.find(nextState);
 
-        std::unique_ptr<GameState> nextGameState = nullptr;
+        if(it == gameStates.end()) {
+            std::unique_ptr<GameState> nextGameState = nullptr;
 
-        switch(nextState) {
-            case GAME_STATE_SPLASH:
-                // Load game resources from splash state
-                nextGameState = std::make_unique<SplashState>();
-                break;
-            case GAME_STATE_MENU:
-                nextGameState = std::make_unique<MenuState>(this);
-                break;
-            case GAME_STATE_PLAY:
-                // only make new state if currently not in pause state 
-                if(currState != GAME_STATE_PAUSE) {
+            switch(nextState) {
+                case GAME_STATE_SPLASH:
+                    nextGameState = std::make_unique<SplashState>();
+                    break;
+                case GAME_STATE_MENU:
+                    nextGameState = std::make_unique<MenuState>(this);
+                    break;
+                case GAME_STATE_PLAY:
                     nextGameState = std::make_unique<PlayState>();
-                }
+                    break;
+                case GAME_STATE_PAUSE:
+                    nextGameState = std::make_unique<PauseState>(this);
+                    break;
+                default:
+                    break;
+            }
 
-                break;
-            case GAME_STATE_PAUSE:
-                nextGameState = std::make_unique<PauseState>(this);
-                break;
+            if(nextGameState.get()) {
+                addGameState(nextState, nextGameState);
+                gameStates.at(nextState)->enterState(this);
+            }
         }
 
-        // Push the next game state if new
-        if(nextGameState.get()) pushGameState(nextGameState);
 
-        if(!gameStates.empty()) gameStates.back()->enterState(this);
+        // Remove splash state if switching off (since it's only used 1x)
+        if(currState == GAME_STATE_SPLASH) {
+            removeGameState(currState);
+        }
+
+        // update curr state
         currState = nextState;
     }
 }
 
-/// Add a game state to the stack (enter a game state)
-void MemSwap::pushGameState(std::unique_ptr<GameState> & state) {
-    gameStates.push_back(std::move(state));
+/// Add a game state to the map
+void MemSwap::addGameState(GameStateID gameStateID, std::unique_ptr<GameState> & state) {
+    gameStates.emplace(gameStateID, std::move(state));
 }
 
 /// Remove a game state from the stack (exit a game state)
-void MemSwap::popGameState() {
-    if(!gameStates.empty()) {
-        gameStates.back()->exitState();
-        gameStates.pop_back();
+void MemSwap::removeGameState(GameStateID gameStateID) {
+    auto it = gameStates.find(gameStateID);
+
+    if(!gameStates.empty() && it != gameStates.end()) {
+        gameStates.at(gameStateID)->exitState();
+        gameStates.erase(it);
     }
 }
 
 void MemSwap::quit() {
-    gameStates.clear();
-
     SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
@@ -248,7 +253,7 @@ bool MemSwap::isPlaying() const {
     return playing; 
 }
 
-int MemSwap::getGameStateID() const { 
+GameStateID MemSwap::getGameStateID() const { 
     return currState; 
 }
 

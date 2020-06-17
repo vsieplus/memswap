@@ -42,7 +42,9 @@ void PauseState::addButtons(MemSwap * game) {
 
 
 void PauseState::enterState(MemSwap * game) {
-
+    // reset current button to resume
+    currButton = RESUME_BTN;
+    buttons.at(RESUME_BTN).setFocus(true);
 }
 
 void PauseState::exitState() {

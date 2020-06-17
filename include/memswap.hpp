@@ -3,7 +3,7 @@
 #ifndef MEMSWAP_HPP
 #define MEMSWAP_HPP
 
-#include <vector>
+#include <unordered_map>
 #include <memory>
 #include <string>
 #include <stdio.h>
@@ -23,8 +23,8 @@ class MemSwap {
         Uint64 lastTime = 0;
         Uint64 currTime;
 
-        int nextState = GAME_STATE_NULL;
-        int currState = GAME_STATE_NULL;
+        GameStateID nextState = GAME_STATE_NULL;
+        GameStateID currState = GAME_STATE_NULL;
 
         // Window constants
         int screenWidth = 640;
@@ -61,20 +61,25 @@ class MemSwap {
         // outline color (for gui elements)
         SDL_Color outlineColor = {0x83, 0x86, 0xF5, 0xFF};
 
-        // Stack for tracking the game states
-        std::vector<std::unique_ptr<GameState>> gameStates;
+        // map for tracking the game states/the current state
+        std::unordered_map<GameStateID, std::unique_ptr<GameState>> gameStates;
 
         // Resource manager for the game
         ResManager resourceManager;
-
-    public:
-        /// Constructor
-        MemSwap();
         
         // initialize
         SDL_Renderer * init ();
         bool initLibs();
 
+        // state management
+        void changeState();
+        void addGameState(GameStateID gameStateID, std::unique_ptr<GameState> & state);
+        void removeGameState(GameStateID gameStateID);
+
+    public:
+        /// Constructor
+        MemSwap();
+        
         // (called during splash state)
         int loadNextResource();
 
@@ -89,16 +94,12 @@ class MemSwap {
         void render() const;
 
         // Manage game states
-        void changeState();
-        void setNextState(int gameID);
-
-        void pushGameState(std::unique_ptr<GameState> & state);
-        void popGameState();
+        void setNextState(GameStateID gameID);
 
         void quit();
 
         bool isPlaying() const;
-        int getGameStateID() const;
+        GameStateID getGameStateID() const;
         SDL_Event getEvent() const;
         SDL_Renderer * getRenderer() const;
         SDL_Color getOutlineColor() const;

@@ -35,20 +35,23 @@ class BitmapFont {
         int spaceChar = 0;
         int newLineChar = 0;
 
+        // (native) screen resolution
+        int screenWidth,screenHeight;
+
         int H_PAD = 100;             // space between edge of window/text
 
-        // for text rendering (w/'typing' animation)        
+        // variables for text rendering (w/'typing' animation)        
         int textSpeed = 24;          // # of chars to render per second
         unsigned int currChar = 0;   // current character of string we've reached
 
         int renderX = 0;
         int renderY = 0;
 
-        float stringProgress = 0;   // how much of string has been typed (0-1)
-        bool rendering = false;     // if currently rendering
-        bool flashing = false;      // if text is flashing
+        float stringProgress = 0;           // how much of string has been typed (0-1)
+        bool renderingDynamic = false;      // if currently rendering
+        bool flashing = false;              // if text is flashing
 
-        std::string currString;     // current string to render
+        std::string currString;             // current (dynamic) strings to render
 
         // strings for parsing bmfont fnt->json file
         const std::string TEXTURE_LABEL = "pages";
@@ -59,20 +62,30 @@ class BitmapFont {
 
         void updateAlpha();
 
-    public:
-        BitmapFont(std::string configPath, SDL_Renderer * renderer);
-
         // build the font
         void buildFont(std::string configPath, SDL_Renderer* renderer);
 
+    public:
+        BitmapFont(std::string configPath, SDL_Renderer * renderer);
+
         // render text using the bitmap
-        void initRenderText(int x, int y, std::string text, bool typed,
-            bool flashing = false, Uint8 r = 0xFF, Uint8 g = 0xFF, Uint8 b = 0xFF);
+        void initRenderDynamicText(int x, int y, const std::string & text, 
+            bool typed, bool flashing = false);
+        
+        // dynamic/static text rendering
         void renderText(SDL_Renderer * renderer) const;
+        void renderText(SDL_Renderer * renderer, const std::string & text, 
+            int x, int y) const;
+        void renderText(SDL_Renderer * renderer, const std::string & text, 
+            int x, int y, unsigned int lastCharIdx) const;
+
 
         void updateText(float delta);
+        void setFontColor(SDL_Color fontColor);
 
-        bool isRendering() const;
+        bool isRenderingDynamic() const;
+        int getLineHeight() const;
+        int getTextWidth(std::string text) const;
 };
 
 

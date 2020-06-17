@@ -7,11 +7,18 @@
 #include <SDL.h>
 
 #include "utils/texture.hpp"
+#include "utils/bitmapfont.hpp"
 
 class Button {
     public:
+        // constructor for a plain button
         Button(int screenX, int screenY, bool clickable,
             std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor);
+
+        // constructor for a button to contain text inside
+        Button(int screenX, int screenY, bool clickable, 
+            std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor,
+            std::string label, std::shared_ptr<BitmapFont> labelFont);
 
         // mouse or keyboard events (depending on GUI type)
         void handleEvents(const SDL_Event & e);
@@ -28,6 +35,12 @@ class Button {
     private:
         std::shared_ptr<Texture> buttonSprite;
 
+        // if the button contains a custom label store it here
+        std::string buttonLabel;
+
+        // the font to use to render the label
+        std::shared_ptr<BitmapFont> buttonFont;
+
         // button outline
         SDL_Rect buttonOutline;
 
@@ -36,6 +49,9 @@ class Button {
 
         // position on screen
         int screenX, screenY;
+
+        // position of text
+        int labelX, labelY;
 
         // amt to shift r/g by for flashing effect
         int colorShiftMax;
@@ -47,7 +63,7 @@ class Button {
         // if button is part of clickable gui (or gamepad controlled focus)
         bool clickable;
 
-        // if the button is in gui focus
+        // if the button has gui focus
         bool inFocus = false;
 
         // whether the mouse is over/on the button + down or not
@@ -56,6 +72,11 @@ class Button {
 
         // use this to determine when to take action
         bool activated = false;
+
+        bool hasLabel;
+
+        int initLabelX();
+        int initLabelY();
 };
 
 #endif // BUTTON_HPP

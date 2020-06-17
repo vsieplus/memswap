@@ -2,11 +2,47 @@
 
 Button::Button(int screenX, int screenY, bool clickable, 
     std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor) : 
-    buttonSprite(buttonSprite), buttonOutline((SDL_Rect) {screenX - 1, 
-    screenY - 1, buttonSprite->getWidth() + 2, buttonSprite->getHeight() + 2}), 
-    outlineColor(outlineColor), screenX(screenX), screenY(screenY),
-    colorShiftMax(std::min(outlineColor.r, outlineColor.g)), currShift(0),
-    clickable(clickable) {}
+    Button(screenX, screenY, clickable, buttonSprite, outlineColor, "", nullptr) {}
+
+Button::Button(int screenX, int screenY, bool clickable,
+    std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor,
+    std::string label, std::shared_ptr<BitmapFont> labelFont) :
+    buttonSprite(buttonSprite), 
+    buttonLabel(label),
+    buttonFont(labelFont),
+    buttonOutline((SDL_Rect) {screenX - 1, screenY - 1, 
+        buttonSprite->getWidth() + 2, buttonSprite->getHeight() + 2}), 
+    outlineColor(outlineColor), 
+    screenX(screenX), 
+    screenY(screenY),
+    labelX(initLabelX()),
+    labelY(initLabelY()),
+    colorShiftMax(std::min(outlineColor.r, outlineColor.g)), 
+    currShift(0),
+    clickable(clickable),
+    hasLabel(labelFont != nullptr) {}
+
+int Button::initLabelX() {
+    int x = 0;
+
+    if(buttonFont.get() && !buttonLabel.empty()) {
+        x = screenX + buttonSprite->getWidth() / 2 -
+            buttonFont->getTextWidth(buttonLabel) / 2;
+    }
+
+    return x;
+}
+
+int Button::initLabelY() {
+    int y = 0;
+
+    if(buttonFont.get() && !buttonLabel.empty()) {
+        y = screenY + buttonSprite->getHeight() / 2 - 
+            buttonFont->getLineHeight() / 2;
+    }
+
+    return y;
+}
 
 void Button::handleEvents(const SDL_Event & e) {
     if(clickable) {
@@ -75,7 +111,6 @@ void Button::render(SDL_Renderer * renderer) const {
 
     // if button is in focus, draw an outline around the button
     if(inFocus) {
-
         SDL_SetRenderDrawColor(renderer, (outlineColor.r - currShift), 
             (outlineColor.g - currShift), outlineColor.b, outlineColor.a);
         SDL_RenderDrawRect(renderer, &buttonOutline);
@@ -84,6 +119,11 @@ void Button::render(SDL_Renderer * renderer) const {
         if(mouseDown) {
 
         }
+    }
+
+    // render text if on screen and has a label
+    if(hasLabel) {
+        buttonFont->renderText(renderer, buttonLabel, labelX, labelY);
     }
 }
 

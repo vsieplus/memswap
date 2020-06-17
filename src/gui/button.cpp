@@ -129,6 +129,9 @@ void Button::render(SDL_Renderer * renderer) const {
 
 void Button::setFocus(bool focus) {
     inFocus = focus;
+
+    // reset outline highlight
+    if(focus) currShift = 0;
 }
 
 bool Button::isActivated() const {

@@ -19,14 +19,13 @@ void SplashState::enterState(MemSwap * game) {
     // load splash textures prematurely
     bgTexture.loadTexture(game->getResManager().getResPath(BG_ID), 
         game->getRenderer());
-
-    // set advText render pos
-    advTextX = (7 * game->getScreenWidth() / 20);
-    advTextY = (3 * game->getScreenHeight() / 5);
 }
 
 void SplashState::exitState() {
-
+    // reset font alpha status
+    if(splashFont.get()) {
+        splashFont->setAlpha(0xFF);
+    }
 }
 
 // Events to handle during splash screen
@@ -47,16 +46,22 @@ void SplashState::update(MemSwap * game, float delta) {
             game->setNextState(GAME_STATE_PLAY);
         }
 
-        // retrieve loaded font
+        // retrieve font now that it's loaded
         if(!splashFont.get()) {
             splashFont = game->getResManager().getFont(FONT_ID);
         }
 
         // start rendering advance text graphic to signal user
-        if(!splashFont->isRendering()) {
+        if(!splashFont->isRenderingDynamic()) {                    
+            // set advText render pos
+            advTextX = (game->getScreenWidth() / 2) - 
+                (splashFont->getTextWidth(ADV_TEXT) / 2);
+            advTextY = (game->getScreenHeight() * 3 / 5);
+
             // typed and flashing, with dark green text
-            splashFont->initRenderText(advTextX, advTextY, ADV_TEXT, true, true,
-                0xA0, 0xFF, 0xE3);
+            splashFont->initRenderDynamicText(advTextX, advTextY, ADV_TEXT, 
+                TYPED, FLASHING);
+            splashFont->setFontColor((SDL_Color) {0xA0, 0xFF, 0xE3, 0xFF});
         } else {
             splashFont->updateText(delta);
         }
@@ -68,11 +73,11 @@ void SplashState::render(SDL_Renderer * renderer) const {
     // Render background
     bgTexture.render(0, 0, renderer);
 
-    // Render progress
-
-    // Render graphic indicating loading is done
-    if(!loadingRes) {
-        if(splashFont.get() && splashFont->isRendering()) {
+    // Render graphic indicating loading is done, or if still loading
+    if(loadingRes) {
+        
+    } else {
+        if(splashFont.get() && splashFont->isRenderingDynamic()) {
             splashFont->renderText(renderer);
         }
     }

@@ -3,10 +3,8 @@
 #ifndef SPLASHSTATE_HPP
 #define SPLASHSTATE_HPP
 
-#include <memory>
 #include <string>
 
-#include <SDL.h>
 #include <SDL_image.h>
 
 #include "gameStates/gamestate.hpp"
@@ -39,6 +37,10 @@ class SplashState : public GameState {
 
         bool loadingRes = true;     // if we're loading resources
         bool advance = false;       // if the user wants to advance
+
+        // typed/flashing advance message
+        const bool TYPED = true;
+        const bool FLASHING = true;
 };
 
 #endif // SPLASHSTATE_HPP

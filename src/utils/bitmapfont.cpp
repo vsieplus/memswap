@@ -136,6 +136,10 @@ void BitmapFont::setFontColor(SDL_Color fontColor) {
     bitmapTexture.setColor(fontColor.r, fontColor.g, fontColor.b);
 }
 
+void BitmapFont::setAlpha(Uint8 a) {
+    bitmapTexture.setAlpha(a);
+}
+
 bool BitmapFont::isRenderingDynamic() const {
     return renderingDynamic;
 }

@@ -132,7 +132,7 @@ void BitmapFont::updateAlpha() {
     bitmapTexture.updateAlpha();
 }
 
-void BitmapFont::setFontColor(SDL_Color fontColor) {
+void BitmapFont::setFontColor(const SDL_Color & fontColor) {
     bitmapTexture.setColor(fontColor.r, fontColor.g, fontColor.b);
 }
 
@@ -149,11 +149,11 @@ int BitmapFont::getLineHeight() const {
 }
 
 // get width of text in pixels (if on one line)
-int BitmapFont::getTextWidth(std::string text) const {
+int BitmapFont::getTextWidth(const std::string & text) const {
     int width = 0;
 
     for(unsigned int i = 0; i < text.length(); i++) {
-        int ascii = (unsigned char) text[i];
+        int ascii = (unsigned char) text.at(i);
 
         if(ascii == SPACE_CHAR) {
             width += spaceChar;

@@ -3,22 +3,20 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-#include <memory>
-#include <SDL.h>
+#include "gui/label.hpp"
 
-#include "utils/texture.hpp"
-#include "utils/bitmapfont.hpp"
-
-class Button {
+// inherit from label + add interaction/dynamic functionality
+class Button : public Label {
     public:
         // constructor for a plain button
         Button(int screenX, int screenY, bool clickable,
             std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor);
 
         // constructor for a button to contain text inside
-        Button(int screenX, int screenY, bool clickable, 
+        Button(int screenX, int screenY, bool clickable,
             std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor,
-            std::string label, std::shared_ptr<BitmapFont> labelFont);
+            std::string label, std::shared_ptr<BitmapFont> labelFont, 
+            SDL_Color textColor);
 
         // mouse or keyboard events (depending on GUI type)
         void handleEvents(const SDL_Event & e);
@@ -34,25 +32,11 @@ class Button {
         void setActivated(bool activated);
 
     private:
-        std::shared_ptr<Texture> buttonSprite;
-
-        // if the button contains a custom label store it here
-        std::string buttonLabel;
-
-        // the font to use to render the label
-        std::shared_ptr<BitmapFont> buttonFont;
-
         // button outline
         SDL_Rect buttonOutline;
 
         // outline color
         SDL_Color outlineColor;
-
-        // position on screen
-        int screenX, screenY;
-
-        // position of text
-        int labelX, labelY;
 
         // amt to shift r/g by for flashing effect
         int colorShiftMax;
@@ -73,8 +57,6 @@ class Button {
 
         // use this to determine when to take action
         bool activated = false;
-
-        bool hasLabel;
 
         int initLabelX();
         int initLabelY();

@@ -54,7 +54,7 @@ void PlayState::update(MemSwap * game, float delta) {
 
             // check if player ready to advance to next level or return to menu
             if(advanceLevel) {
-                
+                // 
             } else if (goToMenu) {
                 game->setNextState(GAME_STATE_MENU);
             }

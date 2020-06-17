@@ -137,3 +137,7 @@ void Button::setFocus(bool focus) {
 bool Button::isActivated() const {
     return activated;
 }
+
+void Button::setActivated(bool activated) {
+    this->activated = activated;
+}

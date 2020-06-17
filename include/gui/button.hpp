@@ -31,6 +31,7 @@ class Button {
         void setFocus(bool focus);
 
         bool isActivated() const;
+        void setActivated(bool activated);
 
     private:
         std::shared_ptr<Texture> buttonSprite;

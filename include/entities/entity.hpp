@@ -1,4 +1,4 @@
-// Abstract base class for entities
+// Abstract base class for entities (not using ECS for this proj's simplicity)
 
 #ifndef ENTITY_HPP
 #define ENTITY_HPP

@@ -17,7 +17,7 @@ class PlayState : public GameState {
         // Texture to show in the background
         std::shared_ptr<Texture> bgTexture;
 
-        const std::string BG_ID = "play_bg";
+        const std::string BG_ID = "play_menu_bg";
 
         // after a level is completed, handle user's choice
         bool levelComplete = false;

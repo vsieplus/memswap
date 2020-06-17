@@ -4,6 +4,7 @@
         "play_menu_bg": "misc/bg.png",
         "menu_menu_btn" : "menu/menuButton.png",
         "menu_lvl_btn" : "menu/levelButton.png",
+        "menu_back_arrow": "menu/backArrow.png",
         "pause_bg": "pause/bg.png",
         "pause_lvlselect_btn": "pause/levelSelectButton.png",
         "window_icon": "misc/windowIcon.png"

@@ -46,7 +46,7 @@ void PauseState::enterState(MemSwap * game) {
 }
 
 void PauseState::exitState() {
-    
+
 }
 
 void PauseState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -78,6 +78,7 @@ void PauseState::update(MemSwap * game, float delta) {
 
     // check if the current button has been activated
     if(buttons.at(currButton).isActivated()) {
+        buttons.at(currButton).setActivated(false);
         switch(currButton) {
             case RESUME_BTN:
                 game->setNextState(GAME_STATE_PLAY);

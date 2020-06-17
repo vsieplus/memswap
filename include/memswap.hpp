@@ -35,6 +35,16 @@ class MemSwap {
         const int NUM_CHANNELS = 2;
         const int SAMPLE_SIZE = 2048;
 
+        // player data/stats
+        int playTime;               // in hours:minutes (time in play state)
+        int levelsCompleted;        // level progress (out of 30)
+        int perfectPlays;           // levels completed with no resets
+        int tilesFlipped;           // total tiles flipped during play
+        int timesReset;             // total level resets
+
+
+        std::string playerName;
+
         const std::string GAME_TITLE = "ReverShade";
         const std::string RES_PATHS_FILE = "res/res_paths.json";
         const std::string ICON_ID = "window_icon";

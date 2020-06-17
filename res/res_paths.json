@@ -1,11 +1,10 @@
 {
     "images":{
         "splash_bg": "splash/bg.png",
-        "menu_bg": "menu/bg.png",
-        "play_bg": "play/bg.png",
+        "play_menu_bg": "misc/bg.png",
+        "menu_menu_btn" : "menu/menuButton.png",
+        "menu_lvl_btn" : "menu/levelButton.png",
         "pause_bg": "pause/bg.png",
-        "pause_resume_btn": "pause/resumeButton.png",
-        "pause_menu_btn": "pause/menuButton.png",
         "pause_lvlselect_btn": "pause/levelSelectButton.png",
         "window_icon": "misc/windowIcon.png"
     },

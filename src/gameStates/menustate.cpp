@@ -31,7 +31,14 @@ MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {
 
 
 void MenuState::enterState(MemSwap * game) {
-    // reset screen to main
+    // get current menu screen (or if first time entering, do nothing)
+    if(returning) {
+        currScreen = (MenuScreen) game->getCurrMenuScreen();
+        currButtonID = 0;
+        updateCurrButton();
+    } else {
+        returning = true;
+    }
 }
 
 void MenuState::exitState() {
@@ -81,6 +88,7 @@ void MenuState::addLvlSelectGUI(MemSwap * game) {
         lvlButton, menuFont, buttonAreaX, buttonAreaY, buttonAreaXEnd, buttonAreaYEnd,
         game->getOutlineColor(), game->getTitleColor(), MenuScreen::MENU_LVLS);
 
+    addBackButton(levelSelectButtons, game);
     stateButtons.emplace(MenuScreen::MENU_LVLS, levelSelectButtons);
 
     // labels
@@ -93,9 +101,10 @@ void MenuState::addLvlSelectGUI(MemSwap * game) {
 }
 
 void MenuState::addStatsGUI(MemSwap * game) {
-    std::vector<Button> StatsButtons;
+    std::vector<Button> statsButtons;
 
-    stateButtons.emplace(MenuScreen::MENU_STATS, StatsButtons);
+    addBackButton(statsButtons, game);
+    stateButtons.emplace(MenuScreen::MENU_STATS, statsButtons);
 
 
     std::vector<Label> statsLabels;
@@ -107,9 +116,10 @@ void MenuState::addStatsGUI(MemSwap * game) {
 }
 
 void MenuState::addConfigGUI(MemSwap * game) {
-    std::vector<Button> ConfigButtons;
+    std::vector<Button> configButtons;
 
-    stateButtons.emplace(MenuScreen::MENU_CONFIG, ConfigButtons);
+    addBackButton(configButtons, game);
+    stateButtons.emplace(MenuScreen::MENU_CONFIG, configButtons);
 
     std::vector<Label> configLabels;
 
@@ -122,7 +132,8 @@ void MenuState::addConfigGUI(MemSwap * game) {
 void MenuState::addCreditsGUI(MemSwap * game) {
     // only need a 'back' button
     std::vector<Button> creditsButtons;
-
+    
+    addBackButton(creditsButtons, game);
     stateButtons.emplace(MenuScreen::MENU_CREDITS, creditsButtons);
 
     std::vector<Label> creditsLabels;
@@ -131,6 +142,25 @@ void MenuState::addCreditsGUI(MemSwap * game) {
     addTitleLabel(creditsLabels, CREDITS_TITLE, false, game);
 
     stateLabels.emplace(MenuScreen::MENU_CREDITS, creditsLabels);
+}
+
+
+// add a 'back' button as the last button to the given vector 
+// (bottom right of previous buttons, or center if none)
+void MenuState::addBackButton(std::vector<Button> & buttons, MemSwap * game) {
+    auto backButton = game->getResManager().getTexture(BACK_BUTTON_ID);
+    
+    int lastX, lastY;
+
+    if(buttons.empty()) {
+        lastX = game->getScreenWidth() / 2 - backButton->getWidth() / 2;
+        lastY = game->getScreenHeight() / 2 - backButton->getHeight() / 2;
+    } else {
+        lastX = buttons.back().getScreenX() + BG_PAD;
+        lastY = buttons.back().getScreenY() + BG_PAD;
+    }
+
+    buttons.emplace_back(lastX, lastY, CLICKABLE, backButton, game->getOutlineColor());
 }
 
 void MenuState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -144,7 +174,6 @@ void MenuState::handleEvents(MemSwap * game, const SDL_Event & e) {
 
 // general function to change the current button focus (for any screen)
 void MenuState::changeCurrButton(const SDL_Event & e) {
-    currButton->setFocus(false);
     auto sym = e.key.keysym.sym;
 
     // depending on dir, change button in current direction, depending on 
@@ -158,58 +187,85 @@ void MenuState::changeCurrButton(const SDL_Event & e) {
 
     int nextID = -1;
 
+    auto & currButtons = stateButtons.at(currScreen);
+
+    bool hasBackButton = currScreen != MenuScreen::MENU_MAIN;
+    bool onLastButton = (unsigned int) currButtonID == currButtons.size() - 2;
+    bool onBackButton = checkOnBackButton();
+
     switch(sym) {
         // user wants to move up
         case SDLK_w:
-            // compute hypothetical next button
+            // compute hypothetical next button (special case moving from back btn)
             nextID = currButtonID - rowBtns;
 
             // check for up move on first row -> same col, last row
             if(nextID < 0) {
                 currButtonID = (totalBtns - ((rowBtns - 1) - currButtonID)) - 1;
             } else {
-                currButtonID = nextID;
+                currButtonID = onBackButton ? currButtons.size() - 2 : nextID;
             }
             break;
         
-        // similar as above
+        // left
         case SDLK_a:
             nextID = currButtonID - 1;
 
             // move left when on first column -> last column, same row
-            if(currButtonID % rowBtns == 0) {
-                currButtonID = (currButtonID / rowBtns) * colBtns + colBtns - 1;
+            if(!onBackButton && currButtonID % rowBtns == 0) {
+                currButtonID += (rowBtns - 1);
             } else {
-                currButtonID = nextID;
+                currButtonID = onBackButton ? currButtons.size() - 2 : nextID;
             }
             break;
+
+        // down
         case SDLK_s:
+            // do nothing of on back button currently
+            if(onBackButton) break;
+
             nextID = currButtonID + rowBtns;
 
             // moving down when on last row [move to first row in same col.]
             if(nextID > totalBtns - 1) {
-                currButtonID = currButtonID % rowBtns;
+                // if on (second to last) button, go to back button (for non-main screens)
+                if(hasBackButton && onLastButton) {
+                    currButtonID = currButtons.size() - 1;
+                } else {
+                    currButtonID = currButtonID % rowBtns;
+                }
             } else {
                 currButtonID = nextID;
             }
             break;
+
+        // right
         case SDLK_d:
+            if(onBackButton) break;
+
             nextID = currButtonID + 1;
 
             // moving right when on last column
             if((currButtonID + 1) % rowBtns == 0) {
-                currButtonID = (currButtonID / rowBtns) * colBtns;
+                // check for back button like above
+                if(hasBackButton && onLastButton) {                    
+                    currButtonID = currButtons.size() - 1;
+                } else {
+                    currButtonID -= (rowBtns - 1);
+                }
             } else {
                 currButtonID = nextID;
             }
             break;      
-        default:        
-            break;                                         
+        default:
+            // if some other key was pressed, don't bother changing focus 
+            return;                                         
     }
 
     updateCurrButton();
 }
 
+// update the current button and check for activations
 void MenuState::update(MemSwap * game, float delta) {
     currButton->update();
 
@@ -217,30 +273,36 @@ void MenuState::update(MemSwap * game, float delta) {
     if(currButton->isActivated()) {
         currButton->setActivated(false);
 
-        switch(currScreen) {
-            case MenuScreen::MENU_MAIN:
-                activateMain();
-                break;
-            case MenuScreen::MENU_LVLS:
-                activateLvlSelect();
-                break;
-            case MenuScreen::MENU_STATS:
-                activateStats();
-                break;
-            case MenuScreen::MENU_CONFIG:
-                activateConfig();
-                break;
-            case MenuScreen::MENU_CREDITS:
-                activateCredits();
-                break;
+        // if on the back button (for non-main screens), reset to main
+        if(checkOnBackButton()) {
+            currScreen = MenuScreen::MENU_MAIN;
+            currButtonID = 0;
+            updateCurrButton();
+        } else {
+            // otherwise look for other corresponding activations
+            switch(currScreen) {
+                case MenuScreen::MENU_MAIN:
+                    activateMain();
+                    break;
+                case MenuScreen::MENU_LVLS:
+                    activateLvlSelect(game);
+                    break;
+                case MenuScreen::MENU_STATS:
+                    activateStats();
+                    break;
+                case MenuScreen::MENU_CONFIG:
+                    activateConfig();
+                    break;
+                case MenuScreen::MENU_CREDITS:
+                    activateCredits();
+                    break;
+            }
         }
     }
 }
 
 // handle button activations for each screen
 void MenuState::activateMain() {
-    currButton->setFocus(false);
-
     switch(currButtonID) {
         case MainButton::MAIN_LVLS:
             currScreen = MenuScreen::MENU_LVLS;
@@ -261,8 +323,12 @@ void MenuState::activateMain() {
     updateCurrButton();
 }
 
-void MenuState::activateLvlSelect() {
-    
+void MenuState::activateLvlSelect(MemSwap * game) {
+    auto levelID = currButton->getText();
+
+    // move to play state + set correct level id
+    game->setNextState(GAME_STATE_PLAY);
+    game->setCurrLevelID(levelID);
 }
 
 void MenuState::activateStats() {
@@ -279,6 +345,7 @@ void MenuState::activateCredits() {
 
 // call this whenever currScreen/currButtonID changes
 void MenuState::updateCurrButton() {
+    currButton->setFocus(false);
     currButton = &(stateButtons.at(currScreen).at(currButtonID));
     currButton->setFocus(true);
 }
@@ -363,4 +430,15 @@ void MenuState::addTitleLabel(std::vector<Label> & labels, std::string label,
 
     labels.emplace_back(titleX, titleY, labelSprite, menuFont, label,
         game->getTitleColor());
+}
+
+// check if currently on a 'back' button
+bool MenuState::checkOnBackButton() const {
+    auto & currButtons = stateButtons.at(currScreen);
+
+    // bools for back button handling
+    bool hasBackBtn = currScreen != MenuScreen::MENU_MAIN;
+    bool onBackBtn = (unsigned int) currButtonID == currButtons.size() - 1;
+
+    return hasBackBtn && onBackBtn;
 }

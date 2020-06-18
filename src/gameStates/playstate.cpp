@@ -1,6 +1,7 @@
 // implementation for Play state
 
 #include "memswap.hpp"
+#include "gameStates/menustate.hpp"
 #include "gameStates/playstate.hpp"
 
 PlayState::PlayState() : GameState(GAME_STATE_PLAY) {}
@@ -9,12 +10,12 @@ void PlayState::enterState(MemSwap * game) {
     // retrieve bg texture
     bgTexture = game->getResManager().getTexture(BG_ID);
 
-    // load level (if not paused)
-    if(!paused) {
-        std::string levelPath = game->getResManager().getResPath("testing"); 
+    // load current level (if entering from non-paused state)
+    if(!game->isPaused()) {
+        std::string levelPath = game->getResManager().getResPath(game->getCurrLevelID()); 
         level = Level(levelPath, game->getRenderer(), game);
     } else {
-        paused = false;
+        game->setPaused(false);
     }
 }
 
@@ -34,7 +35,7 @@ void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
             // level.reset();
         } else if(keyStates[SDL_SCANCODE_ESCAPE]) {
             // Check for pause
-            paused = true;
+            game->setPaused(true);
         }
 
         level.handleEvents(keyStates);
@@ -42,7 +43,7 @@ void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
 }
 
 void PlayState::update(MemSwap * game, float delta) {
-    if(paused) {
+    if(game->isPaused()) {
         game->setNextState(GAME_STATE_PAUSE);
     } else {
         level.update(delta);
@@ -57,6 +58,7 @@ void PlayState::update(MemSwap * game, float delta) {
                 // 
             } else if (goToMenu) {
                 game->setNextState(GAME_STATE_MENU);
+                game->setCurrMenuScreen(MenuState::MenuScreen::MENU_LVLS);
             }
         }
     }
@@ -73,12 +75,4 @@ void PlayState::render(SDL_Renderer * renderer) const {
     if(levelComplete) {
 
     }
-}
-
-void PlayState::setPaused(bool paused) {
-    this->paused = paused;
-}
-
-bool PlayState::isPaused() const {
-    return paused;
 }

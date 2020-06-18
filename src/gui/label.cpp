@@ -42,3 +42,15 @@ void Label::render(SDL_Renderer * renderer) const {
         labelFont->renderText(renderer, labelText, textX, textY);
     }
 }
+
+std::string Label::getText() const {
+    return labelText;
+}
+
+int Label::getScreenX() const {
+    return screenX;
+}
+
+int Label::getScreenY() const {
+    return screenY;
+}

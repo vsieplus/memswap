@@ -25,8 +25,7 @@ class MenuState : public GameState {
         void handleEvents(MemSwap * game, const SDL_Event & e) override;
         void update(MemSwap * game, float delta) override;
         void render(SDL_Renderer * renderer) const override;
-    
-    private:
+
         // enums for menu screens/their buttons
         enum MenuScreen {
             MENU_MAIN,        // main menu
@@ -35,7 +34,8 @@ class MenuState : public GameState {
             MENU_CONFIG,      // options/settings
             MENU_CREDITS,     // credits
         };
-
+    
+    private:
         enum MainButton {
             MAIN_LVLS,
             MAIN_STATS,
@@ -47,14 +47,17 @@ class MenuState : public GameState {
 
         const bool CLICKABLE = false;
 
+        // if returning to the menu state, or first time entering
+        bool returning = false;
+
         // ID's for gui resources
         const std::string FONT_ID = "mainFont";
         const std::string BG_ID = "play_menu_bg";
         const std::string MENU_BUTTON_ID = "menu_menu_btn";
         const std::string LVL_BUTTON_ID = "menu_lvl_btn";
+        const std::string BACK_BUTTON_ID = "menu_back_btn";
         const std::string MENU_LABEL_LONG_ID = "menu_label_long";
         const std::string MENU_LABEL_SHORT_ID = "menu_label_short";
-        const std::string MENU_BACK_ARROW_ID = "menu_back_arrow";
         const std::string MENU_STATS_BOARD_ID = "menu_stats_board";
 
         // titles for menu screens
@@ -111,15 +114,19 @@ class MenuState : public GameState {
         void addConfigGUI(MemSwap * game);
         void addCreditsGUI(MemSwap * game);
 
+        void addBackButton(std::vector<Button> & buttons, MemSwap * game);
+
         void changeCurrButton(const SDL_Event & e);
         void updateCurrButton();
 
         // handle button activations for each screen
         void activateMain();
-        void activateLvlSelect();
+        void activateLvlSelect(MemSwap * game);
         void activateStats();
         void activateConfig();
         void activateCredits();
+
+        bool checkOnBackButton() const;
 
         // construct and return vector of spaced buttons
         std::vector<Button> getSpacedButtons(

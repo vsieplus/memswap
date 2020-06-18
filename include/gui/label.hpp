@@ -18,6 +18,10 @@ class Label {
 
         void render(SDL_Renderer * renderer) const;
 
+        std::string getText() const;
+        int getScreenX() const;
+        int getScreenY() const;
+
     protected:
         std::shared_ptr<Texture> labelSprite;
         std::string labelText;

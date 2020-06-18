@@ -210,7 +210,6 @@ void MemSwap::changeState() {
 
             if(nextGameState.get()) {
                 addGameState(nextState, nextGameState);
-                gameStates.at(nextState)->enterState(this);
             }
         }
 
@@ -221,6 +220,7 @@ void MemSwap::changeState() {
         }
 
         // update curr state
+        gameStates.at(nextState)->enterState(this);
         currState = nextState;
     }
 }
@@ -273,8 +273,24 @@ int MemSwap::getScreenHeight() const {
     return screenHeight;
 }
 
+int MemSwap::getCurrMenuScreen() const {
+    return currMenuScreen;
+}
+
 std::string MemSwap::getGameTitle() const {
     return GAME_TITLE;
+}
+
+void MemSwap::setCurrLevelID(std::string levelID) {
+    currLevelID = levelID;
+}
+
+void MemSwap::setCurrMenuScreen(int screenID) {
+    currMenuScreen = screenID;
+}
+
+std::string MemSwap::getCurrLevelID() const {
+    return currLevelID;
 }
 
 ResManager & MemSwap::getResManager() {
@@ -291,4 +307,12 @@ SDL_Color MemSwap::getButtonTextColor() const {
 
 SDL_Color MemSwap::getTitleColor() const {
     return TITLE_COLOR;
+}
+
+void MemSwap::setPaused(bool paused) {
+    this->paused = paused;
+}
+
+bool MemSwap::isPaused() const {
+    return paused;
 }

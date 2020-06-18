@@ -10,6 +10,7 @@
  */
 
 #include "memswap.hpp"
+#include "gameStates/menustate.hpp"
 #include "gameStates/pausestate.hpp"
 
 PauseState::PauseState(MemSwap * game) : GameState(GAME_STATE_PAUSE) {
@@ -85,16 +86,21 @@ void PauseState::update(MemSwap * game, float delta) {
     // check if the current button has been activated
     if(buttons.at(currButton).isActivated()) {
         buttons.at(currButton).setActivated(false);
+        buttons.at(currButton).setFocus(false);
+
         switch(currButton) {
             case RESUME_BTN:
                 game->setNextState(GAME_STATE_PLAY);
                 break;
             case MENU_BTN:
+                game->setPaused(false);
                 game->setNextState(GAME_STATE_MENU);
+                game->setCurrMenuScreen(MenuState::MenuScreen::MENU_MAIN);
                 break;
             case LVLSELECT_BTN:
+                game->setPaused(false);
                 game->setNextState(GAME_STATE_MENU);
-                // setMenuPos(... lvl select)
+                game->setCurrMenuScreen(MenuState::MenuScreen::MENU_LVLS);
                 break;
         }
     }

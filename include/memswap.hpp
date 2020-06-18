@@ -35,6 +35,9 @@ class MemSwap {
         const int NUM_CHANNELS = 2;
         const int SAMPLE_SIZE = 2048;
 
+        // current menu screen id
+        int currMenuScreen;
+
         // player data/stats
         int playTime;               // in hours:minutes (time in play state)
         int levelsCompleted;        // level progress (out of 30)
@@ -48,7 +51,10 @@ class MemSwap {
         const std::string RES_PATHS_FILE = "res/res_paths.json";
         const std::string ICON_ID = "window_icon";
 
+        std::string currLevelID;
+
         bool playing = true;
+        bool paused = false;
 
         bool minimized = false;
         bool fullscreen = false; // Press F11 to toggle fullscreen
@@ -117,7 +123,16 @@ class MemSwap {
         int getScreenWidth() const;
         int getScreenHeight() const;
 
+        int getCurrMenuScreen() const;
+
+        void setCurrLevelID(std::string levelID);
+        void setCurrMenuScreen(int screenID);
+
         std::string getGameTitle() const;
+        std::string getCurrLevelID() const;
+
+        void setPaused(bool paused);
+        bool isPaused() const;
 
         ResManager & getResManager();
 };

@@ -43,7 +43,7 @@ void SplashState::update(MemSwap * game, float delta) {
     } else {
         if (advance) {
             // Otherwise finish the SPLASH state and set next as the MENU state
-            game->setNextState(GAME_STATE_PLAY);
+            game->setNextState(GAME_STATE_MENU);
         }
 
         // retrieve font now that it's loaded

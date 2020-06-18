@@ -24,9 +24,6 @@ class PlayState : public GameState {
         bool advanceLevel = false;
         bool goToMenu = false;
 
-        // track if paused
-        bool paused = false;
-
     public:
         PlayState();
 
@@ -36,9 +33,6 @@ class PlayState : public GameState {
         void handleEvents(MemSwap * game, const SDL_Event & e) override;
         void update(MemSwap * game, float delta) override;
         void render(SDL_Renderer * renderer) const override;
-
-        void setPaused(bool paused);
-        bool isPaused() const;
 };
 
 #endif // PLAYSTATE_HPP

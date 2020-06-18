@@ -14,9 +14,8 @@ class Button : public Label {
 
         // constructor for a button to contain text inside
         Button(int screenX, int screenY, bool clickable,
-            std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor,
-            std::string label, std::shared_ptr<BitmapFont> labelFont, 
-            SDL_Color textColor);
+            std::shared_ptr<Texture> buttonSprite, std::shared_ptr<BitmapFont> labelFont,
+            SDL_Color outlineColor, SDL_Color textColor, std::string label);
 
         // mouse or keyboard events (depending on GUI type)
         void handleEvents(const SDL_Event & e);

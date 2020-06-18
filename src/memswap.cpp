@@ -273,10 +273,22 @@ int MemSwap::getScreenHeight() const {
     return screenHeight;
 }
 
+std::string MemSwap::getGameTitle() const {
+    return GAME_TITLE;
+}
+
 ResManager & MemSwap::getResManager() {
     return resourceManager;
 }
 
 SDL_Color MemSwap::getOutlineColor() const {
-    return outlineColor;
+    return OUTLINE_COLOR;
+}
+
+SDL_Color MemSwap::getButtonTextColor() const {
+    return BUTTON_TEXT_COLOR;
+}
+
+SDL_Color MemSwap::getTitleColor() const {
+    return TITLE_COLOR;
 }

@@ -39,58 +39,84 @@ void MenuState::exitState() {
 
 // functions to add buttons for the specified screen
 void MenuState::addMainGUI(MemSwap * game) {
-    // add title
-
-
-    // add buttons
-    std::vector<Button> mainButtons;
-
-    // calc. button spacing in bottom (2/3) [4 buttons, 2 rows] inside border
-    int interButtonVSpace = (((game->getScreenHeight() - (game->getScreenHeight()
-        - (2 * BG_PAD)) / 3) - (BUTTON_HEIGHT * (MAIN_LABELS.size() / 2))) 
-        / (MAIN_LABELS.size() / 2 + 1)) / 2;
-    int interButtonHSpace = ((game->getScreenWidth() - BG_PAD) - (BUTTON_WIDTH *
-        (MAIN_LABELS.size() / 2))) / (MAIN_LABELS.size() / 2 + 1);
-
-    // start placing buttons in bottom 2/3 of inner-bg area
+    // start placing menu buttons in bottom 2/3 of inner-bg area
     int buttonAreaX = BG_PAD;
     int buttonAreaY = BG_PAD + ((game->getScreenHeight() - (2 * BG_PAD)) / 3);
+   
+    int buttonAreaXEnd = game->getScreenWidth() - BG_PAD;
+    int buttonAreaYEnd = game->getScreenHeight() - BG_PAD;
 
-    for(unsigned int i = 0; i < MAIN_LABELS.size() / 2; i++) {
-        for(unsigned int j = 0; j < MAIN_LABELS.size() / 2; j++) {
-            mainButtons.emplace_back(buttonAreaX + (j * BUTTON_WIDTH) + ((j + 1) *
-                interButtonHSpace), buttonAreaY + (i * BUTTON_HEIGHT) + ((i + 1) *
-                interButtonVSpace), CLICKABLE, 
-                game->getResManager().getTexture(MENU_BUTTON_ID), 
-                game->getOutlineColor(), MAIN_LABELS.at((i * 2) + j), menuFont);
-        }
-    }
+    auto menuButton = game->getResManager().getTexture(MENU_BUTTON_ID);
 
+    // get buttons spaced evenly
+    std::vector<Button> mainButtons = getSpacedButtons(MAIN_LABELS, menuButton,
+        menuFont, buttonAreaX, buttonAreaY, buttonAreaXEnd, buttonAreaYEnd,
+        game->getOutlineColor(), game->getButtonTextColor(), MenuScreen::MENU_MAIN);
+
+    // set focus of first button in main menu
     mainButtons.front().setFocus(true);
 
     stateButtons.emplace(MenuScreen::MENU_MAIN, mainButtons);
-    screenLayouts.emplace(MenuScreen::MENU_MAIN, std::make_pair<int, int>(2, 2));
+    
+    // add title label
+    std::vector<Label> mainLabels;
+    addTitleLabel(mainLabels, game->getGameTitle(), true, game);
+
+    stateLabels.emplace(MenuScreen::MENU_MAIN, mainLabels);
 }
 
 void MenuState::addLvlSelectGUI(MemSwap * game) {
-    std::vector<Button> LvlSelectButtons;
+    // start placing buttons in bottom 4/5 of inner-bg area
+    int buttonAreaX = BG_PAD;
+    int buttonAreaY = BG_PAD + ((game->getScreenHeight() - (2 * BG_PAD)) / 5);
 
-    stateButtons.emplace(MenuScreen::MENU_LVLS, LvlSelectButtons);
-    screenLayouts.emplace(MenuScreen::MENU_LVLS, std::make_pair(LVLS_COLS, LVLS_ROWS));
+    int buttonAreaXEnd = game->getScreenWidth() - BG_PAD;
+    int buttonAreaYEnd = game->getScreenHeight() - BG_PAD;
+
+    // calc. button spacing in bottom [3 rows, 10 columns] inside border
+    auto lvlButton = game->getResManager().getTexture(LVL_BUTTON_ID);
+
+    // get level buttons
+    std::vector<Button> levelSelectButtons = getSpacedButtons(LVLS_LABELS, 
+        lvlButton, menuFont, buttonAreaX, buttonAreaY, buttonAreaXEnd, buttonAreaYEnd,
+        game->getOutlineColor(), game->getTitleColor(), MenuScreen::MENU_LVLS);
+
+    stateButtons.emplace(MenuScreen::MENU_LVLS, levelSelectButtons);
+
+    // labels
+    std::vector<Label> lvlsLabels;
+
+    // title label
+    addTitleLabel(lvlsLabels, LVL_SELECT_TITLE, true, game);
+
+    stateLabels.emplace(MenuScreen::MENU_LVLS, lvlsLabels);
 }
 
 void MenuState::addStatsGUI(MemSwap * game) {
     std::vector<Button> StatsButtons;
 
     stateButtons.emplace(MenuScreen::MENU_STATS, StatsButtons);
-    screenLayouts.emplace(MenuScreen::MENU_STATS, std::make_pair<int, int>(2, 1));
+
+
+    std::vector<Label> statsLabels;
+
+    // title label
+    addTitleLabel(statsLabels, STATS_TITLE, true, game);
+
+    stateLabels.emplace(MenuScreen::MENU_STATS, statsLabels);
 }
 
 void MenuState::addConfigGUI(MemSwap * game) {
     std::vector<Button> ConfigButtons;
 
     stateButtons.emplace(MenuScreen::MENU_CONFIG, ConfigButtons);
-    screenLayouts.emplace(MenuScreen::MENU_CONFIG, std::make_pair<int, int>(1, 1));
+
+    std::vector<Label> configLabels;
+
+    // title label
+    addTitleLabel(configLabels, CONFIG_TITLE, false, game);
+
+    stateLabels.emplace(MenuScreen::MENU_CONFIG, configLabels);
 }
 
 void MenuState::addCreditsGUI(MemSwap * game) {
@@ -98,7 +124,13 @@ void MenuState::addCreditsGUI(MemSwap * game) {
     std::vector<Button> creditsButtons;
 
     stateButtons.emplace(MenuScreen::MENU_CREDITS, creditsButtons);
-    screenLayouts.emplace(MenuScreen::MENU_CREDITS, std::make_pair<int, int>(1, 1));
+
+    std::vector<Label> creditsLabels;
+
+    // title label
+    addTitleLabel(creditsLabels, CREDITS_TITLE, false, game);
+
+    stateLabels.emplace(MenuScreen::MENU_CREDITS, creditsLabels);
 }
 
 void MenuState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -119,7 +151,7 @@ void MenuState::changeCurrButton(const SDL_Event & e) {
     // button layout of the current screen
 
     // .first = buttons per row, .second = buttons per column
-    auto layout = screenLayouts.at(currScreen);
+    auto layout = BTN_LAYOUTS.at(currScreen);
     int & rowBtns = layout.first;
     int & colBtns = layout.second;
     int totalBtns = rowBtns * colBtns;
@@ -250,4 +282,76 @@ void MenuState::render(SDL_Renderer * renderer) const {
     for(Button button: stateButtons.at(currScreen)) {
         button.render(renderer);
     }
+
+    // render labels for the current screen
+    for(Label label: stateLabels.at(currScreen)) {
+        label.render(renderer);
+    }
 }
+
+// util functions to automatically compute space to evenly space 
+// buttons/gui elems in a specified area
+int MenuState::calculateInterHSpace(int buttonsPerRow, int buttonWidth, 
+    int startX, int endX) {
+
+    return ((endX - startX) - (buttonsPerRow * buttonWidth)) / (buttonsPerRow + 1);
+}
+
+int MenuState::calculateInterVSpace(int buttonsPerCol, int buttonHeight, 
+    int startY, int endY) {
+
+    return ((endY - startY) - (buttonsPerCol * buttonHeight)) / (buttonsPerCol + 1);
+}
+
+std::vector<Button> MenuState::getSpacedButtons (
+    const std::vector<std::string> & buttonLabels,
+    const std::shared_ptr<Texture> & buttonTexture, 
+    const std::shared_ptr<BitmapFont> & buttonFont,
+    int buttonAreaX, int buttonAreaY, int buttonAreaXEnd, int buttonAreaYEnd, 
+    SDL_Color outlineColor, SDL_Color textColor,
+    MenuScreen screen) const {
+
+    // compute inter-button spacings
+    auto dims = BTN_LAYOUTS.at(screen);
+    int rows = dims.first;
+    int cols = dims.second;
+                            
+    int interHSpace = calculateInterHSpace(cols, buttonTexture->getWidth(), 
+        buttonAreaX, buttonAreaXEnd);
+    int interVSpace = calculateInterVSpace(rows, buttonTexture->getHeight(),
+        buttonAreaY, buttonAreaYEnd);
+
+    std::vector<Button> buttons;
+
+    int buttonWidth = buttonTexture->getWidth();
+    int buttonHeight = buttonTexture->getHeight();
+
+    // add each of the four buttons
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            buttons.emplace_back(buttonAreaX + (j * buttonWidth) + ((j + 1) *
+                interHSpace), buttonAreaY + (i * buttonHeight) + ((i + 1) *
+                interVSpace), CLICKABLE, buttonTexture, buttonFont,
+                outlineColor, textColor, buttonLabels.at((i * 2) + j));
+        }
+    }
+
+    return buttons;
+}
+
+// general function to add a title label to the passed vector (modifies it)
+void MenuState::addTitleLabel(std::vector<Label> & labels, std::string label,
+    bool longLabel, MemSwap * game) const {
+        
+    // get correct label texture
+    auto labelID = longLabel ? MENU_LABEL_LONG_ID : MENU_LABEL_SHORT_ID;
+    auto labelSprite = game->getResManager().getTexture(labelID);
+
+    // compute coords (center title label)
+    int titleX = game->getScreenWidth() / 2 - labelSprite->getWidth() / 2;
+    int titleY = BG_PAD + (game->getScreenHeight() - (2 * BG_PAD)) / 6 -
+        labelSprite->getHeight() / 2;
+
+    labels.emplace_back(titleX, titleY, labelSprite, menuFont, label,
+        game->getTitleColor());
+} 

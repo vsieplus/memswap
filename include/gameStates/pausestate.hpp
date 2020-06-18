@@ -47,6 +47,9 @@ class PauseState : public GameState {
         // track current button in focus
         int currButton = RESUME_BTN;
 
+        // non-clickable menu
+        const bool CLICKABLE = false; 
+
         void addButtons(MemSwap * game);
         void changeCurrButton(bool left);
 };

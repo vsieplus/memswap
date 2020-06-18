@@ -1,10 +1,10 @@
 #include "gui/label.hpp"
 
 Label::Label(int screenX, int screenY, std::shared_ptr<Texture> labelSprite) :
-    Label(screenX, screenY, labelSprite, "", nullptr, (SDL_Color) {0, 0, 0, 0}){}
+    Label(screenX, screenY, labelSprite, nullptr, "", (SDL_Color) {0, 0, 0, 0}){}
 
 Label::Label(int screenX, int screenY, std::shared_ptr<Texture> labelSprite,
-    std::string labelText, std::shared_ptr<BitmapFont> labelFont, SDL_Color textColor) : 
+    std::shared_ptr<BitmapFont> labelFont, std::string labelText,  SDL_Color textColor) : 
     labelSprite(labelSprite), labelText(labelText), labelFont(labelFont), 
     textColor(textColor),
     screenX(screenX), screenY(screenY),

@@ -30,10 +30,14 @@ void PauseState::addButtons(MemSwap * game) {
         emptyButton->getWidth())) / (BUTTON_LABELS.size() + 1);
 
     // resume, menu, + lvl select
+    auto pauseFont = game->getResManager().getFont(FONT_ID);
+    auto outlineColor = game->getOutlineColor();
+    auto textColor = game->getButtonTextColor();
+
     for(unsigned int i = 0; i < BUTTON_LABELS.size() ; i++) {
         buttons.emplace_back((i + 1) * interButtonSpace + i * emptyButton->getWidth(), 
-        buttonY, false, emptyButton, game->getOutlineColor(), BUTTON_LABELS.at(i),
-        game->getResManager().getFont(FONT_ID));
+        buttonY, CLICKABLE, emptyButton, pauseFont, outlineColor, textColor,
+        BUTTON_LABELS.at(i));
         
     }
     

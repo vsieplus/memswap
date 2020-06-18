@@ -13,7 +13,7 @@ class Label {
 
         // with text
         Label(int screenX, int screenY, std::shared_ptr<Texture> labelSprite,
-            std::string label, std::shared_ptr<BitmapFont> labelFont,
+            std::shared_ptr<BitmapFont> labelFont, std::string label, 
             SDL_Color textColor);
 
         void render(SDL_Renderer * renderer) const;

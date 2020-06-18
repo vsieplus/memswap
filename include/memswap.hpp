@@ -42,10 +42,9 @@ class MemSwap {
         int tilesFlipped;           // total tiles flipped during play
         int timesReset;             // total level resets
 
-
         std::string playerName;
 
-        const std::string GAME_TITLE = "ReverShade";
+        const std::string GAME_TITLE = "Purple Puzzles";
         const std::string RES_PATHS_FILE = "res/res_paths.json";
         const std::string ICON_ID = "window_icon";
 
@@ -58,8 +57,16 @@ class MemSwap {
         SDL_Renderer * renderer;
         SDL_Event e;
 
-        // outline color (for gui elements)
-        SDL_Color outlineColor = {0x83, 0x86, 0xF5, 0xFF};
+        // colors for GUI
+
+        // outline color (for gui elements) [light purplish]
+        const SDL_Color OUTLINE_COLOR = {0x83, 0x86, 0xF5, 0xFF};
+        
+        // for button text (light greenish)
+        const SDL_Color BUTTON_TEXT_COLOR = {0xA0, 0xFF, 0xE3, 0xFF};
+
+        // for title text (black)
+        const SDL_Color TITLE_COLOR = {0x00, 0x00, 0x00, 0xFF};
 
         // map for tracking the game states/the current state
         std::unordered_map<GameStateID, std::unique_ptr<GameState>> gameStates;
@@ -102,10 +109,15 @@ class MemSwap {
         GameStateID getGameStateID() const;
         SDL_Event getEvent() const;
         SDL_Renderer * getRenderer() const;
+
         SDL_Color getOutlineColor() const;
+        SDL_Color getButtonTextColor() const;
+        SDL_Color getTitleColor() const;
 
         int getScreenWidth() const;
         int getScreenHeight() const;
+
+        std::string getGameTitle() const;
 
         ResManager & getResManager();
 };

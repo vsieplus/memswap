@@ -2,13 +2,13 @@
 
 Button::Button(int screenX, int screenY, bool clickable, 
     std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor) : 
-    Button(screenX, screenY, clickable, buttonSprite, outlineColor, "", nullptr,
-        (SDL_Color) {0, 0, 0, 0}) {}
+    Button(screenX, screenY, clickable, buttonSprite, nullptr, outlineColor, 
+        (SDL_Color) {0, 0, 0, 0}, "") {}
 
 Button::Button(int screenX, int screenY, bool clickable,
-    std::shared_ptr<Texture> buttonSprite, SDL_Color outlineColor,
-    std::string label, std::shared_ptr<BitmapFont> labelFont, SDL_Color textColor) :
-    Label(screenX, screenY, buttonSprite, label, labelFont, textColor),
+    std::shared_ptr<Texture> buttonSprite, std::shared_ptr<BitmapFont> labelFont,
+    SDL_Color outlineColor, SDL_Color textColor, std::string label) :
+    Label(screenX, screenY, buttonSprite, labelFont, label, textColor),
     buttonOutline((SDL_Rect) {screenX - 1, screenY - 1, 
         buttonSprite->getWidth() + 2, buttonSprite->getHeight() + 2}), 
     outlineColor(outlineColor),

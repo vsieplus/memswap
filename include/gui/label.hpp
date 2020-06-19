@@ -8,19 +8,29 @@
 
 class Label {
     public:
+        // enum for label text alignment
+        enum TextAlignment {
+            ALIGN_LEFT,         // left align
+            ALIGN_CENTER,       // center text
+            ALIGN_RIGHT,        // right align
+        };
+
         // without text
         Label(int screenX, int screenY, std::shared_ptr<Texture> labelSprite);
 
         // with text
         Label(int screenX, int screenY, std::shared_ptr<Texture> labelSprite,
             std::shared_ptr<BitmapFont> labelFont, std::string label, 
-            SDL_Color textColor);
+            SDL_Color textColor, TextAlignment textAlignment = ALIGN_CENTER);
 
         void render(SDL_Renderer * renderer) const;
 
+        void setText(std::string text);
         std::string getText() const;
         int getScreenX() const;
         int getScreenY() const;
+        int getWidth() const;
+        int getHeight() const;
 
     protected:
         std::shared_ptr<Texture> labelSprite;
@@ -28,6 +38,11 @@ class Label {
         std::shared_ptr<BitmapFont> labelFont;
 
         SDL_Color textColor;
+
+        TextAlignment textAlignment;
+
+        // pad for text from label border
+        const int TEXT_PAD = 20;
 
         // coords of the texture
         int screenX, screenY;

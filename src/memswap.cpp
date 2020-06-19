@@ -281,16 +281,40 @@ std::string MemSwap::getGameTitle() const {
     return GAME_TITLE;
 }
 
+std::string MemSwap::getCurrLevelID() const {
+    return currLevelID;
+}
+
+// construct/return string containing player stats
+std::string MemSwap::getStatsString() const {
+    std::string stats;
+
+    // get current player data ...
+    stats += "Player Name: " + playerName + NEWLINE_CHAR;
+    stats += "Play Time:   " + std::to_string(playTime) + NEWLINE_CHAR;
+
+    return stats;
+}
+
+std::string MemSwap::getCreditsString() const {
+    std::string credits;
+
+    // get current player data ...
+    credits += "Purple Puzzles\n\n";
+    credits += "Design: vsie\n";
+    credits += "Programming: vsie\n";
+    credits += "Art: vsie\n";
+    credits += "SFX/Music: vsie\n";
+
+    return credits;
+}
+
 void MemSwap::setCurrLevelID(std::string levelID) {
     currLevelID = levelID;
 }
 
 void MemSwap::setCurrMenuScreen(int screenID) {
     currMenuScreen = screenID;
-}
-
-std::string MemSwap::getCurrLevelID() const {
-    return currLevelID;
 }
 
 ResManager & MemSwap::getResManager() {

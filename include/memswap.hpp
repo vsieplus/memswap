@@ -18,6 +18,8 @@
 
 class MemSwap {
     private:
+        const static char NEWLINE_CHAR = '\n';
+
         // for time
         float delta = 0;        // ms passed since last call to update
         Uint64 lastTime = 0;
@@ -71,8 +73,8 @@ class MemSwap {
         // for button text (light greenish)
         const SDL_Color BUTTON_TEXT_COLOR = {0xA0, 0xFF, 0xE3, 0xFF};
 
-        // for title text (black)
-        const SDL_Color TITLE_COLOR = {0x00, 0x00, 0x00, 0xFF};
+        // for title text (same as outline color)
+        const SDL_Color TITLE_COLOR = {0x83, 0x86, 0xF5, 0xFF};
 
         // map for tracking the game states/the current state
         std::unordered_map<GameStateID, std::unique_ptr<GameState>> gameStates;
@@ -130,6 +132,9 @@ class MemSwap {
 
         std::string getGameTitle() const;
         std::string getCurrLevelID() const;
+
+        std::string getStatsString() const;
+        std::string getCreditsString() const;
 
         void setPaused(bool paused);
         bool isPaused() const;

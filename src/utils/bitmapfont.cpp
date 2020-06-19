@@ -83,23 +83,24 @@ void BitmapFont::renderText(SDL_Renderer * renderer, const std::string & text,
     int currX = x, currY = y;
 
     for(unsigned int i = 0; i <= lastCharIdx; i++) {
-        // check if space char
-        if(text[i] == SPACE_CHAR) {
-            currX += spaceChar;
-        }
-
         // access correct clip using ascii val.
         int ascii = (unsigned char) text[i];
 
-        currX += charSpacings.at(ascii).charXOffset;
-        currY += charSpacings.at(ascii).charYOffset;
+        // check if space char
+        if(ascii == SPACE_CHAR) {
+            currX += spaceChar;
+        }
 
-        // handle new lines when within distance of window border
-        if(currX > screenWidth - H_PAD) {
+        // check if newline char or within pad distance of border
+        if(ascii == NEWLINE_CHAR || currX > screenWidth - H_PAD) {
             // move down and back
             currY += newLineChar;
             currX = x;
+            continue;
         }
+
+        currX += charSpacings.at(ascii).charXOffset;
+        currY += charSpacings.at(ascii).charYOffset;
 
         bitmapTexture.render(currX, currY + charSpacings.at(ascii).charYOffset,
             renderer, &charClips.at(ascii));
@@ -148,12 +149,34 @@ int BitmapFont::getLineHeight() const {
     return newLineChar;
 }
 
-// get width of text in pixels (if on one line)
+// get height of text in pixels
+int BitmapFont::getTextHeight(const std::string & text) const {
+    int height = getLineHeight();
+
+    auto find = text.find(NEWLINE_CHAR);
+    while(find != std::string::npos) {
+        height += getLineHeight();
+        find = text.find(NEWLINE_CHAR, find + 1);
+    }
+
+    return height;
+}
+
+// get width of text in pixels (if multiple lines, returns the largest)
 int BitmapFont::getTextWidth(const std::string & text) const {
+    int maxWidth = 0;
     int width = 0;
 
     for(unsigned int i = 0; i < text.length(); i++) {
         int ascii = (unsigned char) text.at(i);
+
+        if(ascii == NEWLINE_CHAR) {
+            if(width > maxWidth) {
+                maxWidth = width;
+            }
+            width = 0;
+            continue;
+        }
 
         if(ascii == SPACE_CHAR) {
             width += spaceChar;
@@ -163,5 +186,7 @@ int BitmapFont::getTextWidth(const std::string & text) const {
             charSpacings.at(ascii).charXAdvance;
     }
 
-    return width;
+    // check final line
+    maxWidth = width > maxWidth ? width : maxWidth;
+    return maxWidth;
 }

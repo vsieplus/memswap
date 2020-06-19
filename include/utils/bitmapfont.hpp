@@ -86,6 +86,7 @@ class BitmapFont {
 
         bool isRenderingDynamic() const;
         int getLineHeight() const;
+        int getTextHeight(const std::string & text) const;
         int getTextWidth(const std::string & text) const;
 };
 

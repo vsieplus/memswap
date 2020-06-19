@@ -86,7 +86,7 @@ void MenuState::addLvlSelectGUI(MemSwap * game) {
     // get level buttons
     std::vector<Button> levelSelectButtons = getSpacedButtons(LVLS_LABELS, 
         lvlButton, menuFont, buttonAreaX, buttonAreaY, buttonAreaXEnd, buttonAreaYEnd,
-        game->getOutlineColor(), game->getTitleColor(), MenuScreen::MENU_LVLS);
+        game->getOutlineColor(), game->getButtonTextColor(), MenuScreen::MENU_LVLS);
 
     addBackButton(levelSelectButtons, game);
     stateButtons.emplace(MenuScreen::MENU_LVLS, levelSelectButtons);
@@ -101,18 +101,36 @@ void MenuState::addLvlSelectGUI(MemSwap * game) {
 }
 
 void MenuState::addStatsGUI(MemSwap * game) {
-    std::vector<Button> statsButtons;
-
-    addBackButton(statsButtons, game);
-    stateButtons.emplace(MenuScreen::MENU_STATS, statsButtons);
-
-
     std::vector<Label> statsLabels;
 
     // title label
     addTitleLabel(statsLabels, STATS_TITLE, true, game);
 
+    // stats board as a label (construct w/out stats, add later when on stats screen)
+    addTextBoard(statsLabels, "", game, Label::TextAlignment::ALIGN_LEFT);
+
     stateLabels.emplace(MenuScreen::MENU_STATS, statsLabels);
+
+    // Buttons: Create new profile, reset data, back
+    
+    // start placing buttons in the bottom 1/3 of the stats board
+    int buttonAreaX = statsLabels.back().getScreenX();
+    int buttonAreaY = statsLabels.back().getScreenY() + 
+        statsLabels.back().getHeight() * 1 / 3;
+   
+    int buttonAreaXEnd = statsLabels.back().getScreenX() + statsLabels.back().getWidth();
+    int buttonAreaYEnd = statsLabels.back().getScreenY() + statsLabels.back().getHeight();
+
+    auto menuButton = game->getResManager().getTexture(MENU_BUTTON_ID);
+
+    // get buttons spaced evenly
+    std::vector<Button> statsButtons = getSpacedButtons(STATS_LABELS, menuButton,
+        menuFont, buttonAreaX, buttonAreaY, buttonAreaXEnd, buttonAreaYEnd,
+        game->getOutlineColor(), game->getButtonTextColor(), MenuScreen::MENU_STATS);
+    
+
+    addBackButton(statsButtons, game);
+    stateButtons.emplace(MenuScreen::MENU_STATS, statsButtons);
 }
 
 void MenuState::addConfigGUI(MemSwap * game) {
@@ -138,29 +156,59 @@ void MenuState::addCreditsGUI(MemSwap * game) {
 
     std::vector<Label> creditsLabels;
 
-    // title label
+    // title label + text board for credits
     addTitleLabel(creditsLabels, CREDITS_TITLE, false, game);
+    addTextBoard(creditsLabels, game->getCreditsString(), game,
+        Label::TextAlignment::ALIGN_CENTER);
 
     stateLabels.emplace(MenuScreen::MENU_CREDITS, creditsLabels);
 }
 
 
 // add a 'back' button as the last button to the given vector 
-// (bottom right of previous buttons, or center if none)
 void MenuState::addBackButton(std::vector<Button> & buttons, MemSwap * game) {
     auto backButton = game->getResManager().getTexture(BACK_BUTTON_ID);
     
     int lastX, lastY;
 
+    // (bottom right of previous buttons, or bottom right if none)
     if(buttons.empty()) {
-        lastX = game->getScreenWidth() / 2 - backButton->getWidth() / 2;
-        lastY = game->getScreenHeight() / 2 - backButton->getHeight() / 2;
+        lastX = game->getScreenWidth() * 3 / 4 - backButton->getWidth() / 2;
+        lastY = game->getScreenHeight() * 4 / 5 - backButton->getHeight() / 2;
     } else {
-        lastX = buttons.back().getScreenX() + BG_PAD;
-        lastY = buttons.back().getScreenY() + BG_PAD;
+        lastX = buttons.back().getScreenX() + buttons.back().getWidth() * 8 / 7;
+        lastY = buttons.back().getScreenY() + buttons.back().getHeight() * 8 / 7;
     }
 
     buttons.emplace_back(lastX, lastY, CLICKABLE, backButton, game->getOutlineColor());
+}
+
+// general function to add a title label to the passed vector (modifies it)
+void MenuState::addTitleLabel(std::vector<Label> & labels, std::string label,
+    bool longLabel, MemSwap * game) const {
+        
+    // get correct label texture
+    auto labelID = longLabel ? MENU_LABEL_LONG_ID : MENU_LABEL_SHORT_ID;
+    auto labelSprite = game->getResManager().getTexture(labelID);
+
+    // compute coords (center title label)
+    int titleX = game->getScreenWidth() / 2 - labelSprite->getWidth() / 2;
+    int titleY = BG_PAD + (game->getScreenHeight() - (2 * BG_PAD)) / 6 -
+        labelSprite->getHeight() / 2;
+
+    labels.emplace_back(titleX, titleY, labelSprite, menuFont, label,
+        game->getTitleColor());
+}
+
+// add a text board to the label vector (default alignment = center)
+void MenuState::addTextBoard(std::vector<Label> & labels, std::string label, 
+    MemSwap * game, Label::TextAlignment alignment) {
+    
+    auto textBoard = game->getResManager().getTexture(MENU_TEXT_BOARD_ID);
+    int boardX = game->getScreenWidth() / 2 - textBoard->getWidth() / 2;
+    int boardY = labels.back().getScreenY() + labels.back().getHeight() + BG_PAD / 4;
+    labels.emplace_back(boardX, boardY, textBoard, menuFont, label,
+        game->getButtonTextColor(), alignment);
 }
 
 void MenuState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -184,6 +232,9 @@ void MenuState::changeCurrButton(const SDL_Event & e) {
     int & rowBtns = layout.second;          // buttons per row = # cols
     int & colBtns = layout.first;           // buttons per col = # rows
     int totalBtns = rowBtns * colBtns;
+
+    // cannot change for one-button screens (e.g. credits)
+    if(totalBtns <= 1) return;
 
     int nextID = -1;
 
@@ -282,7 +333,7 @@ void MenuState::update(MemSwap * game, float delta) {
             // otherwise look for other corresponding activations
             switch(currScreen) {
                 case MenuScreen::MENU_MAIN:
-                    activateMain();
+                    activateMain(game);
                     break;
                 case MenuScreen::MENU_LVLS:
                     activateLvlSelect(game);
@@ -302,13 +353,16 @@ void MenuState::update(MemSwap * game, float delta) {
 }
 
 // handle button activations for each screen
-void MenuState::activateMain() {
+void MenuState::activateMain(MemSwap * game) {
     switch(currButtonID) {
         case MainButton::MAIN_LVLS:
             currScreen = MenuScreen::MENU_LVLS;
             break;
         case MainButton::MAIN_STATS:
             currScreen = MenuScreen::MENU_STATS;
+            // retrieve updated stats
+            stateLabels.at(MenuScreen::MENU_STATS).back().setText(
+                game->getStatsString());
             break;
         case MainButton::MAIN_CONFIG:
             currScreen = MenuScreen::MENU_CONFIG;
@@ -354,14 +408,14 @@ void MenuState::updateCurrButton() {
 void MenuState::render(SDL_Renderer * renderer) const {
     bgTexture->render(0, 0, renderer);
 
-    // render each of the buttons for the current screen
-    for(Button button: stateButtons.at(currScreen)) {
-        button.render(renderer);
-    }
-
     // render labels for the current screen
     for(Label label: stateLabels.at(currScreen)) {
         label.render(renderer);
+    }
+
+    // render each of the buttons for the current screen
+    for(Button button: stateButtons.at(currScreen)) {
+        button.render(renderer);
     }
 }
 
@@ -413,23 +467,6 @@ std::vector<Button> MenuState::getSpacedButtons (
     }
 
     return buttons;
-}
-
-// general function to add a title label to the passed vector (modifies it)
-void MenuState::addTitleLabel(std::vector<Label> & labels, std::string label,
-    bool longLabel, MemSwap * game) const {
-        
-    // get correct label texture
-    auto labelID = longLabel ? MENU_LABEL_LONG_ID : MENU_LABEL_SHORT_ID;
-    auto labelSprite = game->getResManager().getTexture(labelID);
-
-    // compute coords (center title label)
-    int titleX = game->getScreenWidth() / 2 - labelSprite->getWidth() / 2;
-    int titleY = BG_PAD + (game->getScreenHeight() - (2 * BG_PAD)) / 6 -
-        labelSprite->getHeight() / 2;
-
-    labels.emplace_back(titleX, titleY, labelSprite, menuFont, label,
-        game->getTitleColor());
 }
 
 // check if currently on a 'back' button

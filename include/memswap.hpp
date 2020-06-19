@@ -40,7 +40,7 @@ class MemSwap {
         // current menu screen id
         int currMenuScreen;
 
-        // player data/stats
+        // profile to track current player data/stats
         int playTime;               // in hours:minutes (time in play state)
         int levelsCompleted;        // level progress (out of 30)
         int perfectPlays;           // levels completed with no resets

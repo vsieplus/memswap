@@ -31,7 +31,7 @@ class MenuState : public GameState {
             MENU_MAIN,        // main menu
             MENU_LVLS,        // level select
             MENU_STATS,       // player stats/data
-            MENU_CONFIG,      // options/settings
+            MENU_HTP,      // options/settings
             MENU_CREDITS,     // credits
         };
     
@@ -39,7 +39,7 @@ class MenuState : public GameState {
         enum MainButton {
             MAIN_LVLS,
             MAIN_STATS,
-            MAIN_CONFIG,
+            MAIN_HTP,
             MAIN_CREDITS,
         };
 
@@ -60,12 +60,13 @@ class MenuState : public GameState {
         const std::string MENU_LABEL_LONG_ID = "menu_label_long";
         const std::string MENU_LABEL_SHORT_ID = "menu_label_short";
         const std::string MENU_TEXT_BOARD_ID = "menu_text_board";
+        const std::string MENU_HTP_BOARD_ID = "menu_htp_board";
 
         // button labels
         const std::vector<std::string> MAIN_LABELS = {
             "Play",         // -> level select
             "Stats",        // -> user stats/data
-            "Settings",     // -> config
+            "How To Play",  // -> how to play
             "Credits",      // -> credits
         };
 
@@ -75,14 +76,12 @@ class MenuState : public GameState {
             "3-1", "3-2", "3-3", "3-4", "3-5", "3-6", "3-7", "3-8", "3-9", "3-X"
         };
 
-        const std::vector<std::string> STATS_LABELS = {
-            "New Profile", "Reset Data",
-        };
+        const std::vector<std::string> STATS_LABELS = {"Reset Data"};
 
         // titles/labels for menu screens
         const std::string LVL_SELECT_TITLE = "Level Select";
         const std::string STATS_TITLE = "Player Stats";
-        const std::string CONFIG_TITLE = "Settings";
+        const std::string HTP_TITLE = "How To Play";
         const std::string CREDITS_TITLE = "Credits";
 
         // bg texture
@@ -102,9 +101,9 @@ class MenuState : public GameState {
             {
                 {MenuScreen::MENU_MAIN, std::make_pair(2, 2)},
                 {MenuScreen::MENU_LVLS, std::make_pair(3, 10)},
-                {MenuScreen::MENU_STATS, std::make_pair(1, 2)},
-                {MenuScreen::MENU_CONFIG, std::make_pair(2, 2)},
-                {MenuScreen::MENU_CREDITS, std::make_pair(1, 1)},
+                {MenuScreen::MENU_STATS, std::make_pair(1, 1)},
+                {MenuScreen::MENU_HTP, std::make_pair(0, 0)},
+                {MenuScreen::MENU_CREDITS, std::make_pair(0, 0)},
             };
 
         // track curr screen and button focus
@@ -116,7 +115,7 @@ class MenuState : public GameState {
         void addMainGUI(MemSwap * game);
         void addLvlSelectGUI(MemSwap * game);
         void addStatsGUI(MemSwap * game);
-        void addConfigGUI(MemSwap * game);
+        void addHTPGUI(MemSwap * game);
         void addCreditsGUI(MemSwap * game);
 
         void addBackButton(std::vector<Button> & buttons, MemSwap * game);
@@ -135,7 +134,7 @@ class MenuState : public GameState {
         void activateMain(MemSwap * game);
         void activateLvlSelect(MemSwap * game);
         void activateStats();
-        void activateConfig();
+        void activateHTP();
         void activateCredits();
 
         bool checkOnBackButton() const;

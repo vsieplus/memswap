@@ -22,7 +22,7 @@ MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {
     addMainGUI(game);
     addLvlSelectGUI(game);
     addStatsGUI(game);
-    addConfigGUI(game);
+    addHTPGUI(game);
     addCreditsGUI(game);
 
     // set current button to first button on main menu screen, first ptr
@@ -106,12 +106,13 @@ void MenuState::addStatsGUI(MemSwap * game) {
     // title label
     addTitleLabel(statsLabels, STATS_TITLE, true, game);
 
-    // stats board as a label (construct w/out stats, add later when on stats screen)
-    addTextBoard(statsLabels, "", game, Label::TextAlignment::ALIGN_LEFT);
+    // stats board as a label
+    addTextBoard(statsLabels, game->getStatsString(), game, 
+        Label::TextAlignment::ALIGN_LEFT);
 
     stateLabels.emplace(MenuScreen::MENU_STATS, statsLabels);
 
-    // Buttons: Create new profile, reset data, back
+    // Buttons: reset data, back
     
     // start placing buttons in the bottom 1/3 of the stats board
     int buttonAreaX = statsLabels.back().getScreenX();
@@ -133,18 +134,24 @@ void MenuState::addStatsGUI(MemSwap * game) {
     stateButtons.emplace(MenuScreen::MENU_STATS, statsButtons);
 }
 
-void MenuState::addConfigGUI(MemSwap * game) {
-    std::vector<Button> configButtons;
+void MenuState::addHTPGUI(MemSwap * game) {
+    std::vector<Button> htpButtons;
 
-    addBackButton(configButtons, game);
-    stateButtons.emplace(MenuScreen::MENU_CONFIG, configButtons);
+    addBackButton(htpButtons, game);
+    stateButtons.emplace(MenuScreen::MENU_HTP, htpButtons);
 
-    std::vector<Label> configLabels;
+    std::vector<Label> htpLabels;
 
     // title label
-    addTitleLabel(configLabels, CONFIG_TITLE, false, game);
+    addTitleLabel(htpLabels, HTP_TITLE, false, game);
 
-    stateLabels.emplace(MenuScreen::MENU_CONFIG, configLabels);
+    // How to play board label
+    auto htpBoard = game->getResManager().getTexture(MENU_HTP_BOARD_ID);
+    int boardX = game->getScreenWidth() / 2 - htpBoard->getWidth() / 2;
+    int boardY = htpLabels.back().getScreenY() + htpLabels.back().getHeight() + BG_PAD / 4;
+    htpLabels.emplace_back(boardX, boardY, htpBoard);
+
+    stateLabels.emplace(MenuScreen::MENU_HTP, htpLabels);
 }
 
 void MenuState::addCreditsGUI(MemSwap * game) {
@@ -159,7 +166,7 @@ void MenuState::addCreditsGUI(MemSwap * game) {
     // title label + text board for credits
     addTitleLabel(creditsLabels, CREDITS_TITLE, false, game);
     addTextBoard(creditsLabels, game->getCreditsString(), game,
-        Label::TextAlignment::ALIGN_CENTER);
+        Label::TextAlignment::ALIGN_LEFT);
 
     stateLabels.emplace(MenuScreen::MENU_CREDITS, creditsLabels);
 }
@@ -173,7 +180,7 @@ void MenuState::addBackButton(std::vector<Button> & buttons, MemSwap * game) {
 
     // (bottom right of previous buttons, or bottom right if none)
     if(buttons.empty()) {
-        lastX = game->getScreenWidth() * 3 / 4 - backButton->getWidth() / 2;
+        lastX = game->getScreenWidth() * 4 / 5 - backButton->getWidth() / 2;
         lastY = game->getScreenHeight() * 4 / 5 - backButton->getHeight() / 2;
     } else {
         lastX = buttons.back().getScreenX() + buttons.back().getWidth() * 8 / 7;
@@ -233,8 +240,8 @@ void MenuState::changeCurrButton(const SDL_Event & e) {
     int & colBtns = layout.first;           // buttons per col = # rows
     int totalBtns = rowBtns * colBtns;
 
-    // cannot change for one-button screens (e.g. credits)
-    if(totalBtns <= 1) return;
+    // cannot change for 0-button screens (e.g. credits)
+    if(totalBtns == 0) return;
 
     int nextID = -1;
 
@@ -341,8 +348,8 @@ void MenuState::update(MemSwap * game, float delta) {
                 case MenuScreen::MENU_STATS:
                     activateStats();
                     break;
-                case MenuScreen::MENU_CONFIG:
-                    activateConfig();
+                case MenuScreen::MENU_HTP:
+                    activateHTP();
                     break;
                 case MenuScreen::MENU_CREDITS:
                     activateCredits();
@@ -364,8 +371,8 @@ void MenuState::activateMain(MemSwap * game) {
             stateLabels.at(MenuScreen::MENU_STATS).back().setText(
                 game->getStatsString());
             break;
-        case MainButton::MAIN_CONFIG:
-            currScreen = MenuScreen::MENU_CONFIG;
+        case MainButton::MAIN_HTP:
+            currScreen = MenuScreen::MENU_HTP;
             break;    
         case MainButton::MAIN_CREDITS:
             currScreen = MenuScreen::MENU_CREDITS;
@@ -389,7 +396,7 @@ void MenuState::activateStats() {
 
 }
 
-void MenuState::activateConfig() {
+void MenuState::activateHTP() {
 
 }
 

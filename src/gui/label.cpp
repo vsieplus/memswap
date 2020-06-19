@@ -48,7 +48,7 @@ int Label::initTextY() const {
                 break;
             case TextAlignment::ALIGN_LEFT:
             case TextAlignment::ALIGN_RIGHT:
-                y = screenY + (2 * TEXT_PAD);
+                y = screenY + (TEXT_PAD);
                 break;
         }
     }

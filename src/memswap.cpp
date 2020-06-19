@@ -291,7 +291,7 @@ std::string MemSwap::getStatsString() const {
 
     // get current player data ...
     stats += "Player Name: " + playerName + NEWLINE_CHAR;
-    stats += "Play Time:   " + std::to_string(playTime) + NEWLINE_CHAR;
+    stats += "Play Time: " + std::to_string(playTime) + NEWLINE_CHAR;
 
     return stats;
 }

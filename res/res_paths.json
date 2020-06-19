@@ -9,6 +9,7 @@
         "menu_label_long": "menu/menuLabelLong.png",
         "menu_label_short": "menu/menuLabelShort.png",
         "menu_text_board": "menu/textBoard.png",
+        "menu_htp_board": "menu/HTPBoard.png",
         "pause_bg": "pause/bg.png",
         "pause_lvlselect_btn": "pause/levelSelectButton.png",
         "window_icon": "misc/windowIcon.png"

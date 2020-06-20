@@ -34,6 +34,8 @@ class Profile {
         const static char NEWLINE_CHAR = '\n';
 
         const static int NUM_LEVELS = 30;
+        const static int SEC_PER_HOUR = 3600;
+        const static int SEC_PER_MIN = 60;
 
         int playTime = 0;             // in seconds (time in play state)
         int perfectPlays = 0;         // levels completed with no resets

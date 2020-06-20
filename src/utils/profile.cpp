@@ -1,5 +1,8 @@
+#include <stdio.h>
+
 #include "utils/profile.hpp"
 #include "memswap.hpp"
+
 
 // default constructor to create a new default profile
 Profile::Profile() {
@@ -55,7 +58,16 @@ std::string Profile::getStatsString() const {
     std::string stats;
 
     // get current player data ...
-    stats += "Play Time: " + std::to_string(playTime) + NEWLINE_CHAR;
+    int hours = playTime / SEC_PER_HOUR;
+    int minutes = (playTime % SEC_PER_HOUR) / SEC_PER_MIN;
+    int seconds = playTime % SEC_PER_MIN;
+
+    char playTimeString[10];
+    snprintf(playTimeString, 10, "%d:%02d:%02d", hours, minutes, seconds);
+
+    stats += "Play Time: ";
+    stats += playTimeString;
+    stats += NEWLINE_CHAR;
     stats += "Tiles Flipped: " + std::to_string(tilesFlipped) + NEWLINE_CHAR;
     stats += "Perfect Plays (no reset): " + std::to_string(perfectPlays) + NEWLINE_CHAR;
     stats += "Level Resets: " + std::to_string(levelResets) + NEWLINE_CHAR;

@@ -12,15 +12,19 @@ void PlayState::enterState(MemSwap * game) {
 
     // load current level (if entering from non-paused state)
     if(!game->isPaused()) {
-        std::string levelPath = game->getResManager().getResPath(game->getCurrLevelID()); 
-        level = Level(levelPath, game->getRenderer(), game);
+        loadLevel(game);
     } else {
         game->setPaused(false);
     }
 }
 
-void PlayState::exitState() {
+// load the curr. level
+void PlayState::loadLevel(MemSwap * game) {
+    std::string levelPath = game->getResManager().getResPath(game->getCurrLevelID()); 
+    level = Level(levelPath, game->getRenderer(), game);
+}
 
+void PlayState::exitState() {
 }
 
 void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -29,10 +33,13 @@ void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
     if(level.isCompleted()) {
 
     } else {
-        // Check for level reset
-        if(keyStates[SDL_SCANCODE_SPACE]) {
-            //enterState(game);
-            // level.reset();
+        // Check for level reset (cannot reset on default position)
+        if(level.getTilesFlipped() != 0 && keyStates[SDL_SCANCODE_R]) {
+            // update stats
+            currTilesFlipped += level.getTilesFlipped();
+            currNumResets++;
+
+            level.reset(game);
         } else if(keyStates[SDL_SCANCODE_ESCAPE]) {
             // Check for pause
             game->setPaused(true);
@@ -42,8 +49,20 @@ void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
     }
 }
 
+void PlayState::updateStats(MemSwap * game) {
+    // update profile data after each level complete
+    if(currNumResets != 0 || currTilesFlipped != 0) {
+        game->updatePlayerStats(currNumResets, currTilesFlipped + 
+            level.getTilesFlipped());
+        currNumResets = 0;
+        currTilesFlipped = 0;
+    }
+}
+ 
 void PlayState::update(MemSwap * game, float delta) {
+    // if paused update stats and set pause state
     if(game->isPaused()) {
+        updateStats();
         game->setNextState(GAME_STATE_PAUSE);
     } else {
         level.update(delta);
@@ -51,11 +70,16 @@ void PlayState::update(MemSwap * game, float delta) {
         // check if level is succesfully completed
         levelComplete = level.isCompleted();
         if(levelComplete) {
-            // prepare to display msg to user
+            updateStats();
 
             // check if player ready to advance to next level or return to menu
             if(advanceLevel) {
-                // 
+                // try to advance level (or go to special screen if unable to)
+                if(game->advanceLevel()) {
+                    loadLevel(game);
+                } else {
+                    // do something special
+                }
             } else if (goToMenu) {
                 game->setNextState(GAME_STATE_MENU);
                 game->setCurrMenuScreen(MenuState::MenuScreen::MENU_LVLS);

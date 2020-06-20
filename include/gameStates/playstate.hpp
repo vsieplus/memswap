@@ -19,6 +19,10 @@ class PlayState : public GameState {
 
         const std::string BG_ID = "play_menu_bg";
 
+        // track resets for the play state
+        int currNumResets = 0;
+        int currTilesFlipped = 0;
+
         // after a level is completed, handle user's choice
         bool levelComplete = false;
         bool advanceLevel = false;
@@ -29,6 +33,9 @@ class PlayState : public GameState {
 
         void enterState(MemSwap * game) override;
         void exitState() override;
+
+        // helper function to load levels
+        void loadLevel(MemSwap * game);
 
         void handleEvents(MemSwap * game, const SDL_Event & e) override;
         void update(MemSwap * game, float delta) override;

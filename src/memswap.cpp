@@ -17,7 +17,7 @@
 #include "gameStates/pausestate.hpp"
 
 MemSwap::MemSwap() : currTime(SDL_GetPerformanceCounter()), gameStates(), 
-    resourceManager(RES_PATHS_FILE, init()) {
+    resourceManager(RES_PATHS_FILE, init()), playerProfile() {
     // Initialize SDL components
     if(!initLibs()) {
         printf("Failed to initialize SDL libraries");
@@ -27,6 +27,11 @@ MemSwap::MemSwap() : currTime(SDL_GetPerformanceCounter()), gameStates(),
     SDL_Surface * icon = IMG_Load(resourceManager.getResPath(ICON_ID).c_str());
     SDL_SetWindowIcon(window, icon);
     SDL_FreeSurface(icon);
+
+    // load player profile, or if none exists, init default level status
+    if(!loadProfile()) {
+        playerProfile.initLevelsCompleted();
+    }
 
     // Start game in splash state to load res/
     setNextState(GAME_STATE_SPLASH);
@@ -86,6 +91,33 @@ bool MemSwap::initLibs() {
 	}
 
 	return true;
+}
+
+// save player profile
+void MemSwap::saveProfile() {
+    // Open in write/binary mode
+	SDL_RWops * saveFile = SDL_RWFromFile(SAVE_PATH.c_str(), "w+b");
+	if(saveFile) {
+        // Write to file, the profile's starting address, size, and qty. (1)
+        SDL_RWwrite(saveFile, &playerProfile, sizeof(Profile), 1);
+
+		SDL_RWclose(saveFile);
+	}
+}
+
+// return true if loaded succesfully, false if not (i.e. savefile nonexistent)
+bool MemSwap::loadProfile() {
+	SDL_RWops * saveFile = SDL_RWFromFile(SAVE_PATH.c_str(), "r+b");
+    // if file exists, load data to profile, otherwise return false
+	if(saveFile) {
+        // Read from file into address of playerProfile, for its size in bytes 1x
+        SDL_RWread(saveFile, &playerProfile, sizeof(Profile), 1);
+
+		SDL_RWclose(saveFile);
+        return true;
+	} else {
+		return false;
+	}
 }
 
 /// Handle game events
@@ -179,13 +211,16 @@ void MemSwap::setNextState(GameStateID stateID) {
 /// Change states if needed
 void MemSwap::changeState() {
     if(nextState != currState) {
+        // exit current state/cleanup
+        if(currState != GAME_STATE_NULL) gameStates.at(currState)->exitState();
+
         // If next state set to exit/null, stop playing
         if(nextState == GAME_STATE_EXIT || nextState == GAME_STATE_NULL) {
             playing = false;
             return;
         }
 
-        // check if the next state already exists, if not add to the map
+        // check if the next state already exists, if not, create + add to the map
         auto it = gameStates.find(nextState);
 
         if(it == gameStates.end()) {
@@ -213,13 +248,22 @@ void MemSwap::changeState() {
             }
         }
 
-
         // Remove splash state if switching off (since it's only used 1x)
         if(currState == GAME_STATE_SPLASH) {
             removeGameState(currState);
         }
 
-        // update curr state
+        // if we're entering the play state start tracking time
+        if(nextState == GAME_STATE_PLAY) {
+            startPlayTime = SDL_GetPerformanceCounter();
+        }
+
+        // if we're exiting the play state, update play time
+        if(currState == GAME_STATE_PLAY) {
+            updatePlayTime();
+        }
+
+        // exit curr state, enter new state
         gameStates.at(nextState)->enterState(this);
         currState = nextState;
     }
@@ -240,7 +284,42 @@ void MemSwap::removeGameState(GameStateID gameStateID) {
     }
 }
 
+// update player profile data
+void MemSwap::updatePlayTime() {
+    // update playtime
+    Uint64 stopPlayTime = SDL_GetPerformanceCounter();
+    playerProfile.addPlayTime((stopPlayTime - startPlayTime) 
+        / SDL_GetPerformanceFrequency());
+}
+
+// update player game-related stats - call at the end of each level from playstate
+// or when exit play state->pause/menu
+void MemSwap::updatePlayerStats(int resets, int flipped, bool completed, bool perfect) {
+    if(completed) {
+        // set level complete (get idx of ID in LVLS_LABELS)
+        auto it = std::find(LVLS_LABELS.begin(), LVLS_LABELS.end(), currLevelID);
+        int IDIndex = std::distance(LVLS_LABELS.begin(), it);
+        playerProfile.setLevelComplete(IDIndex);
+
+        // add perfect play
+        if(perfect) {
+            playerProfile.addPerfectPlay();
+        }
+    }
+
+    // add resets/tiles flipped
+    playerProfile.addLevelResets(resets);
+    playerProfile.addTilesFlipped(flipped);
+
+    // save
+    saveProfile();
+}
+
 void MemSwap::quit() {
+    // save player data on exit
+    saveProfile();
+
+    // sdl cleanup
     SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
@@ -285,15 +364,8 @@ std::string MemSwap::getCurrLevelID() const {
     return currLevelID;
 }
 
-// construct/return string containing player stats
 std::string MemSwap::getStatsString() const {
-    std::string stats;
-
-    // get current player data ...
-    stats += "Player Name: " + playerName + NEWLINE_CHAR;
-    stats += "Play Time: " + std::to_string(playTime) + NEWLINE_CHAR;
-
-    return stats;
+    return playerProfile.getStatsString();
 }
 
 std::string MemSwap::getCreditsString() const {
@@ -307,6 +379,23 @@ std::string MemSwap::getCreditsString() const {
     credits += "SFX/Music: vsie\n";
 
     return credits;
+}
+
+std::vector<std::string> MemSwap::getLevelLabels() const {
+    return LVLS_LABELS;
+}
+
+// tries to advance to next level, returns false if unable to
+bool MemSwap::advanceLevel() {
+    auto it = std::find(LVLS_LABELS.begin(), LVLS_LABELS.end(), currLevelID);
+    unsigned int currIndex = std::distance(LVLS_LABELS.begin(), it);
+    
+    if(currIndex < LVLS_LABELS.size() - 1) {
+        currLevelID = LVLS_LABELS.at(currIndex + 1);
+        return true;
+    }
+
+    return false;
 }
 
 void MemSwap::setCurrLevelID(std::string levelID) {
@@ -339,4 +428,8 @@ void MemSwap::setPaused(bool paused) {
 
 bool MemSwap::isPaused() const {
     return paused;
+}
+
+void MemSwap::resetPlayerData() {
+    playerProfile.resetProfile();
 }

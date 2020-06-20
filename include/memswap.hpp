@@ -15,15 +15,17 @@
 #include "gameStates/gamestate.hpp"
 
 #include "utils/resmanager.hpp"
+#include "utils/profile.hpp"
 
 class MemSwap {
     private:
-        const static char NEWLINE_CHAR = '\n';
-
         // for time
         float delta = 0;        // ms passed since last call to update
-        Uint64 lastTime = 0;
-        Uint64 currTime;
+        Uint64 lastTime = 0;    // last call to update
+        Uint64 currTime;        // curr call to update
+
+        // when play state was last started (reset each time enter)
+        Uint64 startPlayTime = 0;  
 
         GameStateID nextState = GAME_STATE_NULL;
         GameStateID currState = GAME_STATE_NULL;
@@ -40,20 +42,19 @@ class MemSwap {
         // current menu screen id
         int currMenuScreen;
 
-        // profile to track current player data/stats
-        int playTime;               // in hours:minutes (time in play state)
-        int levelsCompleted;        // level progress (out of 30)
-        int perfectPlays;           // levels completed with no resets
-        int tilesFlipped;           // total tiles flipped during play
-        int timesReset;             // total level resets
-
-        std::string playerName;
-
         const std::string GAME_TITLE = "Purple Puzzles";
         const std::string RES_PATHS_FILE = "res/res_paths.json";
         const std::string ICON_ID = "window_icon";
+        const std::string SAVE_PATH = "res/saves/playerSave.data";
 
+        // levelID management
         std::string currLevelID;
+
+        const std::vector<std::string> LVLS_LABELS = {
+            "1-1", "1-2", "1-3", "1-4", "1-5", "1-6", "1-7", "1-8", "1-9", "1-X",
+            "2-1", "2-2", "2-3", "2-4", "2-5", "2-6", "2-7", "2-8", "2-9", "2-X",
+            "3-1", "3-2", "3-3", "3-4", "3-5", "3-6", "3-7", "3-8", "3-9", "3-X"
+        };
 
         bool playing = true;
         bool paused = false;
@@ -81,9 +82,12 @@ class MemSwap {
 
         // Resource manager for the game
         ResManager resourceManager;
+
+        // Player data/profile
+        Profile playerProfile;
         
         // initialize
-        SDL_Renderer * init ();
+        SDL_Renderer * init();
         bool initLibs();
 
         // state management
@@ -97,6 +101,15 @@ class MemSwap {
         
         // (called during splash state)
         int loadNextResource();
+
+        // save/load/reset player profile
+        void saveProfile();
+        bool loadProfile();
+        
+        void resetPlayerData();
+        void updatePlayTime();
+        void updatePlayerStats(int resets, int flipped, bool completed,
+            bool perfect);
 
         // Handle events
         void handleEvents();
@@ -127,7 +140,10 @@ class MemSwap {
 
         int getCurrMenuScreen() const;
 
+        // manage current level in the game
+        bool advanceLevel();
         void setCurrLevelID(std::string levelID);
+
         void setCurrMenuScreen(int screenID);
 
         std::string getGameTitle() const;
@@ -135,6 +151,8 @@ class MemSwap {
 
         std::string getStatsString() const;
         std::string getCreditsString() const;
+
+        std::vector<std::string> getLevelLabels() const;
 
         void setPaused(bool paused);
         bool isPaused() const;

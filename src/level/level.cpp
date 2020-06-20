@@ -117,6 +117,10 @@ int Level::getTilesFlipped() const {
     return tilesFlipped;
 }
 
+void Level::setTilesFlipped(int tiles) {
+    tilesFlipped = tiles;
+}
+
 bool Level::inBounds(int x, int y) const {
     return map.inBounds(x,y);
 }

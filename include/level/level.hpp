@@ -65,6 +65,7 @@ class Level {
         int getPixelHeight() const;
 
         void addTileFlipped();
+        void setTilesFlipped(int tiles);
         int getTilesFlipped() const;
 
         template <class T>

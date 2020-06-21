@@ -38,7 +38,7 @@ void SplashState::handleEvents(MemSwap * game, const SDL_Event & e) {
 void SplashState::update(MemSwap * game, float delta) {
     // Continue loading resources until finished
     if(loadingRes) {
-        game->getResManager().loadNextResource();
+        game->loadNextResource();
         loadingRes = game->getResManager().loadingResources();
     } else {
         if (advance) {

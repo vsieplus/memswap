@@ -9,6 +9,9 @@
 #include "gameStates/gamestate.hpp"
 #include "level/level.hpp"
 
+#include "gui/label.hpp"
+#include "gui/button.hpp"
+
 // Class for the Play State
 class PlayState : public GameState {
     private:
@@ -17,19 +20,43 @@ class PlayState : public GameState {
         // Texture to show in the background
         std::shared_ptr<Texture> bgTexture;
 
-        const std::string BG_ID = "play_menu_bg";
+        // for post-level completion menu (popup window)
+        Label postGameBoard;
+
+        // buttons
+        std::vector<Button> postGameButtons;
+
+        inline const static std::vector<std::string> postGameMenuLabels = {
+            "Next Level", "Main Menu", "Level Select"
+        };
+
+        inline const static std::string BG_ID = "play_menu_bg";
+        inline const static std::string FONT_ID = "mainFont";
+        inline const static std::string BUTTON_ID = "menu_menu_btn";
+        inline const static std::string POSTGAME_BOARD_ID = "menu_text_board";
+
+        inline const static std::string POSTGAME_TEXT = "Level Complete!";
+
+        // enum for postgame menu buttons
+        enum PGButton {
+            BUTTON_NEXT,
+            BUTTON_MAIN,
+            BUTTON_LVLS,
+        };
+
+        unsigned int currButton = BUTTON_NEXT;
 
         // track resets for the play state
         int currNumResets = 0;
         int currTilesFlipped = 0;
 
-        // after a level is completed, handle user's choice
+        // after a level is completed
         bool levelComplete = false;
-        bool advanceLevel = false;
-        bool goToMenu = false;
+
+        void handlePGActivation(MemSwap * game);
 
     public:
-        PlayState();
+        PlayState(MemSwap * game);
 
         void enterState(MemSwap * game) override;
         void exitState() override;
@@ -42,6 +69,8 @@ class PlayState : public GameState {
         void handleEvents(MemSwap * game, const SDL_Event & e) override;
         void update(MemSwap * game, float delta) override;
         void render(SDL_Renderer * renderer) const override;
+
+        bool levelIsComplete() const;
 };
 
 #endif // PLAYSTATE_HPP

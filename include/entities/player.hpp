@@ -10,7 +10,7 @@
 
 class Player : public Movable {
     private:
-        static const int PLAYER_VELOCITY = 7;
+        static const int PLAYER_VELOCITY = 6;
 
         bool teleporting = false;
         

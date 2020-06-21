@@ -31,6 +31,8 @@ int Label::initTextX() const {
             case TextAlignment::ALIGN_RIGHT:
                 x = screenX + labelSprite->getWidth() * 2 / 4;
                 break;
+            default:
+                break;
         }
     }
 
@@ -51,6 +53,8 @@ int Label::initTextY() const {
                 break;
             case ALIGN_RIGHT:
                 y = screenY + labelSprite->getHeight() - TEXT_PAD;
+                break;
+            default:
                 break;
         }
     }

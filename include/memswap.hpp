@@ -98,9 +98,6 @@ class MemSwap {
     public:
         /// Constructor
         MemSwap();
-        
-        // (called during splash state)
-        int loadNextResource();
 
         // save/load/reset player profile
         void saveProfile();
@@ -160,7 +157,8 @@ class MemSwap {
         void setPaused(bool paused);
         bool isPaused() const;
 
-        ResManager & getResManager();
+        void loadNextResource();
+        const ResManager & getResManager();
 };
 
 #endif // MEMSWAP_HPP

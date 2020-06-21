@@ -123,18 +123,21 @@ bool MemSwap::loadProfile() {
 /// Handle game events
 void MemSwap::handleEvents() {
     if(nextState != GAME_STATE_EXIT && !minimized && !gameStates.empty()) {
+        bool playComplete = currState == GAME_STATE_PLAY &&
+            dynamic_cast<PlayState *>(gameStates.at(GAME_STATE_PLAY).get())->levelIsComplete();
+
         // normal polled events
         while(SDL_PollEvent(&e)) {
-            handleWindowEvents();            
+            handleWindowEvents();
             
-            // no polled events for play state
-            if(currState != GAME_STATE_PLAY) {
+            // no polled events for play state, unless in postgame state
+            if(currState != GAME_STATE_PLAY || playComplete) {
                 gameStates.at(currState)->handleEvents(this, e);
             }
         }
 
-        // keyState events for play state
-        if(currState == GAME_STATE_PLAY) {
+        // keyState events for play state if not completed
+        if(currState == GAME_STATE_PLAY && !playComplete) {
             gameStates.at(currState)->handleEvents(this, e);
         }
     }   
@@ -234,7 +237,7 @@ void MemSwap::changeState() {
                     nextGameState = std::make_unique<MenuState>(this);
                     break;
                 case GAME_STATE_PLAY:
-                    nextGameState = std::make_unique<PlayState>();
+                    nextGameState = std::make_unique<PlayState>(this);
                     break;
                 case GAME_STATE_PAUSE:
                     nextGameState = std::make_unique<PauseState>(this);
@@ -413,13 +416,18 @@ bool MemSwap::advanceLevel() {
 
 void MemSwap::setCurrLevelID(std::string levelID) {
     currLevelID = levelID;
+    printf("Setting currLevelID: %s\n", currLevelID.c_str());
 }
 
 void MemSwap::setCurrMenuScreen(int screenID) {
     currMenuScreen = screenID;
 }
 
-ResManager & MemSwap::getResManager() {
+void MemSwap::loadNextResource () {
+    resourceManager.loadNextResource();
+}
+
+const ResManager & MemSwap::getResManager() {
     return resourceManager;
 }
 

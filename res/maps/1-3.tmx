@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
- <tileset firstgid="1" source="bgTiles.tsx"/>
- <tileset firstgid="65" source="entityTiles.tsx"/>
- <layer id="1" name="background" width="15" height="10">
+<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="entityTiles.tsx"/>
+ <tileset firstgid="65" source="bgTiles.tsx"/>
+ <layer id="1" name="background" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYmBgYMKDGfGIo2Ni9eJTg81cYszBppcUtcTqYSJRLb6wQDeHVP8S629yzCTkJ0LmAQAuZwED
+   eJy1k1EKwDAIQ72a3v9Q+x0leYaxfgRapWkScapqfkKLu8OIs6s5fqo7jlMXvSEt6R9JP/FDuSpPbfhIUzpblY/yrPruHfkkftKaZKT4v2aUzpF2YNO35ZL43/huwO1cMu83HvSsTOo=
   </data>
  </layer>
- <layer id="2" name="entities" width="15" height="10">
+ <layer id="2" name="entities" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJzzZKAecCRTXxAV3TDYASV+JTd86Q0CgRgAP8IBwQ==
+   eJzjZBi5QHCgHTAKRsEoIAkAAG3UABs=
   </data>
  </layer>
 </map>

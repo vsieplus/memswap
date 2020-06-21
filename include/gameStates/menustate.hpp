@@ -114,8 +114,16 @@ class MenuState : public GameState {
         std::unordered_map<MenuScreen, std::vector<Label>> stateLabels;
 
         // store button layouts, for general button focus changing [not including back-button]
-        // key: screen enum value, val: Pair of (rows, columns) [of buttons]
-        const static std::unordered_map<MenuScreen, std::pair<int, int>> BTN_LAYOUTS;
+        // key: screen enum value, val: Pair of (rows, columns) [of buttons]       
+        inline const static std::unordered_map<MenuState::MenuScreen, std::pair<int, int>> BTN_LAYOUTS =
+        {
+            {MenuState::MenuScreen::MENU_MAIN, std::make_pair(2, 2)},
+            {MenuState::MenuScreen::MENU_LVLS, std::make_pair(3, 10)},
+            {MenuState::MenuScreen::MENU_STATS, std::make_pair(1, 1)},
+            {MenuState::MenuScreen::MENU_HTP, std::make_pair(0, 0)},
+            {MenuState::MenuScreen::MENU_CREDITS, std::make_pair(0, 0)},
+            {MenuState::MenuScreen::PLAY_POSTGAME, std::make_pair(1, 3)}
+        };
 
         // load buttons for each menu screen 
         void addMainGUI(MemSwap * game);

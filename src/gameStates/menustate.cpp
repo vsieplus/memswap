@@ -10,19 +10,7 @@
  */
 
 #include "memswap.hpp"
-
 #include "gameStates/menustate.hpp"
-
-const std::unordered_map<MenuState::MenuScreen, std::pair<int, int>> MenuState::BTN_LAYOUTS =
-{
-    {MenuState::MenuScreen::MENU_MAIN, std::make_pair(2, 2)},
-    {MenuState::MenuScreen::MENU_LVLS, std::make_pair(3, 10)},
-    {MenuState::MenuScreen::MENU_STATS, std::make_pair(1, 1)},
-    {MenuState::MenuScreen::MENU_HTP, std::make_pair(0, 0)},
-    {MenuState::MenuScreen::MENU_CREDITS, std::make_pair(0, 0)},
-    {MenuState::MenuScreen::PLAY_POSTGAME, std::make_pair(1, 3)}
-};
-
 
 MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {
     // retrieve resources
@@ -429,8 +417,8 @@ void MenuState::activateLvlSelect(MemSwap * game) {
     // the level will be unlocked if its 'locked' graphic doesn't exist
     if(!currButton->checkHasGraphic()) {
         // move to play state + set correct level id
-        game->setNextState(GAME_STATE_PLAY);
         game->setCurrLevelID(levelID);
+        game->setNextState(GAME_STATE_PLAY);
     }
 }
 

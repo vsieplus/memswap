@@ -5,9 +5,8 @@
 #include "entities/player.hpp"
 #include "entities/receptor.hpp"
 #include "entities/diamond.hpp"
+#include "entities/portal.hpp"
 #include "level/level.hpp"
-
-const std::string Player::PLAYER_SHAPE = "player";
 
 Player::Player(int screenX, int screenY, int gridX, int gridY, int parity,
     std::shared_ptr<Sprite> entitySprite) : Movable(screenX, screenY, gridX, 
@@ -84,6 +83,8 @@ void Player::pushDiamond(Level * level) {
     if(diamond.get() && !diamond->isMerging()) {
         // set the move direction of the diamond
         diamond->setMoveDir(pushDir);
+        pushedObjects.push(diamond);
+        actionHistory.push(Movable::MovableAction::PUSH);
     }
 }
 
@@ -99,7 +100,50 @@ void Player::checkPortal(Level * level) {
         // set portal's player, remove portals from grid temporarily
         portal->setPlayer(level->getGridElement<Player>(gridX, gridY));
         portal->removePortals(level);
+
+        // store portal for undo purposes
+        lastPortal = portal;
     }
+}
+
+void Player::undoAction(Level * level) {
+    // handle undo for player-specific actions
+    if(!actionHistory.empty()) {
+        MovableAction lastAction = actionHistory.top();
+
+        switch(lastAction) {
+            // for push actions, simply undo the last action of the last pushed obj.
+            case PUSH:
+                // undo the last action of the pushed object
+                pushedObjects.top()->undoAction(level);
+                pushedObjects.pop();
+
+                // pop the PUSH action from this player's history
+                actionHistory.pop();
+                break;
+
+            // if teleport was last action, player must still be on portal
+            // -> portal is still tracking player, so teleport them back
+            case TELEPORT:
+                lastPortal->teleportPlayer(level, true);
+                actionHistory.pop();
+
+                // undo move onto portal
+                undoAction(level);
+
+                // give ownership of portals -> level
+                level->placePortals();
+                break;
+            default:
+                // check for undoing general movement
+                Movable::undoAction(level);
+                break;
+        }
+    }
+}
+
+void Player::pushAction(MovableAction action) {
+    actionHistory.push(action);
 }
 
 bool Player::isTeleporting() const {
@@ -108,4 +152,8 @@ bool Player::isTeleporting() const {
 
 void Player::setTeleporting(bool teleporting) {
     this->teleporting = teleporting;
+}
+
+void Player::setLastPortal(std::shared_ptr<Portal> lastPortal) {
+    this->lastPortal = lastPortal;
 }

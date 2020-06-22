@@ -18,6 +18,8 @@ class Portal : public Entity {
         // the player being teleported by this portal
         std::shared_ptr<Player> player;
 
+        void resetPortalStatus(Level * level);
+
     public:
         Portal(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite);
@@ -27,13 +29,15 @@ class Portal : public Entity {
         void render(SDL_Renderer* renderer) const override;
 
         // teleport the player
-        void teleportPlayer(Level * level);
+        void teleportPlayer(Level * level, bool undo = false);
 
         // temporarily lift portals from grid
         void removePortals(Level * level);
 
         void setPlayer(std::shared_ptr<Player> player);
         void setOtherPortal(std::shared_ptr<Portal> otherPortal);
+
+        std::shared_ptr<Player> getPlayer() const;
 
         void setRemoved(bool removed);
         bool isRemoved() const;

@@ -16,6 +16,12 @@ void Portal::update(Level * level, float delta) {
         if(!player->isMoving() && player->isTeleporting()) {
             teleportPlayer(level);
             player->setTeleporting(false);
+
+            // transfer ownership of player to otherPortal
+            player->setLastPortal(otherPortal);
+            otherPortal->setPlayer(player);
+            player.reset();
+            return;
         }
 
         // if player has moved off of the portal(s), place them back in the grid
@@ -24,14 +30,20 @@ void Portal::update(Level * level, float delta) {
         if(!(playerX == gridX && playerY == gridY) && !(playerX == 
             otherPortal->getGridX() && playerY == otherPortal->getGridY())) {
             
+            // give ownership back to level
             level->placePortals();
 
-            // reset portal status/player pointer
-            player.reset();
-            setActivated(false);
-            setRemoved(false);
+            resetPortalStatus(level);
         }
     }
+}
+
+// transfer ownership of portals back to level/reset active status
+void Portal::resetPortalStatus(Level * level) {
+    // reset portal status/player pointer
+    setActivated(false);
+    setRemoved(false);
+    player.reset();
 }
 
 void Portal::render(SDL_Renderer* renderer) const {
@@ -39,15 +51,24 @@ void Portal::render(SDL_Renderer* renderer) const {
 }
 
 // teleport the player to the other portal, placing it back in the grid
-void Portal::teleportPlayer(Level * level) {
+void Portal::teleportPlayer(Level * level, bool undo) {
     level->moveGridElement(player->getGridX(), player->getGridY(),
         otherPortal->getGridX(), otherPortal->getGridY());
 
     // update player render position
     player->setScreenX(otherPortal->getScreenX());
     player->setScreenY(otherPortal->getScreenY());
-}
 
+    // add a teleport to the player's action history if not undoing
+    if(!undo) {
+        player->pushAction(Movable::MovableAction::TELEPORT);
+    } else {
+        // otherwise, place the portals back/transfer back player ownership
+        player->setLastPortal(otherPortal);
+        otherPortal->setPlayer(player);
+        resetPortalStatus(level);
+    }
+}
 
 // temporarily lift portals from grid
 void Portal::removePortals(Level * level) {
@@ -57,8 +78,13 @@ void Portal::removePortals(Level * level) {
     setRemoved(true);
 }
 
+// set player of this portal, from which they will teleport to the otherPortal (whose player is unset)
 void Portal::setPlayer(std::shared_ptr<Player> player) {
     this->player = player;
+}
+
+std::shared_ptr<Player> Portal::getPlayer() const {
+    return player;
 }
 
 void Portal::setOtherPortal(std::shared_ptr<Portal> otherPortal) {

@@ -8,15 +8,20 @@
 
 #include "entities/movable.hpp"
 
+class Portal;
+
 class Player : public Movable {
     private:
         static const int PLAYER_VELOCITY = 6;
 
         // track when a player is undoing a buffer/set to BUFFER_CAP each time
-        static const int UNDO_BUFFER_CAP = 15;
+        static const int UNDO_BUFFER_CAP = 10;
         int undoBuffer = 0;
 
         bool teleporting = false;
+
+        // maintain stack of pointers to objects pushed by player for undo purposes
+        std::stack<std::shared_ptr<Movable>> pushedObjects;
         
         // check if player has input movement
         void checkMovement(const Uint8 * keyStates, Level * level);
@@ -26,8 +31,10 @@ class Player : public Movable {
 
         // check for portal
         void checkPortal(Level * level);
+
+        void undoAction(Level * level) override;
     public:
-        const static std::string PLAYER_SHAPE;
+        inline const static std::string PLAYER_SHAPE = "player";
 
         Player(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite);
@@ -39,6 +46,10 @@ class Player : public Movable {
 
         bool isTeleporting() const;
         void setTeleporting(bool teleporting);
+
+        void pushAction(MovableAction action);
+
+        void setLastPortal(std::shared_ptr<Portal> lastPortal);
 };
 
 #endif // PLAYER_HPP

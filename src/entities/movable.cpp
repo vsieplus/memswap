@@ -278,6 +278,14 @@ void Movable::undoMovement(Direction direction, Level * level) {
     setScreenX(origCoords.first * entitySprite->getWidth());
     setScreenY(origCoords.second * entitySprite->getHeight());
 
+    // if previous move was a teleport, transfer ownership of portals back to level
+    if(!actionHistory.empty() && actionHistory.top() == TELEPORT) {
+        lastPortal->removePortals(level);
+        lastPortal->setActivated(true);
+        lastPortal->setPlayer(level->getPlayer());
+    }
+
+    // place the entity at its orig. position
     level->moveGridElement(gridX, gridY, origCoords.first, origCoords.second);
 }
 

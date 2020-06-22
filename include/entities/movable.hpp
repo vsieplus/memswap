@@ -70,6 +70,9 @@ class Movable : public Entity {
 
         // the receptor to merge with
         std::shared_ptr<Receptor> mReceptor;
+
+        // the last portal the entity used
+        std::shared_ptr<Portal> lastPortal;
         
         // if merging with a receptor/moving
         bool merging = false;

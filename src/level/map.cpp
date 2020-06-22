@@ -295,7 +295,7 @@ void Map::flipTile(int tileX, int tileY, int entityParity, Level * level) {
         Tile & currTile = mapTiles.at(xyToIndex(tileX, tileY));
 
         // skip if tile is parity-neutral/has already been flipped
-        if(currTile.getParity() == PARITY_NONE || currTile.isFlipped()) return;
+        if(currTile.getParity() == PARITY_NONE) return;
 
         // Flip if parity differs from player's
         if(entityParity != currTile.getParity()) {

@@ -24,6 +24,7 @@ class Level {
         // how many tiles have been flipped in this map
         int tilesFlipped = 0;
 
+
         // The map representation of the background
         Map map;
 
@@ -61,7 +62,9 @@ class Level {
         void checkComplete();
 
         bool isCompleted() const;
+
         bool isPerfect() const;
+        void setPerfect(bool perfect);
 
         int getGridWidth() const;
         int getGridHeight() const;

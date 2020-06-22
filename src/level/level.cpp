@@ -98,6 +98,10 @@ bool Level::isPerfect() const {
     return perfect;
 }
 
+void Level::setPerfect(bool perfect) {
+    this->perfect = perfect;
+}
+
 int Level::getGridWidth() const { 
     return gridWidth;
 }

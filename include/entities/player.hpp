@@ -12,6 +12,10 @@ class Player : public Movable {
     private:
         static const int PLAYER_VELOCITY = 6;
 
+        // track when a player is undoing a buffer/set to BUFFER_CAP each time
+        static const int UNDO_BUFFER_CAP = 15;
+        int undoBuffer = 0;
+
         bool teleporting = false;
         
         // check if player has input movement

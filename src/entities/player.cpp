@@ -14,17 +14,25 @@ Player::Player(int screenX, int screenY, int gridX, int gridY, int parity,
     gridY, PLAYER_VELOCITY, parity, entitySprite, PLAYER_SHAPE) {}
 
 void Player::handleEvents(const Uint8 * keyStates, Level * level) {
-    // Check if player wants to start moving or buffer a move, when not boosted,
-    // merging, or teleporting
-    if((!moving || (moveProg > MOVEMENT_BUFFER && bufferedDir == DIR_NONE)) &&
+    // check for move undo ('u')
+    if(keyStates[SDL_SCANCODE_U] && undoBuffer == 0) {
+        undoBuffer = UNDO_BUFFER_CAP;
+    } else if((!moving || (moveProg > MOVEMENT_BUFFER && bufferedDir == DIR_NONE)) &&
         boostPower == 0 && !merging && !teleporting) {
+
+        // Check if player wants to start moving or buffer a move, when not boosted,
+        // merging, or teleporting
         checkMovement(keyStates, level);
     }
 }
 
 void Player::update(Level * level, float delta) {
-    // check for entity interaction if player tried to move + isn't boosted
-    if((moveDir != DIR_NONE || bufferedDir != DIR_NONE) && boostPower == 0) {
+    // check for move undo
+    if(undoBuffer > 0 && undoBuffer-- == UNDO_BUFFER_CAP) {
+        if(level->isPerfect()) level->setPerfect(false);
+        undoAction(level);
+    } else if((moveDir != DIR_NONE || bufferedDir != DIR_NONE) && boostPower == 0) {
+        // check for entity interaction if player tried to move + isn't boosted
         pushDiamond(level);
         checkReceptor(level);
         checkPortal(level);

@@ -14,7 +14,7 @@ void Movable::update(Level * level, float delta) {
             if(boostPower > 0) {
                 booster->update(level, delta);
             } else {
-                booster.reset();
+                //booster.reset();
             }
         }
 
@@ -36,7 +36,7 @@ void Movable::update(Level * level, float delta) {
 }
 
 void Movable::render(SDL_Renderer* renderer) const {
-    // render receptor first when merging
+    // render receptor first when merging/booster when boosting
     if(merging) {
         mReceptor->render(renderer);
     } else if(boostPower > 0 && booster.get()) {
@@ -104,6 +104,20 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
 
     // if merging with receptor, flip new tile (that entity just moved to)
     if(merging) level->flipMapTiles(gridX, gridY, parity);
+
+    // add move action to track history
+    MoveableAction moveAction;
+    switch(direction) {
+        case DIR_UP:    moveAction = MoveableAction::MOVE_UP;
+                        break;
+        case DIR_DOWN:  moveAction = MoveableAction::MOVE_DOWN;
+                        break;
+        case DIR_LEFT:  moveAction = MoveableAction::MOVE_LEFT;
+                        break;
+        case DIR_RIGHT: moveAction = MoveableAction::MOVE_RIGHT;
+                        break;                                                                        
+    }
+    actionHistory.push(moveAction);
 }
 
 // Move the player
@@ -185,6 +199,51 @@ void Movable::checkReceptor(Level * level) {
         // stop movement after next move if boosting
         boostPower = boostPower > 0 ? 1 : 0;
     }
+}
+
+// undo the last action taken by this entity
+void Movable::undoAction(Level * level) {
+    if(!actionHistory.empty()) {
+        MoveableAction lastAction = actionHistory.top();
+        actionHistory.pop();
+
+        switch(lastAction) {
+            case MOVE_LEFT:     undoMovement(DIR_LEFT, level);
+                                break;
+            case MOVE_RIGHT:    undoMovement(DIR_RIGHT, level);
+                                break;
+            case MOVE_DOWN:     undoMovement(DIR_DOWN, level);
+                                break;
+            case MOVE_UP:       undoMovement(DIR_UP, level);
+                                break;
+        }
+    }
+}
+
+// undoes a move made in the specified direction
+void Movable::undoMovement(Direction direction, Level * level) {
+    std::pair<int, int> origCoords;
+
+    switch(direction) {
+        case DIR_UP:    origCoords = getCoords(DIR_DOWN);
+                        break;
+        case DIR_DOWN:  origCoords = getCoords(DIR_UP);
+                        break;
+        case DIR_LEFT:  origCoords = getCoords(DIR_RIGHT);
+                        break;
+        case DIR_RIGHT: origCoords = getCoords(DIR_LEFT);
+                        break;
+        default:        break;
+    }
+
+    // undo tile flip
+    level->flipMapTiles(origCoords.first, origCoords.second, PARITY_GRAY);
+
+    // reset position
+    setScreenX(origCoords.first * entitySprite->getWidth());
+    setScreenY(origCoords.second * entitySprite->getHeight());
+
+    level->moveGridElement(gridX, gridY, origCoords.first, origCoords.second);
 }
 
 // Linear interpolation from current position to <endX, endY>

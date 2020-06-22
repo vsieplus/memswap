@@ -3,15 +3,13 @@
 #ifndef MOVABLE_HPP
 #define MOVABLE_HPP
 
+#include <stack>
+
 #include "entities/entity.hpp"
 #include "entities/boost.hpp"
 #include "entities/receptor.hpp"
 #include "level/level.hpp"
 #include "level/tile.hpp"
-/* 
-// make 'T' dependent on 'Level'
-template<typename T, typename>
-struct dependentTemplate {typedef T type} */
 
 class Movable : public Entity {
     protected:
@@ -28,6 +26,19 @@ class Movable : public Entity {
 
         // for tracking boost status of movable entities
         int boostPower = 0;
+
+        // enum of actions to store play history for undo functionality
+        enum MoveableAction {
+            MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN,
+            BOOST_LEFT, BOOST_RIGHT, BOOST_UP, BOOST_DOWN,
+            MERGE,
+            // (player actions)
+            PUSH_LEFT, PUSH_RIGHT, PUSH_DOWN, PUSH_UP,
+            TELEPORT
+        };
+
+        // stack of actions
+        std::stack<MoveableAction> actionHistory;
 
         // for storing booster upon activation
         std::shared_ptr<Boost> booster;
@@ -52,6 +63,9 @@ class Movable : public Entity {
         // check for a boost entity
         bool checkBoost(Level * level, Direction direction);
         void checkReceptor(Level * level);
+
+        void undoAction(Level * level);
+        void undoMovement(Direction direction, Level * level);
 
     public:
         Movable(int screenX, int screenY, int gridX, int gridY, int velocity,

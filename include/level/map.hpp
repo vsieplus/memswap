@@ -50,6 +50,9 @@ class Map {
         // track the portals in the map
         std::vector<std::shared_ptr<Portal>> mapPortals;
 
+        // track the player in the map
+        std::shared_ptr<Player> mapPlayer;
+
     public:
         // strings used to interface with tiledmap properties/labels
         const static std::string BG_LAYER_NAME, ENTITY_LAYER_NAME;
@@ -120,6 +123,8 @@ class Map {
         // functions to convert between x,y indices to map key
         int xyToIndex(int x, int y) const;
         std::pair<int, int> indexToXY(int index) const;
+
+        std::shared_ptr<Player> getPlayer() const;
 };
 
 #endif // MAP_HPP

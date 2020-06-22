@@ -137,3 +137,7 @@ bool Level::inBounds(int x, int y) const {
 Parity Level::getTileParity(int x, int y) const {
     return map.getTileParity(x, y);
 }
+
+std::shared_ptr<Player> Level::getPlayer() const {
+    return map.getPlayer();
+}

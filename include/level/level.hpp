@@ -12,6 +12,7 @@
 
 class MemSwap;
 class Texture;
+class Player;
 
 class Level {
     private:
@@ -23,7 +24,6 @@ class Level {
 
         // how many tiles have been flipped in this map
         int tilesFlipped = 0;
-
 
         // The map representation of the background
         Map map;
@@ -82,6 +82,8 @@ class Level {
 
         bool inBounds(int x, int y) const;
         Parity getTileParity(int x, int y) const;
+
+        std::shared_ptr<Player> getPlayer() const;
 };
 
 #endif // LEVEL_HPP

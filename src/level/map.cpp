@@ -225,6 +225,7 @@ void Map::addEntity(int screenX, int screenY, int gridX, int gridY, int tileID,
     if(entityName == PLAYER_ENAME) {
         newEntity = std::make_shared<Player>(screenX, screenY, gridX, gridY, 
             parity, entitySprite);
+        mapPlayer = std::dynamic_pointer_cast<Player>(newEntity);
     } else if(entityName == DIAMOND_ENAME) {
         newEntity = std::make_shared<Diamond>(screenX, screenY, gridX, gridY, 
             parity, entitySprite);
@@ -364,4 +365,8 @@ int Map::getRenderX() const {
 
 int Map::getRenderY() const {
     return renderY;
+}
+
+std::shared_ptr<Player> Map::getPlayer() const {
+    return mapPlayer;
 }

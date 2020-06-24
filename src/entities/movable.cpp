@@ -287,6 +287,11 @@ void Movable::undoMovement(Direction direction, Level * level) {
 
     // place the entity at its orig. position
     level->moveGridElement(gridX, gridY, origCoords.first, origCoords.second);
+
+    // check if next most recent action on top is merge, if so undo
+    if(!actionHistory.empty() && actionHistory.top() == MERGE) {
+        undoMerge(level);
+    }
 }
 
 // undo a boosted move
@@ -303,8 +308,12 @@ void Movable::undoBoost(Direction direction, Level * level, MovableAction lastAc
             boosters.pop();
             
             undoAction(level);
-            lastAction = actionHistory.top();
 
+            // update lastAction if there are still more actions after recursing
+            if(!actionHistory.empty()) {
+                lastAction = actionHistory.top();
+            }
+                
             // we have moved off the grid location, so we may now replace the boost here
             level->placeGridElement(lastBoost, lastBoost->getGridX(), lastBoost->getGridY());
         }
@@ -318,7 +327,7 @@ void Movable::undoBoost(Direction direction, Level * level, MovableAction lastAc
     bool lastBoost = !topIsBoost && (lastAction == BOOST_DOWN || lastAction == BOOST_UP
         || lastAction == BOOST_LEFT || lastAction == BOOST_RIGHT);
 
-    // recurse for boosts if top is another boost or the last move onto a booster
+    // recurse for boosts if top is another boost or currently on the last move/boost onto a booster
     if(topIsBoost || lastBoost) {
         undoAction(level);
     }
@@ -328,9 +337,6 @@ void Movable::undoBoost(Direction direction, Level * level, MovableAction lastAc
 // undo merge with receptor, and movement onto the receptor + ownership
 void Movable::undoMerge(Level * level) {
     actionHistory.pop();
-
-    // first undo the movement onto the receptor, which is the next action
-    undoAction(level);
 
     // then undo the merge
     merging = false;

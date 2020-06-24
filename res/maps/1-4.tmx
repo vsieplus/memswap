@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="3">
+<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="3">
  <editorsettings>
   <export target="1-4.tmx" format="tmx"/>
  </editorsettings>
@@ -229,12 +229,12 @@
  </tileset>
  <layer id="1" name="background" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYBximAmKCakhxgwmKplHSD0xdpBqHqVhSG3zSAlPQnpJMQ+XX4g1l5BdTDjsoUZYUcO8kYQBQokBYg==
+   eJylUlsOACAIUu9/iI5an80h0Ppgbb5IpCIiDwqgx7MB5aq9UxzxOTnGjfJTj+JG9Uwn1Ks4mU6O1k6/2lndW+k84edfSmelL/Pd5A92N5f3ZQ/Xv6z+dR6b68xjOn94bl2QvtqwlAO3
   </data>
  </layer>
- <layer id="4" name="entities" width="20" height="15">
+ <layer id="6" name="entities" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBh6IJgKajyp4RA8wA+LWCCN7RyqAFtYkaImiET7HIHYHY+8G4nmkQpgdvvT2J7hCACjSwPh
+   eJzzZIAAdwZU4MFAX0Bv+8gFfkjsgAFzBeUAPb79sKqiPRjodEcqIDac/KE0sv/Q/eZKuXPgAGYPteIxEIjdGChP4/545MgxGwAjlwZv
   </data>
  </layer>
 </map>

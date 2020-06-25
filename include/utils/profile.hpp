@@ -34,7 +34,7 @@ class Profile {
     private:
         const static char NEWLINE_CHAR = '\n';
 
-        const static int NUM_LEVELS = 30;
+        const static int NUM_LEVELS = 20;
         const static int SEC_PER_HOUR = 3600;
         const static int SEC_PER_MIN = 60;
 
@@ -46,7 +46,7 @@ class Profile {
         int numLevelsCompleted = 0;
 
         // bool array indicating level completeness
-        // in order of level number (1 -> 30)
+        // in order of level number (1 -> 20)
         std::array<bool, NUM_LEVELS> levelsCompleted;
 };
 

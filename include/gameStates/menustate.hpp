@@ -118,7 +118,7 @@ class MenuState : public GameState {
         inline const static std::unordered_map<MenuState::MenuScreen, std::pair<int, int>> BTN_LAYOUTS =
         {
             {MenuState::MenuScreen::MENU_MAIN, std::make_pair(2, 2)},
-            {MenuState::MenuScreen::MENU_LVLS, std::make_pair(3, 10)},
+            {MenuState::MenuScreen::MENU_LVLS, std::make_pair(2, 10)},
             {MenuState::MenuScreen::MENU_STATS, std::make_pair(1, 1)},
             {MenuState::MenuScreen::MENU_HTP, std::make_pair(0, 0)},
             {MenuState::MenuScreen::MENU_CREDITS, std::make_pair(0, 0)},

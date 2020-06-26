@@ -31,8 +31,8 @@ void Player::update(Level * level, float delta) {
     if(undoBuffer > 0 && undoBuffer-- == UNDO_BUFFER_CAP) {
         if(level->isPerfect()) level->setPerfect(false);
         undoAction(level);
-    } else if((moveDir != DIR_NONE || bufferedDir != DIR_NONE) && boostPower == 0) {
-        // check for entity interaction if player tried to move + isn't boosted
+    } else if(moveDir != DIR_NONE || bufferedDir != DIR_NONE) {
+        // check for entity interaction if player tried to move/is moving
         pushDiamond(level);
         checkReceptor(level);
         checkPortal(level);

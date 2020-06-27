@@ -26,6 +26,9 @@
         "2-6": "2-6.tmx", "2-7": "2-7.tmx", "2-8": "2-8.tmx",
         "2-9": "2-9.tmx", "2-X": "2-X.tmx"
     },
+    "animations": {
+        "loading": "splash_loading.png"
+    },
     "sounds": {
         "flip": "flip.wav",
         "bonk": "bonk.wav",

@@ -2,19 +2,35 @@
 
 #include "utils/spritesheet.hpp"
 
-SpriteSheet::SpriteSheet(std::string texturePath, SDL_Renderer * renderer) {
-    loadSpritesheet(texturePath, renderer);
+SpriteSheet::SpriteSheet(std::string texturePath, SDL_Renderer * renderer,
+    int spriteWidth, int spriteHeight) : spritesheetTexture(new Texture()) {
+    loadSpritesheet(texturePath, renderer, spriteWidth, spriteHeight);
+}
+
+// load directly from an image texture w / specified params
+void SpriteSheet::loadSpritesheet(std::string texturePath, SDL_Renderer * renderer,
+    int spriteWidth, int spriteHeight) {
+
+    // load the texture
+    spritesheetTexture->loadTexture(texturePath, renderer);
+
+    // assumes the texture contains n sprites of size spriteWidth x spriteHeight in one row
+    int numSprites = spritesheetTexture->getWidth() / spriteWidth;
+
+    for(int i = 0; i < numSprites; i++) {
+        std::shared_ptr<Sprite> tileSprite = 
+            std::make_shared<Sprite>(spritesheetTexture,
+            (struct SDL_Rect) {i * spriteWidth, 0, spriteWidth, spriteHeight});
+
+        sprites.emplace(i, tileSprite);         
+    }
+
 }
 
 SpriteSheet::SpriteSheet(std::string mapPath, std::string tilesetName, 
     SDL_Renderer * renderer) : spritesheetTexture(new Texture()) {
     
     loadSpritesheet(mapPath, tilesetName, renderer);
-}
-
-// load directly from texture
-void SpriteSheet::loadSpritesheet(std::string texturePath, SDL_Renderer * renderer) {
-
 }
     
 // load a spritesheet from a tiledmap
@@ -66,7 +82,7 @@ void SpriteSheet::loadTileProperties(const tmx::Tileset::Tile & tile) {
     auto & properties = tile.properties;
 
     if(!properties.empty()) {
-        std::unordered_map<std::string, std::any> propertyMap;
+        std::map<std::string, std::any> propertyMap;
 
         for(auto & property: properties) {
             std::string propName = property.getName();
@@ -116,4 +132,8 @@ int SpriteSheet::getFirstGID() const {
 
 SDL_Texture * SpriteSheet::getTexture() const {
     return spritesheetTexture->getTexture().get();
+}
+
+int SpriteSheet::getNumSprites() const {
+    return sprites.size();
 }

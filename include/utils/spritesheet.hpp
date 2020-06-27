@@ -3,7 +3,7 @@
 #ifndef SPRITESHEET_HPP
 #define SPRITESHEET_HPP
 
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <any>
 #include <functional>
@@ -24,21 +24,23 @@ class SpriteSheet {
         std::shared_ptr<Texture> spritesheetTexture;
 
         // sprites in the spritesheet, key: hash of tileID, val: Sprite obj.
-        std::unordered_map<int, std::shared_ptr<Sprite>> sprites;
+        std::map<int, std::shared_ptr<Sprite>> sprites;
 
         // (non-empty) tile properties, as stored in the tiledmap data
         // key: tile ID, value: map of properties (prop. names -> values)
-        std::unordered_map<int, std::unordered_map<std::string, std::any>> tileProperties;
+        std::map<int, std::map<std::string, std::any>> tileProperties;
 
         void loadTileProperties(const tmx::Tileset::Tile & tile);
 
     public:
-        SpriteSheet(std::string texturePath, SDL_Renderer * renderer);
+        SpriteSheet(std::string texturePath, SDL_Renderer * renderer,
+            int spriteWidth, int spriteHeight);
         SpriteSheet(std::string mapPath, std::string tilesetName, SDL_Renderer * renderer);
 
         // functions to load a spritesheet, either directly from a file, or
         // via tiledmap interface + tmx loading
-        void loadSpritesheet(std::string texturePath, SDL_Renderer * renderer);
+        void loadSpritesheet(std::string texturePath, SDL_Renderer * renderer,
+            int spriteWidth, int spriteHeight);
         void loadSpritesheet(std::string mapPath, std::string tilesetName, 
             SDL_Renderer * renderer);
 
@@ -54,6 +56,7 @@ class SpriteSheet {
         SDL_Texture * getTexture() const;
 
         int getFirstGID() const;
+        int getNumSprites() const;
 };
 
 #endif // SPRITESHEET_HPP

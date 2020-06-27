@@ -68,7 +68,7 @@ void Movable::initMovement(Direction direction, Level * level) {
 
 /**
  * @brief attempt to initialize player movement to the specified new
- *        position. Returns early if unable to
+ *        position. Returns early if invalid
  */
 void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange, 
     int yGridChange, Direction direction, Level * level) {
@@ -77,9 +77,16 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
     int newGridY = gridY + yGridChange;
 
     // Check for collisions or invalid tile movement (same tile Parity)
-    if(checkCollision(level, newGridX, newGridY) || parity == 
-       level->getTileParity(newGridX, newGridY)) {
+    if(checkCollision(level, newGridX, newGridY) || parity == level->getTileParity(newGridX, newGridY)) {
+        
+        // if failing on a boost, add a dummy "boost-in-place" to action hist.
+        if(boostPower > 0) {
+            addMoveToHistory(DIR_NONE);
+        }
+
         moveDir = DIR_NONE;
+        moving = false;
+        boostPower = 0;
         return;
     }
 
@@ -124,7 +131,8 @@ void Movable::addMoveToHistory(Direction direction) {
                         break;
         case DIR_RIGHT: moveAction = boosted ? BOOST_RIGHT : MOVE_RIGHT;
                         break;
-        default:        break;                                                                   
+        case DIR_NONE:  moveAction = BOOST_NONE;
+                        break;                                                                  
     }
 
     actionHistory.push(moveAction);
@@ -149,7 +157,9 @@ void Movable::move(Level * level, float delta) {
             // if there is, avoid boosting 2x in that direction
             if(!checkBoost(level, moveDir)) {
                 initMovement(moveDir, level);
-                boostPower--;
+                
+                // decrement boost power if init was succesful (we're now moving)
+                if(moving) boostPower--;
             }
         } else if(bufferedDir != DIR_NONE) {
             // check for boost in the buffered direction, if there is one there
@@ -245,6 +255,8 @@ void Movable::undoAction(Level * level) {
                                 break;
             case BOOST_UP:      undoBoost(DIR_UP, level, lastAction);
                                 break;
+            case BOOST_NONE:    undoBoost(DIR_NONE, level, lastAction);
+                                break;
             case MERGE:         undoMerge(level);
                                 break;
             default:            break;
@@ -268,7 +280,7 @@ void Movable::undoMovement(Direction direction, Level * level) {
                         break;
         case DIR_RIGHT: origCoords = getCoords(DIR_LEFT);
                         break;
-        default:        break;
+        case DIR_NONE:  return;
     }
 
     // undo tile flip
@@ -303,10 +315,11 @@ void Movable::undoBoost(Direction direction, Level * level, MovableAction lastAc
     if(!boosters.empty()) {
         std::shared_ptr<Boost> lastBoost = boosters.top();
 
-        // undo the move onto the booster, then transfer ownership back to the map
+        // transfer ownership back to the map
         if(lastBoost->getGridX() == gridX && lastBoost->getGridY() == gridY) {
             boosters.pop();
             
+            // undo the movement onto the boost
             undoAction(level);
 
             // update lastAction if there are still more actions after recursing

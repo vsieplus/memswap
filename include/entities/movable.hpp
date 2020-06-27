@@ -39,7 +39,7 @@ class Movable : public Entity {
         // enum of actions to store play history for undo functionality
         enum MovableAction {
             MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN,
-            BOOST_LEFT, BOOST_RIGHT, BOOST_UP, BOOST_DOWN,
+            BOOST_LEFT, BOOST_RIGHT, BOOST_UP, BOOST_DOWN, BOOST_NONE, // dummy boost-inplace
             MERGE,
             // (player exclusive actions)
             PUSH, TELEPORT

@@ -142,10 +142,11 @@ void MenuState::addStatsGUI(MemSwap * game) {
 
     // Buttons: reset data, back
     
-    // start placing buttons in the bottom 2/3 of the stats board
-    int buttonAreaX = statsLabels.back().getScreenX();
+    // start placing buttons in the bottom 1/2, right 1/2 of the stats board
+    int buttonAreaX = statsLabels.back().getScreenX() + 
+        statsLabels.back().getWidth() * 2 / 5;
     int buttonAreaY = statsLabels.back().getScreenY() + 
-        statsLabels.back().getHeight() * 2 / 3;
+        statsLabels.back().getHeight() / 2;
    
     int buttonAreaXEnd = statsLabels.back().getScreenX() + statsLabels.back().getWidth();
     int buttonAreaYEnd = statsLabels.back().getScreenY() + statsLabels.back().getHeight();

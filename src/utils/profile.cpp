@@ -77,7 +77,7 @@ std::string Profile::getStatsString() const {
     stats += "Level resets: " + std::to_string(levelResets) + NEWLINE_CHAR;
     stats += "Moves undone: " + std::to_string(movesUndone) + NEWLINE_CHAR;
     stats += "Levels completed: " + std::to_string(numLevelsCompleted) + 
-        "/30" + NEWLINE_CHAR;
+        "/20" + NEWLINE_CHAR;
 
     return stats;
 }

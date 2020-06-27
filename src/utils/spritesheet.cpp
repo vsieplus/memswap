@@ -122,7 +122,7 @@ void SpriteSheet::loadTileProperties(const tmx::Tileset::Tile & tile) {
 }
 
 // get the clip in this spritesheet for the given tile (as SDL_Rect wrapper Sprite obj.) 
-std::shared_ptr<Sprite> SpriteSheet::getSprite(int tileID) {
+std::shared_ptr<Sprite> SpriteSheet::getSprite(int tileID) const {
     return sprites.at(tileID);
 }
 

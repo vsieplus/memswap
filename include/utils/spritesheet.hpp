@@ -51,7 +51,7 @@ class SpriteSheet {
         }
 
         // Get the sprite in this sheet with the specified id
-        std::shared_ptr<Sprite> getSprite(int tileID);
+        std::shared_ptr<Sprite> getSprite(int tileID) const;
 
         SDL_Texture * getTexture() const;
 

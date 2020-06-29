@@ -48,17 +48,18 @@ class Entity {
         Animator entityAnimator;
 
         // hold all animations to be used by this entity, key = enum ID val.
-        std::unordered_map<int, std::shared_ptr<Animation>> entityAnimations;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations;
 
     public:
         // for grid-based entities
         Entity(int screenX, int screenY, int gridX, int gridY, int parity, 
-            std::shared_ptr<Sprite> entitySprite);
+            std::shared_ptr<Sprite> entitySprite,
+            const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations);
 
         // for non grid-based entities (eg tiles)
         Entity(int screenX, int screenY, int parity, 
             std::shared_ptr<Sprite> entitySprite,
-            std::unordered_map<int, std::shared_ptr<Animation>> entityAnimations);
+            const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations);
 
         virtual void handleEvents(const Uint8 * keyStates, Level * level) = 0;
         virtual void update(Level * level, float delta);

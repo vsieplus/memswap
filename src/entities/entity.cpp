@@ -5,14 +5,15 @@
 #include "level/level.hpp"
 
 Entity::Entity(int screenX, int screenY, int gridX, int gridY, int parity, 
-    std::shared_ptr<Sprite> entitySprite) : 
+    std::shared_ptr<Sprite> entitySprite,
+    const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations) : 
     gridX(gridX), gridY(gridY), parity((Parity)parity), entitySprite(entitySprite),
-    renderArea{screenX, screenY, entitySprite->getWidth(), 
-    entitySprite->getHeight()} {}
+    renderArea{screenX, screenY, entitySprite->getWidth(), entitySprite->getHeight()}, 
+    entityAnimations(entityAnimations) {}
 
 Entity::Entity(int screenX, int screenY, int parity, 
     std::shared_ptr<Sprite> entitySprite,
-    std::unordered_map<int, std::shared_ptr<Animation>> entityAnimations) : 
+    const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations) : 
     gridX(0), gridY(0), parity(Parity(parity)), entitySprite(entitySprite), 
     renderArea{screenX, screenY, entitySprite->getWidth(), entitySprite->getHeight()},
     entityAnimations(entityAnimations) {}

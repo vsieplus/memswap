@@ -2,7 +2,6 @@
 
 #include "utils/resmanager.hpp"
 
-
 // Construct the resource manager with a path to file containing the
 // resource paths (json)
 ResManager::ResManager(std::string resourcePathsFile, SDL_Renderer * renderer):
@@ -64,13 +63,6 @@ void ResManager::parseJSON(std::string resourcePathsFile) {
 
 // load all resources
 void ResManager::loadNextResource() {
-    if(!loadingResources()) {
-        // clear unused resources
-        tilesetNames.clear();
-
-        return;
-    }
-
     int currResID = resourcesToLoad.back();
     resourcesToLoad.pop_back();
 
@@ -91,6 +83,16 @@ void ResManager::loadNextResource() {
         loadMusic(currResID, currResFilepath);
     } else if (resFileExt == FONT_EXT) {
         loadFont(currResID, currResFilepath);
+    }
+
+    // check if finished
+    if(!loadingResources()) {
+        // construct animation maps
+        constructAnimationMaps();
+
+        // clear unused resources
+        animations.clear();
+        tilesetNames.clear();
     }
 }
 
@@ -133,6 +135,19 @@ void ResManager::loadAnimation(int resourceIDHash, std::string resourcePath) {
         ANIM_FRAMEWIDTH, ANIM_FRAMEHEIGHT);
 
     animations.emplace(resourceIDHash, animation);
+}
+
+void ResManager::constructAnimationMaps() {
+    tileAnimations = {{0, getAnimation(TILE_FLIP_ID)}};
+
+    boostAnimations = {{0, getAnimation(BOOST_VANISH1_ID)}, 
+    {1, getAnimation(BOOST_VANISH2_ID)}};
+
+    playerAnimations = {};
+
+    diamondAnimations = {};
+
+    portalAnimations = {};
 }
 
 // return whether done loading resources
@@ -179,4 +194,28 @@ std::shared_ptr<Animation> ResManager::getAnimation(std::string id) const {
 // Return the actual path to the file containing the resource with ID id
 std::string ResManager::getResPath(std::string id) const {
     return resourcePaths.at(resHash(id));
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getTileAnimations() const {
+    return tileAnimations;
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getPlayerAnimations() const {
+    return playerAnimations;
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getDiamondAnimations() const {
+    return diamondAnimations;
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getBoostAnimations() const {
+    return boostAnimations;
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getPortalAnimations() const {
+    return portalAnimations;
+}
+
+const std::unordered_map<int, std::shared_ptr<Animation>> & ResManager::getReceptorAnimations() const {
+    return receptorAnimations;
 }

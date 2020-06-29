@@ -55,6 +55,12 @@ class ResManager {
 
         // animations
         std::unordered_map<int, std::shared_ptr<Animation>> animations;
+        std::unordered_map<int, std::shared_ptr<Animation>> tileAnimations;
+        std::unordered_map<int, std::shared_ptr<Animation>> playerAnimations;
+        std::unordered_map<int, std::shared_ptr<Animation>> boostAnimations;
+        std::unordered_map<int, std::shared_ptr<Animation>> diamondAnimations;
+        std::unordered_map<int, std::shared_ptr<Animation>> portalAnimations;
+        std::unordered_map<int, std::shared_ptr<Animation>> receptorAnimations;
 
         // tileset names
         std::unordered_map<int, std::string> tilesetNames;
@@ -82,6 +88,10 @@ class ResManager {
 
         inline const static std::string BASE_MAP_ID = "testing";
 
+        inline static const std::string TILE_FLIP_ID = "tileFlip";
+        inline const static std::string BOOST_VANISH1_ID = "boostVanish1";
+        inline const static std::string BOOST_VANISH2_ID = "boostVanish2";
+
     public:
         // Construct the resource manager with a path to file containing the
         // resource paths (json)
@@ -100,6 +110,8 @@ class ResManager {
         void loadFont(int resourceIDHash, std::string resourcePath);
         void loadAnimation(int resourceIDHash, std::string resourcePath);
 
+        void constructAnimationMaps();
+
         bool loadingResources() const;
 
         std::string getResExt(std::string path);
@@ -113,6 +125,13 @@ class ResManager {
         std::shared_ptr<Animation> getAnimation(std::string id) const;
         
         std::string getResPath(std::string id) const;
+
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getTileAnimations() const;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getPlayerAnimations() const;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getDiamondAnimations() const;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getBoostAnimations() const;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getPortalAnimations() const;
+        const std::unordered_map<int, std::shared_ptr<Animation>> & getReceptorAnimations() const;
 };
 
 #endif // RESMANAGER_HPP

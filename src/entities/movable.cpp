@@ -144,7 +144,7 @@ void Movable::addMoveToHistory(Direction direction) {
 // Move the player
 void Movable::move(Level * level, float delta) {
     if(moveProg < 1.0f) {
-        // Update moveProg based on time
+        // Update moveProg based on time;
         moveProg += velocity * (delta/1000.f);
 
         // Perform linear interpolation if not yet reached

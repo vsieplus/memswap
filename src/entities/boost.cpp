@@ -14,6 +14,7 @@ void Boost::handleEvents(const Uint8 * keyStates, Level * level) {
 void Boost::update(Level * level, float delta) {
     if(activated) {
         // do some disappearing animation
+        Entity::update(level, delta);
     }
 }
 

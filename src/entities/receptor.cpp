@@ -15,7 +15,7 @@ void Receptor::update(Level * level, float delta) {
     // check if completed
     if(completed) {
         // check if merge animation set/complete
-        
+        Entity::update(level, delta);
     }
 }
 

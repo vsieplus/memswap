@@ -16,7 +16,6 @@ class Boost : public Entity {
         Direction direction;
 
         bool activated = false;
-        bool vanished = false;
 
     public:
         Boost(int screenX, int screenY, int gridX, int gridY, int parity,
@@ -32,7 +31,6 @@ class Boost : public Entity {
         int getPower() const;
         bool isActivated() const;
         void setActivated(bool activated);
-        void setVanished(bool vanished);
 
 };
 

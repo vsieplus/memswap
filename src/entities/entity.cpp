@@ -44,7 +44,7 @@ void Entity::update(Level * level, float delta) {
 void Entity::render(SDL_Renderer * renderer) const {
     if(entityAnimator.isAnimating()) {
         entityAnimator.render(renderArea.x, renderArea.y, renderer, angle);
-    } else {
+    } else if(!vanished) {
         entitySprite->render(renderer, renderArea);
     }
 }
@@ -112,4 +112,8 @@ Parity Entity::getParity() const {
 void Entity::activateAnimation(int animationID) {
     entityAnimator.setCurrAnimation(entityAnimations.at(animationID));
     entityAnimator.start();
+}
+
+void Entity::setVanished(bool vanished) {
+    this->vanished = vanished;
 }

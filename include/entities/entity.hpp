@@ -53,6 +53,9 @@ class Entity {
         // hold all animations to be used by this entity, key = enum ID val.
         const std::unordered_map<int, std::shared_ptr<Animation>> & entityAnimations;
 
+        // if entity is removed from the grid
+        bool vanished = false;
+
     public:
         // for grid-based entities
         Entity(int screenX, int screenY, int gridX, int gridY, int parity, 
@@ -85,6 +88,8 @@ class Entity {
         Parity getParity() const;
 
         std::pair<int, int> getCoords(Direction direction);
+        
+        void setVanished(bool vanished);
 };
 
 #endif // ENTITY_HPP

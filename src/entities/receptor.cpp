@@ -13,13 +13,7 @@ void Receptor::handleEvents(const Uint8 * keyStates, Level * level) {
 
 }
 
-void Receptor::update(Level * level, float delta) {
-    // check if completed
-    if(completed) {
-        // check if merge animation set/complete
-        Entity::update(level, delta);
-    }
-}
+void Receptor::update(Level * level, float delta) {}
 
 void Receptor::render(SDL_Renderer* renderer) const {
     Entity::render(renderer);

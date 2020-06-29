@@ -91,6 +91,7 @@ class ResManager {
         inline static const std::string TILE_FLIP_ID = "tileFlip";
         inline const static std::string BOOST_VANISH1_ID = "boostVanish1";
         inline const static std::string BOOST_VANISH2_ID = "boostVanish2";
+        inline const static std::string DIAMOND_MERGE_ID = "diamondMerge";
 
     public:
         // Construct the resource manager with a path to file containing the

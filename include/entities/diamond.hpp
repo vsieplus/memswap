@@ -10,6 +10,7 @@ class Diamond : public Movable {
     private:
         static const int DIAMOND_VELOCITY = 3;
 
+        enum DiamondAnimation{ DIAMOND_MERGE };
 
     public:
         const static std::string DIAMOND_SHAPE;

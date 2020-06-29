@@ -145,7 +145,7 @@ void ResManager::constructAnimationMaps() {
 
     playerAnimations = {};
 
-    diamondAnimations = {};
+    diamondAnimations = {{0, getAnimation(DIAMOND_MERGE_ID)}};
 
     portalAnimations = {};
 }

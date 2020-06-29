@@ -8,7 +8,7 @@
 class Animation {
     public:
         Animation(std::string animationPath, SDL_Renderer * renderer, 
-            int frameWidth, int frameHeight, int msPerFrame = 50,
+            int frameWidth, int frameHeight, int msPerFrame = 55,
             bool looping = false);
 
         void render(int x, int y, int frameNum, SDL_Renderer * renderer,

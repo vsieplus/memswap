@@ -19,7 +19,13 @@ void Diamond::handleEvents(const Uint8 * keyStates, Level * level) {
 }
 
 void Diamond::update(Level * level, float delta) {
-    if(moveDir != DIR_NONE) {
+    if(merging) {
+        // start merge animation once movement onto receptor is finished
+        if(!moving && !vanished && !entityAnimator.isAnimating()) {
+            activateAnimation(DIAMOND_MERGE);
+            vanished = true;
+        }
+    } else if(moveDir != DIR_NONE) {
         checkReceptor(level);
     }
 

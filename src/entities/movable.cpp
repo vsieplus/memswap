@@ -29,17 +29,14 @@ void Movable::update(Level * level, float delta) {
     } 
     
     if(merging) {
-        // if merging, update receptor, and then do 'merge' animation
-        mReceptor->update(level, delta);
+        // if merging, do 'merge' animation
+        Entity::update(level, delta);
     }
-
-    // update animation
-    Entity::update(level, delta);
 }
 
 void Movable::render(SDL_Renderer* renderer) const {
-    // render receptor first when merging/booster when boosting
-    if(merging) {
+    // render receptor first when merging + moving/booster when boosting
+    if(merging && moving) {
         mReceptor->render(renderer);
     } else if(boostPower > 0) {
         if(!boosters.empty()) {
@@ -360,6 +357,7 @@ void Movable::undoMerge(Level * level) {
 
     // then undo the merge
     merging = false;
+    vanished = false;
     mReceptor->setCompleted(false);
 
     level->flipMapTiles(mReceptor->getGridX(), mReceptor->getGridY(), PARITY_GRAY, true);

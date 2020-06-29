@@ -43,8 +43,6 @@ void Boost::update(Level * level, float delta) {
 }
 
 void Boost::render(SDL_Renderer* renderer) const {
-    if(activated && vanished && !entityAnimator.isAnimating()) return;
-
     Entity::render(renderer);
 }
 
@@ -68,8 +66,4 @@ void Boost::setActivated(bool activated) {
     if(!activated) {
         angle = 0.0;
     }
-}
-
-void Boost::setVanished(bool vanished) {
-    this->vanished = vanished;
 }

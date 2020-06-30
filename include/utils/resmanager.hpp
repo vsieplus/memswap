@@ -101,8 +101,6 @@ class ResManager {
         inline const static std::string PLAYER_MFLEFT_ID = "playerMoveFailLeft";
         inline const static std::string PLAYER_MFRIGHT_ID = "playerMoveFailRight";
 
-
-
     public:
         // Construct the resource manager with a path to file containing the
         // resource paths (json)

@@ -20,10 +20,11 @@ class Player : public Movable {
 
         int movesUndone = 0;
 
-        enum PlayerAnimation {PLAYER_MERGE, PLAYER_TELEPORT, PLAYER_MOVEFAIL_UP,
-            PLAYER_MOVEFAIL_LEFT, PLAYER_MOVEFAIL_RIGHT, PLAYER_MOVEFAIL_DOWN};
+        enum PlayerAnimation {PLAYER_MERGE, PLAYER_MOVEFAIL_UP, PLAYER_MOVEFAIL_DOWN,
+            PLAYER_MOVEFAIL_LEFT, PLAYER_MOVEFAIL_RIGHT, PLAYER_TELEPORT};
 
         bool teleporting = false;
+        bool stuck = false;
 
         // maintain stack of pointers to objects pushed by player for undo purposes
         std::stack<std::shared_ptr<Movable>> pushedObjects;

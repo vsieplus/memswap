@@ -38,14 +38,33 @@ void Player::update(Level * level, float delta) {
         pushDiamond(level);
         checkReceptor(level);
         checkPortal(level);
+
+        auto newCoords = getCoords(currCheckDir());
+
+        // check for failed move
+        if(!moving && !entityAnimator.isAnimating() && 
+            (!level->inBounds(newCoords.first, newCoords.second) || 
+            parity == level->getTileParity(newCoords.first, newCoords.second))) {
+            switch(currCheckDir()) {
+                case DIR_LEFT:  activateAnimation(PLAYER_MOVEFAIL_LEFT);
+                                break;
+                case DIR_RIGHT: activateAnimation(PLAYER_MOVEFAIL_RIGHT);
+                                break;
+                case DIR_UP:    activateAnimation(PLAYER_MOVEFAIL_UP);
+                                break;
+                case DIR_DOWN:  activateAnimation(PLAYER_MOVEFAIL_DOWN);
+                                break;
+                default:        break;
+            }
+        }
     } else if(merging) {
         // if player not moving + is merging, check if level is complete
         if(!moving && !level->isCompleted()) {
             if(!vanished) {
                 activateAnimation(PLAYER_MERGE);
                 vanished = true;
-            } else if(!entityAnimator.isAnimating()) {
-                level->checkComplete();
+            } else if(!entityAnimator.isAnimating() && !stuck) {
+                stuck = !level->checkComplete();
             }
         }
     }
@@ -148,6 +167,8 @@ void Player::undoAction(Level * level) {
                 // give ownership of portals -> level
                 level->placePortals();
                 break;
+            case MERGE:
+                stuck = false;
             default:
                 // check for undoing general movement
                 Movable::undoAction(level);

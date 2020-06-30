@@ -28,10 +28,7 @@ void Movable::update(Level * level, float delta) {
         }
     } 
     
-    if(merging) {
-        // if merging, do 'merge' animation
-        Entity::update(level, delta);
-    }
+    Entity::update(level, delta);
 }
 
 void Movable::render(SDL_Renderer* renderer) const {
@@ -88,6 +85,7 @@ void Movable::initMovement(int xPosChange, int yPosChange, int xGridChange,
         moveDir = DIR_NONE;
         moving = false;
         boostPower = 0;
+
         return;
     }
 

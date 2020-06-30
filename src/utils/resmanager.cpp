@@ -143,7 +143,12 @@ void ResManager::constructAnimationMaps() {
     boostAnimations = {{0, getAnimation(BOOST_VANISH1_ID)}, 
         {1, getAnimation(BOOST_VANISH2_ID)}};
 
-    playerAnimations = {{0, getAnimation(PLAYER_MERGE_ID)}};
+    playerAnimations = {{0, getAnimation(PLAYER_MERGE_ID)},
+        {1, getAnimation(PLAYER_MFUP_ID)},
+        {2, getAnimation(PLAYER_MFDOWN_ID)},
+        {3, getAnimation(PLAYER_MFLEFT_ID)},
+        {4, getAnimation(PLAYER_MFRIGHT_ID)},
+        {5, getAnimation(PLAYER_TELEPORT_ID)}};
 
     diamondAnimations = {{0, getAnimation(DIAMOND_MERGE_ID)}};
 

@@ -54,7 +54,7 @@ void Map::update(Level * level, float delta) {
 
     // if level has portals and they're removed, update manually
     if(!mapPortals.empty() && mapPortals.back()->isRemoved()) {
-        for(auto portal: mapPortals) {
+        for(auto & portal: mapPortals) {
             portal->update(level, delta);
         }
     }
@@ -78,7 +78,7 @@ void Map::render(SDL_Renderer * renderer) const {
 
     // render portals manually if tmp. removed
     if(!mapPortals.empty() && mapPortals.back()->isRemoved()) {
-        for(auto portal: mapPortals) {
+        for(auto & portal: mapPortals) {
             portal->render(renderer);
         }
     }

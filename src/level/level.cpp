@@ -62,18 +62,19 @@ void Level::placePortals() {
 }
 
 // check if the level is complete
-void Level::checkComplete() {
+bool Level::checkComplete() {
     // check if each tile parity matches purple parity
     for(int y = 0; y < gridHeight; y++) {
         for(int x = 0; x < gridWidth; x++) {
             // if some tile isn't flipped, level has not been succesfully completed
             if(getTileParity(x, y) != PARITY_PURPLE) {
-                return;
+                return false;
             }
         }
     }
 
     completed = true;
+    return true;
 }
 
 void Level::reset(MemSwap * game) {

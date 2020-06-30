@@ -59,7 +59,7 @@ class Level {
         void placePortals();
 
         // check for level completion
-        void checkComplete();
+        bool checkComplete();
 
         bool isCompleted() const;
 

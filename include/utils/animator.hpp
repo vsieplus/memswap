@@ -9,7 +9,7 @@ class Animator {
     public:
         Animator();
 
-        void start();
+        void start(bool reverse = false);
 
         void update(float delta);
         void render(int x, int y, SDL_Renderer * renderer, double angle = 0.0) const;
@@ -24,6 +24,7 @@ class Animator {
     private:
         // track the animation progress
         bool animating = false;
+        bool reverse = false;
 
         int currFrame = 0;
         

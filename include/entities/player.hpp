@@ -20,14 +20,13 @@ class Player : public Movable {
 
         int movesUndone = 0;
 
-        enum PlayerAnimation {PLAYER_MERGE, PLAYER_MOVEFAIL_UP, PLAYER_MOVEFAIL_DOWN,
-            PLAYER_MOVEFAIL_LEFT, PLAYER_MOVEFAIL_RIGHT, PLAYER_TELEPORT};
-
         bool teleporting = false;
         bool stuck = false;
 
         // maintain stack of pointers to objects pushed by player for undo purposes
         std::stack<std::shared_ptr<Movable>> pushedObjects;
+
+        inline const static std::string PLAYER_SHAPE = "player";
         
         // check if player has input movement
         void checkMovement(const Uint8 * keyStates, Level * level);
@@ -40,7 +39,8 @@ class Player : public Movable {
 
         void undoAction(Level * level) override;
     public:
-        inline const static std::string PLAYER_SHAPE = "player";
+        enum PlayerAnimation {PLAYER_MERGE, PLAYER_MOVEFAIL_UP, PLAYER_MOVEFAIL_DOWN,
+            PLAYER_MOVEFAIL_LEFT, PLAYER_MOVEFAIL_RIGHT, PLAYER_TELEPORT};
 
         Player(int screenX, int screenY, int gridX, int gridY, int parity,
             std::shared_ptr<Sprite> entitySprite,

@@ -17,15 +17,25 @@ void Portal::update(Level * level, float delta) {
     if(activated && player.get()) {
         // if player is done moving onto the portal, proceed with the teleport
         if(!player->isMoving() && player->isTeleporting()) {
-            teleportPlayer(level);
-            player->setTeleporting(false);
+            // activate player teleport-in animation
+            if(!player->isVanished()) {
+                player->activateAnimation(Player::PlayerAnimation::PLAYER_TELEPORT);
+                player->setVanished(true);
+            } else if(!player->isAnimating()) {
+                // once animation finished, teleport the player + activate teleport-out animation (reversed)
+                teleportPlayer(level);
+                player->setTeleporting(false);
+                player->setVanished(false);
 
-            // transfer ownership of player to otherPortal
-            player->setLastPortal(otherPortal);
-            otherPortal->setPlayer(player);
-            player.reset();
-            checkSurrounded(level);
-            return;
+                player->activateAnimation(Player::PlayerAnimation::PLAYER_TELEPORT, true);
+
+                // transfer ownership of player to otherPortal
+                player->setLastPortal(otherPortal);
+                otherPortal->setPlayer(player);
+                player.reset();
+                checkSurrounded(level);
+                return;
+            }
         }
 
         // if player has moved off of the portal, place them back in the grid

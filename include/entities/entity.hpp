@@ -80,7 +80,7 @@ class Entity {
         void setGridX(int x);
         void setGridY(int y);
 
-        void activateAnimation(int animationID);
+        void activateAnimation(int animationID, bool reverse = false);
 
         int getScreenX() const;
         int getScreenY() const;
@@ -93,6 +93,7 @@ class Entity {
         
         void setVanished(bool vanished);
         bool isVanished() const;
+        bool isAnimating() const;
 };
 
 #endif // ENTITY_HPP

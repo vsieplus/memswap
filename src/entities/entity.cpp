@@ -113,9 +113,9 @@ Parity Entity::getParity() const {
     return parity;
 }
 
-void Entity::activateAnimation(int animationID) {
+void Entity::activateAnimation(int animationID, bool reverse) {
     entityAnimator.setCurrAnimation(entityAnimations.at(animationID));
-    entityAnimator.start();
+    entityAnimator.start(reverse);
 }
 
 void Entity::setVanished(bool vanished) {
@@ -124,4 +124,8 @@ void Entity::setVanished(bool vanished) {
 
 bool Entity::isVanished() const {
     return vanished;
+}
+
+bool Entity::isAnimating() const {
+    return entityAnimator.isAnimating();
 }

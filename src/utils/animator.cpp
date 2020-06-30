@@ -2,24 +2,32 @@
 
 Animator::Animator() {}
 
-void Animator::start() {
+void Animator::start(bool reverse) {
+    this->reverse = reverse;
+
     msFromStart = 0;
-    currFrame = 0;
-    setAnimating(true);
+    currFrame = reverse ? currAnimation->getNumFrames() - 1 : 0;
+    if(!animating) setAnimating(true);
 }
 
 void Animator::update(float delta) {
     msFromStart += delta;
-    currFrame = msFromStart / currAnimation->getMsPerFrame();
+    
+    if(reverse) {
+        currFrame = currAnimation->getNumFrames() - 1
+            - (msFromStart / currAnimation->getMsPerFrame());
+    } else {
+        currFrame = msFromStart / currAnimation->getMsPerFrame();
+    }
 /* 
     printf("current frame: %dout of %d\n", currFrame, currAnimation->getNumFrames());
     printf("delta: %.6f\n", delta);
     printf("ms from start %.6f\n", msFromStart); */
 
     // check if Animator has finished, stop unless looping
-    if(currFrame > currAnimation->getNumFrames() - 1) {
-        currFrame = 0;
-        msFromStart = 0;
+    if((!reverse && currFrame > currAnimation->getNumFrames() - 1) ||
+       (reverse && currFrame == 0)) {
+        start(reverse);
         if(!currAnimation->isLooping()) {
             setAnimating(false);
             currAnimation.reset();

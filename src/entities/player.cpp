@@ -102,7 +102,7 @@ void Player::checkPortal(Level * level) {
     auto portal = getEntity<Portal>(level, currCheckDir());
 
     // check if portal is there, if so, activate teleport status
-    if(portal.get()) {
+    if(portal.get() && !portal->isVanished()) {
         teleporting = true;
 
         portal->setActivated(true);
@@ -113,6 +113,9 @@ void Player::checkPortal(Level * level) {
 
         // store portal for undo purposes
         lastPortal = portal;
+
+        // reduce boosting if currently boosted
+        if(boostPower > 1) boostPower = 1;
     }
 }
 

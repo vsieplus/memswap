@@ -97,6 +97,10 @@ void Entity::setGridY(int y) {
     gridY = y;
 }
 
+void Entity::stopAnimator() {
+    entityAnimator.setAnimating(false);
+}
+
 int Entity::getGridX() const {
     return gridX;
 }

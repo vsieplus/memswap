@@ -326,6 +326,7 @@ void Movable::undoBoost(Direction direction, Level * level, MovableAction lastAc
 
             lastBoost->setActivated(false);
             lastBoost->setVanished(false);
+            lastBoost->stopAnimator();
             
             // undo the movement onto the boost
             undoAction(level);

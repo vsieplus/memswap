@@ -39,10 +39,6 @@ void Portal::update(Level * level, float delta) {
         }
     }
 
-    if(vanished && !entityAnimator.isAnimating()) {
-        level->removeGridElement(gridX, gridY);
-    }
-
     Entity::update(level, delta);
 }
 
@@ -59,7 +55,7 @@ void Portal::resetPortalStatus(Level * level) {
 }
 
 // check if a portal is surrounded by purple tiles, if so -> vanish
-bool Portal::checkSurrounded(Level * level, bool playerTeleported) {
+void Portal::checkSurrounded(Level * level, bool playerTeleported) {
     if(vanished) return;
 
     std::array<std::pair<int, int>, 4> coords;

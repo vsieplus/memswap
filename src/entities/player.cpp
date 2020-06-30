@@ -40,8 +40,13 @@ void Player::update(Level * level, float delta) {
         checkPortal(level);
     } else if(merging) {
         // if player not moving + is merging, check if level is complete
-        if(!moving && !level->isCompleted() && !entityAnimator.isAnimating()) {
-            level->checkComplete();
+        if(!moving && !level->isCompleted()) {
+            if(!vanished) {
+                activateAnimation(PLAYER_MERGE);
+                vanished = true;
+            } else if(!entityAnimator.isAnimating()) {
+                level->checkComplete();
+            }
         }
     }
 

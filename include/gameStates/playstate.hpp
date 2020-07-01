@@ -59,7 +59,7 @@ class PlayState : public GameState {
         void exitState() override;
 
         // helper function to load levels
-        void loadLevel(MemSwap * game);
+        void loadLevel(MemSwap * game, bool enteringState = false);
 
         void updateStats(MemSwap * game);
 

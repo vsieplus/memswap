@@ -43,6 +43,8 @@ class GameState {
         /// Render function for the game state
         virtual void render(SDL_Renderer * renderer) const = 0;
 
+        void fade(SDL_Renderer * renderer, MemSwap * game, bool in) const;
+
         int getGameStateID() {
             return gameStateID;
         }

@@ -25,17 +25,21 @@ PlayState::PlayState(MemSwap * game) : GameState(GAME_STATE_PLAY),
 void PlayState::enterState(MemSwap * game) {
     // load current level (if entering from non-paused state)
     if(!game->isPaused()) {
-        loadLevel(game);
+        loadLevel(game, true);
     } else {
         game->setPaused(false);
     }
 }
 
-// load the curr. level
-void PlayState::loadLevel(MemSwap * game) {
+// load the curr. level + fade out/in
+void PlayState::loadLevel(MemSwap * game, bool enteringState) {
+    if(!enteringState) fade(game->getRenderer(), game, false);
+
     std::string levelPath = game->getResManager().getResPath(game->getCurrLevelID());
     level = Level(levelPath, game->getRenderer(), game);
     levelComplete = false;
+
+    if(!enteringState) fade(game->getRenderer(), game, true);
 }
 
 void PlayState::exitState() {
@@ -52,7 +56,10 @@ void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
             currMovesUndone += level.getMovesUndone();
             currNumResets++;
 
+            // fade out, reset, fade in
+            fade(game->getRenderer(), game, false);
             level.reset(game);
+            fade(game->getRenderer(), game, true);
         } else if(keyStates[SDL_SCANCODE_ESCAPE]) {
             // Check for pause
             game->setPaused(true);

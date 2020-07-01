@@ -34,6 +34,11 @@ void Player::update(Level * level, float delta) {
         if(level->isPerfect()) level->setPerfect(false);
         undoAction(level);
     } else if(moveDir != DIR_NONE || bufferedDir != DIR_NONE) {
+        // signal last portal to check surrounded upon move if not yet vanished   
+        if(lastPortal.get() && !lastPortal->isVanished()) {
+            lastPortal->checkSurrounded(level);
+        }
+
         // check for entity interaction if player tried to move/is moving
         pushDiamond(level);
         checkReceptor(level);

@@ -289,8 +289,12 @@ void Movable::undoMovement(Direction direction, Level * level) {
     setScreenX(origCoords.first * entitySprite->getWidth());
     setScreenY(origCoords.second * entitySprite->getHeight());
 
-    // if previous move was a teleport, transfer ownership of portals back to level
-    if(!actionHistory.empty() && actionHistory.top() == TELEPORT) {
+    // if previous move was a teleport, or original position had a portal,
+    // transfer ownership of portals back to level before replacing entity
+    if((!actionHistory.empty() && actionHistory.top() == TELEPORT) || 
+        (lastPortal.get() && lastPortal->getGridX() == origCoords.first && 
+        lastPortal->getGridY() == origCoords.second)) {
+        
         lastPortal->removePortals(level);
         lastPortal->setActivated(true);
         lastPortal->setVanished(false);

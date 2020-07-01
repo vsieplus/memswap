@@ -43,8 +43,8 @@ void Portal::update(Level * level, float delta) {
             
             // give ownership back to level
             level->placePortals();
-            checkSurrounded(level, false);
 
+            //checkSurrounded(level, false);
             resetPortalStatus(level);
         }
     }
@@ -65,7 +65,7 @@ void Portal::resetPortalStatus(Level * level) {
 }
 
 // check if a portal is surrounded by purple tiles, if so -> vanish
-void Portal::checkSurrounded(Level * level, bool playerTeleported) {
+void Portal::checkSurrounded(Level * level) {
     if(vanished) return;
 
     std::array<std::pair<int, int>, 4> coords;
@@ -77,8 +77,10 @@ void Portal::checkSurrounded(Level * level, bool playerTeleported) {
     // check if each is a purple tile    
     for(int i = 0; i < 4; i++) {
         if(level->getTileParity(coords[i].first, coords[i].second) != PARITY_PURPLE) {
-            // if not purple, may skip if player is on same tile
-            if(!playerTeleported &&  player->getCoords(DIR_NONE) == coords[i]) continue;
+            // if not purple, may skip if player is on same tile + set to move
+            /* if(!playerTeleported &&  player->getCoords(DIR_NONE) == coords[i]) {
+                    continue;
+            } */
 
             // otherwise early return b/c some surrounding tile not purple
             return;

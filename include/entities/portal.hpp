@@ -32,7 +32,7 @@ class Portal : public Entity {
         void render(SDL_Renderer* renderer) const override;
 
         // check if surrounded by purple tiles -> merge animation
-        void checkSurrounded(Level * level, bool playerTeleported = true);
+        void checkSurrounded(Level * level);
 
         // teleport the player
         void teleportPlayer(Level * level, bool undo = false);

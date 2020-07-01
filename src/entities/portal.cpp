@@ -39,7 +39,9 @@ void Portal::update(Level * level, float delta) {
         }
 
         // if player has moved off of the portal, place them back in the grid
-        if(!player->isMoving() && !(player->getGridX() == gridX && player->getGridY() == gridY)) {
+        if((!(player->getGridX() == gridX && player->getGridY() == gridY)) &&
+            ((player->getScreenX() > getScreenX() || player->getScreenX() + player->getWidth() <= getScreenX()) ||
+            (player->getScreenY() > getScreenY() || player->getScreenY() + player->getHeight() <= getScreenY()))) {
             
             // give ownership back to level
             level->placePortals();
@@ -77,12 +79,8 @@ void Portal::checkSurrounded(Level * level) {
     // check if each is a purple tile    
     for(int i = 0; i < 4; i++) {
         if(level->getTileParity(coords[i].first, coords[i].second) != PARITY_PURPLE) {
-            // if not purple, may skip if player is on same tile + set to move
-            /* if(!playerTeleported &&  player->getCoords(DIR_NONE) == coords[i]) {
-                    continue;
-            } */
 
-            // otherwise early return b/c some surrounding tile not purple
+            // early return b/c some surrounding tile not purple
             return;
         }
     }

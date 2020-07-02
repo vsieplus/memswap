@@ -51,8 +51,7 @@
     },
     "music": {
         "menuMusic": "menuMusic.ogg",
-        "world01": "world1.ogg",
-        "world02": "world2.ogg"
+        "playMusic": "playMusic.ogg"
     },
     "fonts": {
         "mainFont": "rhodum_libre.json"

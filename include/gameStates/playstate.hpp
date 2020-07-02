@@ -8,6 +8,7 @@
 
 #include "gameStates/gamestate.hpp"
 #include "level/level.hpp"
+#include "utils/music.hpp"
 
 #include "gui/label.hpp"
 #include "gui/button.hpp"
@@ -34,6 +35,7 @@ class PlayState : public GameState {
         inline const static std::string POSTGAME_TEXT = "Level Complete!";
 
         inline const static std::string COMPLETE_SOUND_ID = "complete";
+        inline const static std::string PLAY_MUSIC_ID = "playMusic";
 
         // enum for postgame menu buttons
         enum PGButton {
@@ -51,6 +53,8 @@ class PlayState : public GameState {
 
         // after a level is completed
         bool levelComplete = false;
+
+        std::shared_ptr<Music> playMusic;
 
         void handlePGActivation(MemSwap * game);
 

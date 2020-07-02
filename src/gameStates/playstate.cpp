@@ -11,7 +11,8 @@ PlayState::PlayState(MemSwap * game) : GameState(GAME_STATE_PLAY),
         game->getResManager().getTexture(POSTGAME_BOARD_ID),
         game->getResManager().getFont(FONT_ID), POSTGAME_TEXT,
         game->getButtonTextColor(), Label::TextAlignment::ALIGN_CENTER,
-        Label::TextAlignment::ALIGN_TOP) {
+        Label::TextAlignment::ALIGN_TOP),
+    playMusic(game->getResManager().getMusic(PLAY_MUSIC_ID)) {
             
     postGameButtons = MenuState::getSpacedButtons(postGameMenuLabels,
         game->getResManager().getTexture(BUTTON_ID), game->getResManager().getFont(FONT_ID),
@@ -24,10 +25,12 @@ PlayState::PlayState(MemSwap * game) : GameState(GAME_STATE_PLAY),
 
 void PlayState::enterState(MemSwap * game) {
     // load current level (if entering from non-paused state)
-    if(!game->isPaused()) {
-        loadLevel(game, true);
-    } else {
+    if(game->isPaused()) {
         game->setPaused(false);
+        playMusic->undeafen();
+    } else {
+        loadLevel(game, true);
+        playMusic->play();
     }
 }
 
@@ -43,6 +46,7 @@ void PlayState::loadLevel(MemSwap * game, bool enteringState) {
 }
 
 void PlayState::exitState() {
+    playMusic->stop();
 }
 
 void PlayState::handleEvents(MemSwap * game, const SDL_Event & e) {
@@ -109,6 +113,7 @@ void PlayState::update(MemSwap * game, float delta) {
     if(game->isPaused()) {
         updateStats(game);
         game->setNextState(GAME_STATE_PAUSE);
+        playMusic->deafen();
     } else if(levelComplete) {
         // update curr button/check if it has been activated
         postGameButtons.at(currButton).update();

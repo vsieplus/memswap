@@ -11,6 +11,7 @@
 #include "gameStates/gamestate.hpp"
 #include "utils/bitmapfont.hpp"
 #include "utils/texture.hpp"
+#include "utils/music.hpp"
 #include "gui/button.hpp"
 #include "gui/label.hpp"
 
@@ -85,6 +86,13 @@ class MenuState : public GameState {
         inline const static std::string MENU_TEXT_BOARD_ID = "menu_text_board";
         inline const static std::string MENU_HTP_BOARD_ID = "menu_htp_board";
         
+        inline const static std::string MENU_MUSIC_ID = "menuMusic";
+
+        // titles/labels for menu screens
+        inline const static std::string LVL_SELECT_TITLE = "Level Select";
+        inline const static std::string STATS_TITLE = "Player Stats";
+        inline const static std::string HTP_TITLE = "How To Play";
+        inline const static std::string CREDITS_TITLE = "Credits";
 
         // button labels
         const std::vector<std::string> MAIN_LABELS = {
@@ -95,18 +103,15 @@ class MenuState : public GameState {
         };
 
         const std::vector<std::string> STATS_LABELS = {"Reset Data"};
-
-        // titles/labels for menu screens
-        inline const static std::string LVL_SELECT_TITLE = "Level Select";
-        inline const static std::string STATS_TITLE = "Player Stats";
-        inline const static std::string HTP_TITLE = "How To Play";
-        inline const static std::string CREDITS_TITLE = "Credits";
         
         // bg texture
         std::shared_ptr<Texture> bgTexture;
 
         // font for text rendering
         std::shared_ptr<BitmapFont> menuFont;
+
+        // menu music
+        std::shared_ptr<Music> menuMusic;
 
         // maps of menu labels + button vectors, for each menu screen
         // (eventually generalize -> dynamic/static GUI elems)

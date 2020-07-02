@@ -12,10 +12,10 @@
 #include "memswap.hpp"
 #include "gameStates/menustate.hpp"
 
-MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU) {
-    // retrieve resources
-    bgTexture = game->getResManager().getTexture(BG_ID);
-    menuFont = game->getResManager().getFont(FONT_ID);
+MenuState::MenuState(MemSwap * game) : GameState(GAME_STATE_MENU),
+    bgTexture(game->getResManager().getTexture(BG_ID)),
+    menuFont(game->getResManager().getFont(FONT_ID)),
+    menuMusic(game->getResManager().getMusic(MENU_MUSIC_ID)) {
 
     // add buttons/other gui elements for each menu screen
     addMainGUI(game);
@@ -41,9 +41,12 @@ void MenuState::enterState(MemSwap * game) {
     } else {
         returning = true;
     }
+
+    menuMusic->play();
 }
 
 void MenuState::exitState() {
+    menuMusic->stop();
 }
 
 // functions to add buttons for the specified screen

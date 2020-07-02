@@ -105,36 +105,27 @@ void ResManager::loadTexture(int resourceIDHash, std::string resourcePath) {
 }
 
 // load a spritesheet via tutorial tiledmap (from resourcePath)
-void ResManager::loadSpritesheet(int resourceIDHash, std::string resourcePath) {
-    auto spritesheet = std::make_shared<SpriteSheet>(resourcePath, 
-        tilesetNames[resourceIDHash], renderer);
-    
-    spritesheets.emplace(resourceIDHash, spritesheet);
+void ResManager::loadSpritesheet(int resourceIDHash, std::string resourcePath) {    
+    spritesheets.emplace(resourceIDHash, 
+        std::make_shared<SpriteSheet>(resourcePath, tilesetNames[resourceIDHash], renderer));
 }
 
 void ResManager::loadSound(int resourceIDHash, std::string resourcePath) {
-    auto sound = std::make_shared<Sound>(resourcePath);
-
-    sounds.emplace(resourceIDHash, sound);
+    sounds.emplace(resourceIDHash, std::make_shared<Sound>(resourcePath));
 }
 
 void ResManager::loadMusic(int resourceIDHash, std::string resourcePath) {
-/*    std::shared_ptr<Music> (resourcePath)
-      musics.emplace(resourceIDHash, resourcePath)
- */
+    musics.emplace(resourceIDHash, std::make_shared<Music>(resourcePath));
 }
 
 void ResManager::loadFont(int resourceIDHash, std::string resourcePath) {
     // pass path to font json (config) file
-    auto font = std::make_shared<BitmapFont>(resourcePath, renderer);
-    fonts.emplace(resourceIDHash, font);
+    fonts.emplace(resourceIDHash, std::make_shared<BitmapFont>(resourcePath, renderer));
 }
 
 void ResManager::loadAnimation(int resourceIDHash, std::string resourcePath) {
-    auto animation = std::make_shared<Animation>(resourcePath, renderer,
-        ANIM_FRAMEWIDTH, ANIM_FRAMEHEIGHT);
-
-    animations.emplace(resourceIDHash, animation);
+    animations.emplace(resourceIDHash, 
+        std::make_shared<Animation>(resourcePath, renderer, ANIM_FRAMEWIDTH, ANIM_FRAMEHEIGHT));
 }
 
 void ResManager::constructAnimationMaps() {

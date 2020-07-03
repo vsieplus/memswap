@@ -392,6 +392,12 @@ void MenuState::update(MemSwap * game, float delta) {
             }
         }
     }
+
+    if(currScrollX < game->getScreenWidth() - bgTexture->getWidth()) {
+        currScrollX = 0;
+    } else {
+        currScrollX -= SCROLL_VELOCITY * (delta / 1000.f);
+    }
 }
 
 // handle button activations for each screen
@@ -448,7 +454,8 @@ void MenuState::updateCurrButton() {
 
 /// Render function for the game state
 void MenuState::render(SDL_Renderer * renderer) const {
-    bgTexture->render(0, 0, renderer);
+    // scrolling background texture
+    bgTexture->render((int)currScrollX, 0, renderer);
 
     // render labels for the current screen
     for(Label label: stateLabels.at(currScreen)) {

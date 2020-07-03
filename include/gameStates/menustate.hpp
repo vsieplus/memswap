@@ -67,6 +67,10 @@ class MenuState : public GameState {
 
         const static int BG_PAD = 40;
 
+        // bg scrolling + speed - pixels per second
+        float currScrollX = 0;
+        inline const static float SCROLL_VELOCITY = 16;
+
         // if returning to the menu state, or first time entering
         bool returning = false;
 

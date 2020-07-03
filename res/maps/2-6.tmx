@@ -226,12 +226,12 @@
  </tileset>
  <layer id="1" name="background" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJytU0EOACAI0v7/6C4dnBPF9MBmzhFIHRFRg/Nga3T2PTRb8UQzkZZIp+fQBBtaIk1ZD3lgNDA77+bWhfc05at0sRl77z97q3Lf8JnpZDNjM0W+0d2TP87m2H0HFd8FrrACBA==
+   eJytU0EOACAI0v7/6Dp0aA6IlQdWZiqhjYgYC7nXihQ+dv+MU7GOL4NzYbXq/uc9Sg+UB9VDXBUfdaZqv/BAXCqcfJ1g9R3b5eTod+uzM99oXpGt/p/L80djNp9Mi66+37StfCahgAH4
   </data>
  </layer>
  <layer id="2" name="entities" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJzzZBgewJfG5gfR2HxkAPKLH4l6/PHIOQKxO/nOwQmC8cjhCy98+ugBSA1bEHDEow8WtshxEEiEme5IZmIzgxxATtohxkxK3UUtAAAJIQd5
+   eJzzZECAQIaBB440MDNoENk3ChgYginUjy/OSIlPDyB2JaDGjwhzfBmIj3N3ItWBQAAJaj2gGJv/KQ1vGID50RGNT4wekF/Q/e4GpZHF/QmYBwCZywh1
   </data>
  </layer>
 </map>

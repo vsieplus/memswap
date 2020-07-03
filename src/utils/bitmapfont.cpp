@@ -129,6 +129,10 @@ void BitmapFont::updateText(float delta) {
     }
 }
 
+void BitmapFont::setRenderingDynamic(bool renderingDynamic) {
+    this->renderingDynamic = renderingDynamic;
+}
+
 void BitmapFont::updateAlpha() {
     bitmapTexture.updateAlpha();
 }

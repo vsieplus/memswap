@@ -36,8 +36,10 @@ class SplashState : public GameState {
         const std::string LOAD_ANIM_ID = "loading";
         const std::string FONT_ID = "mainFont";
         const std::string ADV_TEXT = "Press Enter to Start...";
+        const std::string LOADING_TEXT = "Loading...";
 
-        int advTextX, advTextY;
+        int advTextX = 0;
+        int advTextY = 0;
 
         int loadX, loadY;
 

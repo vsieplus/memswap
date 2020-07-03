@@ -83,6 +83,7 @@ class BitmapFont {
         void updateText(float delta);
         void setFontColor(const SDL_Color & fontColor);
         void setAlpha(Uint8 a);
+        void setRenderingDynamic(bool renderingDynamic);
 
         bool isRenderingDynamic() const;
         int getLineHeight() const;

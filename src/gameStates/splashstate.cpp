@@ -49,28 +49,41 @@ void SplashState::update(MemSwap * game, float delta) {
     if(loadingRes) {
         game->loadNextResource();
         loadingRes = game->getResManager().loadingResources();
+
+        // retrieve font once it's loaded
+        if(!splashFont.get()) {
+            splashFont = game->getResManager().getFont(FONT_ID);
+
+            // set advText render pos
+            advTextX = (game->getScreenWidth() / 2) - 
+                (splashFont->getTextWidth(LOADING_TEXT) / 2);
+            advTextY = (game->getScreenHeight() * 3 / 5);
+        } else if(!splashFont->isRenderingDynamic()){
+            splashFont->initRenderDynamicText(advTextX, advTextY, LOADING_TEXT, 
+                !TYPED, FLASHING);
+            splashFont->setFontColor(game->getButtonTextColor());
+        } else {
+            splashFont->updateText(delta);
+        }
+
+        if(!loadingRes) {
+            splashFont->setRenderingDynamic(false);
+        }
+
     } else {
         if (advance) {
             // Otherwise finish the SPLASH state and set next as the MENU state
             game->setNextState(GAME_STATE_MENU);
         }
 
-        // retrieve font now that it's loaded
-        if(!splashFont.get()) {
-            splashFont = game->getResManager().getFont(FONT_ID);
-        }
-
         // start rendering advance text graphic to signal user
-        if(!splashFont->isRenderingDynamic()) {                    
-            // set advText render pos
+        if(!splashFont->isRenderingDynamic()) {
             advTextX = (game->getScreenWidth() / 2) - 
-                (splashFont->getTextWidth(ADV_TEXT) / 2);
-            advTextY = (game->getScreenHeight() * 3 / 5);
-
+                (splashFont->getTextWidth(ADV_TEXT) / 2);            
+            
             // typed and flashing, with dark green text
             splashFont->initRenderDynamicText(advTextX, advTextY, ADV_TEXT, 
                 TYPED, FLASHING);
-            splashFont->setFontColor(game->getButtonTextColor());
         } else {
             splashFont->updateText(delta);
         }
@@ -86,8 +99,8 @@ void SplashState::render(SDL_Renderer * renderer) const {
 
     splashAnim.render(loadX, loadY, renderer);
 
-    // Render graphic indicating loading is done
-    if(!loadingRes && splashFont.get() && splashFont->isRenderingDynamic()) {
+    // Render graphic indicating loading is done, or 'loading text'
+    if(splashFont.get() && splashFont->isRenderingDynamic()) {
         splashFont->renderText(renderer);
     }
 }

@@ -23,7 +23,7 @@ $(EXEC_DIR)\$(TARGET): $(SRC)
 build:
 	if not exist $(EXEC_DIR) mkdir $(EXEC_DIR)
 
-release: CC_FLAGS += -Bstatic
+release: CC_FLAGS += -static
 release: all
 
 clean:
